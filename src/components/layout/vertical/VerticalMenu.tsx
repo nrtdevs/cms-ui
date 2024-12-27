@@ -115,7 +115,9 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
               </MenuItem>
             </SubMenu>
             <SubMenu label={dictionary['navigation'].customers}>
-              <MenuItem href={`/${locale}/demo/apps/ecommerce/customers/list`}>{dictionary['navigation'].list}</MenuItem>
+              <MenuItem href={`/${locale}/demo/apps/ecommerce/customers/list`}>
+                {dictionary['navigation'].list}
+              </MenuItem>
               <MenuItem
                 href={`/${locale}/demo/apps/ecommerce/customers/details/879861`}
                 exactMatch={false}
@@ -167,7 +169,11 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
             >
               {dictionary['navigation'].preview}
             </MenuItem>
-            <MenuItem href={`/${locale}/demo/apps/invoice/edit/4987`} exactMatch={false} activeUrl='/demo/apps/invoice/edit'>
+            <MenuItem
+              href={`/${locale}/demo/apps/invoice/edit/4987`}
+              exactMatch={false}
+              activeUrl='/demo/apps/invoice/edit'
+            >
               {dictionary['navigation'].edit}
             </MenuItem>
             <MenuItem href={`/${locale}/demo/apps/invoice/add`}>{dictionary['navigation'].add}</MenuItem>
@@ -296,99 +302,8 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
           <MenuItem href={`/${locale}/demo/react-table`} icon={<i className='tabler-table' />}>
             {dictionary['navigation'].reactTable}
           </MenuItem>
-          <MenuItem
-            icon={<i className='tabler-checkbox' />}
-            href={`${process.env.NEXT_PUBLIC_DOCS_URL}/docs/user-interface/form-elements`}
-            suffix={<i className='tabler-external-link text-xl' />}
-            target='_blank'
-          >
-            {dictionary['navigation'].formELements}
-          </MenuItem>
-          <MenuItem
-            icon={<i className='tabler-layout-board-split' />}
-            href={`${process.env.NEXT_PUBLIC_DOCS_URL}/docs/user-interface/mui-table`}
-            suffix={<i className='tabler-external-link text-xl' />}
-            target='_blank'
-          >
-            {dictionary['navigation'].muiTables}
-          </MenuItem>
-        </MenuSection>
-        <MenuSection label={dictionary['navigation'].chartsMisc}>
-          <SubMenu label={dictionary['navigation'].charts} icon={<i className='tabler-chart-donut-2' />}>
-            <MenuItem href={`/${locale}/demo/charts/apex-charts`}>{dictionary['navigation'].apex}</MenuItem>
-            <MenuItem href={`/${locale}/demo/charts/recharts`}>{dictionary['navigation'].recharts}</MenuItem>
-          </SubMenu>
-          <MenuItem
-            icon={<i className='tabler-cards' />}
-            href={`${process.env.NEXT_PUBLIC_DOCS_URL}/docs/user-interface/foundation`}
-            suffix={<i className='tabler-external-link text-xl' />}
-            target='_blank'
-          >
-            {dictionary['navigation'].foundation}
-          </MenuItem>
-          <MenuItem
-            icon={<i className='tabler-atom' />}
-            href={`${process.env.NEXT_PUBLIC_DOCS_URL}/docs/user-interface/components`}
-            suffix={<i className='tabler-external-link text-xl' />}
-            target='_blank'
-          >
-            {dictionary['navigation'].components}
-          </MenuItem>
-          <MenuItem
-            icon={<i className='tabler-list-search' />}
-            href={`${process.env.NEXT_PUBLIC_DOCS_URL}/docs/menu-examples/overview`}
-            suffix={<i className='tabler-external-link text-xl' />}
-            target='_blank'
-          >
-            {dictionary['navigation'].menuExamples}
-          </MenuItem>
-          <MenuItem
-            icon={<i className='tabler-lifebuoy' />}
-            suffix={<i className='tabler-external-link text-xl' />}
-            target='_blank'
-            href='https://pixinvent.ticksy.com'
-          >
-            {dictionary['navigation'].raiseSupport}
-          </MenuItem>
-          <MenuItem
-            icon={<i className='tabler-book-2' />}
-            suffix={<i className='tabler-external-link text-xl' />}
-            target='_blank'
-            href={`${process.env.NEXT_PUBLIC_DOCS_URL}`}
-          >
-            {dictionary['navigation'].documentation}
-          </MenuItem>
-          <SubMenu label={dictionary['navigation'].others} icon={<i className='tabler-box' />}>
-            <MenuItem suffix={<CustomChip label='New' size='small' color='info' round='true' />}>
-              {dictionary['navigation'].itemWithBadge}
-            </MenuItem>
-            <MenuItem
-              href='https://pixinvent.com'
-              target='_blank'
-              suffix={<i className='tabler-external-link text-xl' />}
-            >
-              {dictionary['navigation'].externalLink}
-            </MenuItem>
-            <SubMenu label={dictionary['navigation'].menuLevels}>
-              <MenuItem>{dictionary['navigation'].menuLevel2}</MenuItem>
-              <SubMenu label={dictionary['navigation'].menuLevel2}>
-                <MenuItem>{dictionary['navigation'].menuLevel3}</MenuItem>
-                <MenuItem>{dictionary['navigation'].menuLevel3}</MenuItem>
-              </SubMenu>
-            </SubMenu>
-            <MenuItem disabled>{dictionary['navigation'].disabledMenu}</MenuItem>
-          </SubMenu>
         </MenuSection>
       </Menu>
-      {/* <Menu
-        popoutMenuOffset={{ mainAxis: 23 }}
-        menuItemStyles={menuItemStyles(verticalNavOptions, theme)}
-        renderExpandIcon={({ open }) => <RenderExpandIcon open={open} transitionDuration={transitionDuration} />}
-        renderExpandedMenuItemIcon={{ icon: <i className='tabler-circle text-xs' /> }}
-        menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
-      >
-        <GenerateVerticalMenu menuData={menuData(dictionary)} />
-      </Menu> */}
     </ScrollWrapper>
   )
 }
