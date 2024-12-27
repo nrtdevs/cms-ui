@@ -82,6 +82,7 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
         <MenuItem href={`/${locale}/users/dashboard`}>{dictionary['navigation'].dashboards}</MenuItem>
+        <MenuItem href={`/${locale}/user-management`}>{dictionary['navigation'].usermanagement}</MenuItem>
         <SubMenu
           label={dictionary['navigation'].dashboards}
           icon={<i className='tabler-smart-home' />}
