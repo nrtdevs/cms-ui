@@ -12,7 +12,7 @@ const data: SearchData[] = [
   {
     id: '1',
     name: 'CRM Dashboard',
-    url: '/dashboards/crm',
+    url: 'demo/dashboards/crm',
     icon: 'tabler-chart-pie-2',
     section: 'Dashboards'
   },

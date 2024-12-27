@@ -30,7 +30,7 @@ const noResultData: NoResultData[] = [
   },
   {
     label: 'CRM',
-    href: '/dashboards/crm',
+    href: 'demo/dashboards/crm',
     icon: 'tabler-chart-donut-3'
   }
 ]
