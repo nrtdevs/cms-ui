@@ -219,11 +219,6 @@ const Page: React.FC = () => {
   })
 
   return (
-<<<<<<< HEAD
-    <div>
-      <h1>User Management</h1>
-      <p>hello!! world </p>
-=======
     <div className='container mx-auto p-4'>
       {/* Conditionally render the AddUser component or the User Table */}
       {isAddUserOpen ? (
@@ -316,7 +311,6 @@ const Page: React.FC = () => {
           </Card>
         </div>
       )}
->>>>>>> ed88e29 (create a usermnagement)
     </div>
   )
 }
