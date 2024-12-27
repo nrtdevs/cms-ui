@@ -33,6 +33,7 @@
     "@fullcalendar/react": "6.1.15",
     "@fullcalendar/timegrid": "6.1.15",
     "@hookform/resolvers": "3.9.0",
+    "@mui/icons-material": "^6.3.0",
     "@mui/lab": "5.0.0-alpha.172",
     "@mui/material": "5.16.4",
     "@mui/material-nextjs": "5.16.4",
@@ -76,6 +77,7 @@
     "react-use": "17.5.1",
     "recharts": "2.12.7",
     "server-only": "0.0.1",
+    "sweetalert2": "^11.15.3",
     "valibot": "0.36.0"
   },
   "devDependencies": {
