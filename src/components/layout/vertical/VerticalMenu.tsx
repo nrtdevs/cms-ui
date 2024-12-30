@@ -81,8 +81,20 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
         renderExpandedMenuItemIcon={{ icon: <i className='tabler-circle text-xs' /> }}
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
-        <MenuItem href={`/${locale}/users/dashboard`}>{dictionary['navigation'].dashboards}</MenuItem>
-        <MenuItem href={`/${locale}/user-management`}>{dictionary['navigation'].usermanagement}</MenuItem>
+        <MenuItem href={`/${locale}/users/dashboard`} icon={<i className='tabler-layout-dashboard' />}>
+          {dictionary['navigation'].dashboards}
+        </MenuItem>
+        <MenuItem href={`/${locale}/user-management`} icon={<i className='tabler-user-cog' />}>
+          {dictionary['navigation'].usermanagement}
+        </MenuItem>
+
+        <MenuItem href={`/${locale}/project-management`} icon={<i className='tabler-brand-vite' />}>
+          {dictionary['navigation'].projectmanagement}
+        </MenuItem>
+
+        <MenuItem href={`/${locale}/project-tracking`} icon={<i className='tabler-track' />}>
+          {dictionary['navigation'].projecttracking}
+        </MenuItem>
         <SubMenu
           label={dictionary['navigation'].dashboards}
           icon={<i className='tabler-smart-home' />}

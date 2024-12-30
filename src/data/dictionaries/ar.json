@@ -101,6 +101,8 @@
     "menuLevel2": "مستوى القائمة 2",
     "menuLevel3": "مستوى القائمة 3",
     "disabledMenu": "قائمة المعوقين",
-    "usermanagement": "إدارة المستخدم"
+    "usermanagement": "إدارة المستخدم",
+    "projectmanagement": "إدارة المشروع",
+    "projecttracking": "تتبع المشروع"
   }
 }

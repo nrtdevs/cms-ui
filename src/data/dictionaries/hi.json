@@ -101,6 +101,8 @@
     "menuLevel2": "मेनू स्तर 2",
     "menuLevel3": "मेनू स्तर 3",
     "disabledMenu": "अक्षम मेनू",
-    "usermanagement": "उपयोगकर्ता प्रबंधन"
+    "usermanagement": "उपयोगकर्ता प्रबंधन",
+    "projectmanagement": "परियोजना प्रबंधन",
+    "projecttracking": "परियोजना ट्रैकिंग"
   }
 }

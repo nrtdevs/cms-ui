@@ -101,6 +101,8 @@
     "menuLevel2": "Niveau de menu 2",
     "menuLevel3": "Niveau de menu 3",
     "disabledMenu": "Menu désactivé",
-    "usermanagement": "Gestion des utilisateurs"
+    "usermanagement": "Gestion des utilisateurs",
+    "projectmanagement": "Gestion de projet",
+    "projecttracking": "Suivi de projet"
   }
 }

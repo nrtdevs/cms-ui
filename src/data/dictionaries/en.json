@@ -101,6 +101,8 @@
     "menuLevel2": "Menu Level 2",
     "menuLevel3": "Menu Level 3",
     "disabledMenu": "Disabled Menu",
-    "usermanagement":"User Management"
+    "usermanagement": "User Management",
+    "projectmanagement": "Project Management",
+    "projecttracking": "Project Tracking"
   }
 }
