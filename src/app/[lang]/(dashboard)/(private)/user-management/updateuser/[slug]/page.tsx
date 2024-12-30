@@ -6,10 +6,9 @@ import { useParams, useRouter } from 'next/navigation'
 
 import { Box, Button, Card, Typography, Stack, Grid } from '@mui/material'
 import Swal from 'sweetalert2'
-
 import Dropdown from '../../../../../../Custom-Cpmponents/Select-dropdown/dropdown'
+
 import CustomTextInput from '../../../../../../Custom-Cpmponents/input/custominput'
-import DatePickerInput from '../../../../../../Custom-Cpmponents/input/Datepickerinput'
 
 interface UserData {
   id: number
@@ -17,19 +16,18 @@ interface UserData {
   lastName: string
   userId: string
   email: string
-  contact: string
   contactNumber: string
-  contactReference: string
   position: string
-  company: string
-  parentCompany: string
-  clientName: string
-  project: string
-  employeeType: string
-  activationDate: string
-  endDate: string
-  entitlements: string
+  positionTypes: string
 }
+const positionTypes = [
+  'Project Director',
+  'Senior Developer',
+  'Marketing Director',
+  'Project Manager',
+  'Product Manager',
+  'Senior Designer'
+]
 
 const users = Array.from({ length: 100 }, (_, index) => ({
   id: index + 1,
@@ -37,9 +35,8 @@ const users = Array.from({ length: 100 }, (_, index) => ({
   lastName: `Last Name ${index + 1}`,
   userId: `P${String(index + 1).padStart(5, '0')}`,
   email: `user${index + 1}@example.com`,
-  contact: `Contact ${index + 1}`,
   contactNumber: `+33-700-555-${String(200 + index)}`,
-  company: `Company ${index + 1}`,
+
   position: [
     'Project Director',
     'Senior Developer',
@@ -47,15 +44,7 @@ const users = Array.from({ length: 100 }, (_, index) => ({
     'Project Manager',
     'Product Manager',
     'Senior Designer'
-  ][index % 6],
-  parentCompany: ['FCC Construcción', 'TechCorp', 'DesignPro', 'FilmCo', 'BuildWorks'][index % 5],
-  clientName: `Client ${index + 1}`,
-  project: ['Project A', 'Project B', 'Project C', 'Project D'][index % 3],
-  contactReference: `Contact Ref ${index + 1}`,
-  employeeType: ['Full-Time', 'Part-Time', 'Locally Hired', 'Freelancer', 'Contractor'][index % 5],
-  entitlements: ['Standard', 'Premium', 'Custom'][index % 5],
-  activationDate: `2024-01-01`,
-  endDate: `2024-12-31`
+  ][index % 6]
 }))
 
 const UserUpdate: React.FC = () => {
@@ -63,10 +52,6 @@ const UserUpdate: React.FC = () => {
   const router = useRouter()
   const [userData, setUserData] = useState<UserData | null>(null)
   const [errors, setErrors] = useState<{ [key in keyof UserData]?: string }>({})
-
-  const entitlementOptions = ['Standard', 'Premium', 'Custom']
-  const projectOptions = ['Project A', 'Project B', 'Project C', 'Project D']
-  const employeeTypes = ['Full-Time', 'Part-Time', 'Locally Hired', 'Freelancer', 'Contractor']
 
   useEffect(() => {
     const user = users.find(user => user.userId === String(slug))
@@ -92,14 +77,6 @@ const UserUpdate: React.FC = () => {
     if (!userData?.email) newErrors.email = 'Email is required'
     if (!userData?.contactNumber) newErrors.contactNumber = 'Contact Number is required'
     if (!userData?.position) newErrors.position = 'Position is required'
-    if (!userData?.parentCompany) newErrors.parentCompany = 'Parent Company is required'
-    if (!userData?.clientName) newErrors.clientName = 'Client Name is required'
-    if (!userData?.project) newErrors.project = 'Project is required'
-    if (!userData?.contactReference) newErrors.contactReference = 'Contact Reference is required'
-    if (!userData?.employeeType) newErrors.employeeType = 'Employee Type is required'
-    if (!userData?.entitlements) newErrors.entitlements = 'Entitlements are required'
-    if (!userData?.activationDate) newErrors.activationDate = 'Activation Date is required'
-    if (!userData?.endDate) newErrors.endDate = 'End Date is required'
 
     // Simple email format validation
     if (userData?.email && !/\S+@\S+\.\S+/.test(userData.email)) {
@@ -231,114 +208,16 @@ const UserUpdate: React.FC = () => {
               />
             </Grid>
 
-            {/* Position */}
+            {/*  position  */}
+
             <Grid item xs={12} sm={4}>
-              <CustomTextInput
+              <Dropdown
                 label='Position'
-                value={userData.position}
-                onChange={value => handleInputChange('position', value)}
+                options={positionTypes}
+                selectedOption={userData.position}
+                onSelect={value => handleInputChange('position', value)}
                 error={!!errors.position}
                 helperText={errors.position}
-                required
-              />
-            </Grid>
-
-            {/* Parent Company */}
-            <Grid item xs={12} sm={4}>
-              <Dropdown
-                label='Parent Company'
-                options={['FCC Construcción', 'TechCorp', 'DesignPro', 'FilmCo', 'BuildWorks']}
-                selectedOption={userData.parentCompany}
-                onSelect={value => handleInputChange('parentCompany', value)}
-                error={!!errors.parentCompany}
-                helperText={errors.parentCompany}
-                required
-              />
-            </Grid>
-
-            {/* Client Name */}
-            <Grid item xs={12} sm={4}>
-              <CustomTextInput
-                label='Client Name'
-                value={userData.clientName}
-                onChange={value => handleInputChange('clientName', value)}
-                error={!!errors.clientName}
-                helperText={errors.clientName}
-                required
-              />
-            </Grid>
-
-            {/* Project */}
-            <Grid item xs={12} sm={4}>
-              <Dropdown
-                label='Project'
-                options={projectOptions}
-                selectedOption={userData.project}
-                onSelect={value => handleInputChange('project', value)}
-                error={!!errors.project}
-                helperText={errors.project}
-                required
-              />
-            </Grid>
-
-            {/* Contact Reference */}
-            <Grid item xs={12} sm={4}>
-              <CustomTextInput
-                label='Contact Reference'
-                value={userData.contactReference}
-                onChange={value => handleInputChange('contactReference', value)}
-                error={!!errors.contactReference}
-                helperText={errors.contactReference}
-                required
-              />
-            </Grid>
-
-            {/* Employee Type */}
-            <Grid item xs={12} sm={4}>
-              <Dropdown
-                label='Employee Type'
-                options={employeeTypes}
-                selectedOption={userData.employeeType}
-                onSelect={value => handleInputChange('employeeType', value)}
-                error={!!errors.employeeType}
-                helperText={errors.employeeType}
-                required
-              />
-            </Grid>
-
-            {/* Entitlements */}
-            <Grid item xs={12} sm={4}>
-              <Dropdown
-                label='Entitlements'
-                options={entitlementOptions}
-                selectedOption={userData.entitlements}
-                onSelect={value => handleInputChange('entitlements', value)}
-                error={!!errors.entitlements}
-                helperText={errors.entitlements}
-                required
-              />
-            </Grid>
-
-            {/* Activation Date */}
-            <Grid item xs={12} sm={4}>
-              <DatePickerInput
-                label='Activation Date'
-                value={userData.activationDate}
-                onChange={value => handleInputChange('activationDate', value)}
-                error={!!errors.activationDate}
-                helperText={errors.activationDate}
-                required
-              />
-            </Grid>
-
-            {/* End Date */}
-            <Grid item xs={12} sm={4}>
-              <DatePickerInput
-                label='End Date'
-                value={userData.endDate}
-                onChange={value => handleInputChange('endDate', value)}
-                error={!!errors.endDate}
-                helperText={errors.endDate}
                 required
               />
             </Grid>
@@ -347,10 +226,9 @@ const UserUpdate: React.FC = () => {
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Button
               variant='contained'
-              className='text-primary bg-#cbff8c] focus:bg-[#cbff8c] hover:bg-[#cbff8c]'
+              className='bg-primary '
               onClick={handleUpdate}
               sx={{
-                backgroundColor: '#cbff8c',
                 fontWeight: '600'
               }}
             >
