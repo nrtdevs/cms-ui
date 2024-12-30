@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation'
 
 import { Box, Button, Card, Typography, Stack, Grid } from '@mui/material'
 import Swal from 'sweetalert2'
+
 import Dropdown from '../../../../../../Custom-Cpmponents/Select-dropdown/dropdown'
 
 import CustomTextInput from '../../../../../../Custom-Cpmponents/input/custominput'
@@ -20,6 +21,7 @@ interface UserData {
   position: string
   positionTypes: string
 }
+
 const positionTypes = [
   'Project Director',
   'Senior Developer',
@@ -44,7 +46,8 @@ const users = Array.from({ length: 100 }, (_, index) => ({
     'Project Manager',
     'Product Manager',
     'Senior Designer'
-  ][index % 6]
+  ][index % 6],
+  positionTypes: 'Full-time' // or any default value
 }))
 
 const UserUpdate: React.FC = () => {
