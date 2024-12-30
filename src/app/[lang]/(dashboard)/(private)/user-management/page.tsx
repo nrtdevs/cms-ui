@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 import {
   Button,
@@ -66,6 +66,10 @@ const Page: React.FC = () => {
   const [isAddUserOpen, setIsAddUserOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const router = useRouter()
+
+  const local: any = useParams()
+
+  console.log(local.lang, 'fjksdhgfkjhgsd')
 
   const rowsPerPage = 10
 
@@ -150,12 +154,13 @@ const Page: React.FC = () => {
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
             <Button
-              onClick={() => router.push(`/user-management/updateuser/${info.row.original.employeeId}`)}
+              onClick={() => router.push(`/${local.lang}/user-management/updateuser/${info.row.original.employeeId}`)}
               className='bg-[#7b91b1] text-white p-0 rounded-sm'
               sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
             >
               <i style={{ fontSize: '15px' }} className='tabler-edit text-white' />
             </Button>
+
             <Button
               className='bg-[#fc7182] text-white p-0 rounded-sm ml-1'
               sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
