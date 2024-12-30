@@ -104,35 +104,6 @@ const DebouncedInput = ({
 const Filter = ({ column, table }: { column: Column<any, unknown>; table: Table<any> }) => {
   const firstValue = table.getPreFilteredRowModel().flatRows[0]?.getValue(column.id)
   const columnFilterValue = column.getFilterValue()
-
-  return typeof firstValue === 'number' ? (
-    <div className='flex gap-x-2'>
-      <CustomTextField
-        fullWidth
-        type='number'
-        sx={{ minInlineSize: 100, maxInlineSize: 125 }}
-        value={(columnFilterValue as [number, number])?.[0] ?? ''}
-        onChange={e => column.setFilterValue((old: [number, number]) => [e.target.value, old?.[1]])}
-        placeholder={`Min ${column.getFacetedMinMaxValues()?.[0] || ''}`}
-      />
-      <CustomTextField
-        fullWidth
-        type='number'
-        sx={{ minInlineSize: 100, maxInlineSize: 125 }}
-        value={(columnFilterValue as [number, number])?.[1] ?? ''}
-        onChange={e => column.setFilterValue((old: [number, number]) => [old?.[0], e.target.value])}
-        placeholder={`Max ${column.getFacetedMinMaxValues()?.[1] || ''}`}
-      />
-    </div>
-  ) : (
-    <CustomTextField
-      fullWidth
-      sx={{ minInlineSize: 100 }}
-      value={(columnFilterValue ?? '') as string}
-      onChange={e => column.setFilterValue(e.target.value)}
-      placeholder='Search...'
-    />
-  )
 }
 
 const KitchenSink = () => {

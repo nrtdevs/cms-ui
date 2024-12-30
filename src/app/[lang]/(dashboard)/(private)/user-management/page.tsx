@@ -4,8 +4,6 @@ import React, { useMemo, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import type { FilterFn } from '@tanstack/table-core'
-
 import {
   Button,
   Stack,
@@ -17,20 +15,22 @@ import {
   TableHead,
   TableRow,
   TableBody,
-  Paper
+  Paper,
+  Box
 } from '@mui/material'
 
-import type { SortingState } from '@tanstack/react-table'
+import type { SortingState, FilterFn } from '@tanstack/react-table'
 import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 
 import AddUser from './adduser/page'
 
 import Paginator from '../../../../Custom-Cpmponents/paginator/Paginator'
+import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
 
 const users = Array.from({ length: 100 }, (_, index) => ({
   id: index + 1,
   name: `User ${index + 1}`,
-  userId: `P${String(index + 1).padStart(5, '0')}`,
+  employeeId: `P${String(index + 1).padStart(5, '0')}`,
   email: `user${index + 1}@example.com`,
   contact: `+33-700-555-${String(200 + index)}`,
   position: [
@@ -41,16 +41,16 @@ const users = Array.from({ length: 100 }, (_, index) => ({
     'Product Manager',
     'Senior Designer'
   ][index % 6],
-  company: ['FCC Construcción', 'TechCorp', 'DesignPro', 'FilmCo', 'BuildWorks'][index % 5],
-  employeeType: ['Full - Time', 'Part - Time', 'Locally Hired', 'Freelancer', 'Contractor'][index % 5],
-  activationDate: `01 Jan 2024`,
-  endDate: `31 Dec 2024`
+  company: `Company ${index + 1}`,
+  employeeType: ['Full-time', 'Part-time'][index % 2],
+  activationDate: `2023-01-${String(index + 1).padStart(2, '0')}`,
+  endDate: `2023-12-${String(index + 1).padStart(2, '0')}`
 }))
 
 interface Timesheet {
   id: number
   name: string
-  userId: string
+  employeeId: any
   email: string
   contact: string
   position: string
@@ -64,6 +64,7 @@ const Page: React.FC = () => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const columnHelper = createColumnHelper<Timesheet>()
   const [isAddUserOpen, setIsAddUserOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
   const router = useRouter()
 
   const rowsPerPage = 10
@@ -72,14 +73,22 @@ const Page: React.FC = () => {
 
   const [currentPage, setCurrentPage] = useState(1)
 
-  const [paginatedData, setPaginatedData] = useState(users.slice(0, rowsPerPage))
+  const filteredData = useMemo(() => {
+    if (!searchTerm) return users
+
+    return users.filter(user =>
+      Object.values(user).some(value => value.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+  }, [searchTerm])
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * rowsPerPage
+
+    return filteredData.slice(startIndex, startIndex + rowsPerPage)
+  }, [filteredData, currentPage])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
-    const startIndex = (page - 1) * rowsPerPage
-    const newData = users.slice(startIndex, startIndex + rowsPerPage)
-
-    setPaginatedData(newData)
   }
 
   const handleAddUserClick = () => {
@@ -90,21 +99,11 @@ const Page: React.FC = () => {
     setIsAddUserOpen(false)
   }
 
-  const fuzzyFilter: FilterFn<any> = (row, columnId, filterValue) => {
-    const cellValue = row.getValue(columnId)
-
-    return cellValue?.toString().toLowerCase().includes(filterValue.toString().toLowerCase())
-  }
-
   const columns = useMemo(
     () => [
       columnHelper.accessor('id', {
-        header: '',
-        cell: info => (
-          <Typography className='text-[#15d155]' sx={{ whiteSpace: 'nowrap' }}>
-            {info.row.original.id}
-          </Typography>
-        )
+        header: '#',
+        cell: info => <Typography sx={{ whiteSpace: 'nowrap' }}>{info.row.original.id}</Typography>
       }),
       columnHelper.accessor('name', {
         header: 'EMPLOYEE NAME',
@@ -114,11 +113,11 @@ const Page: React.FC = () => {
           </Typography>
         )
       }),
-      columnHelper.accessor('userId', {
-        header: 'USER ID',
+      columnHelper.accessor('employeeId', {
+        header: 'Employee ID',
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.row.original.userId}
+            {info.row.original.employeeId}
           </Typography>
         )
       }),
@@ -142,40 +141,6 @@ const Page: React.FC = () => {
           </Typography>
         )
       }),
-      columnHelper.accessor('company', {
-        header: 'PARENT COMPANY',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.row.original.company}
-          </Typography>
-        )
-      }),
-      columnHelper.accessor('employeeType', {
-        header: 'EMPLOYEE TYPE',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.row.original.employeeType}
-          </Typography>
-        )
-      }),
-
-      columnHelper.accessor('activationDate', {
-        header: 'ACTIVATION DATE',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.row.original.activationDate}
-          </Typography>
-        )
-      }),
-
-      columnHelper.accessor('endDate', {
-        header: 'END DATE',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.row.original.endDate}
-          </Typography>
-        )
-      }),
 
       columnHelper.display({
         id: 'actions',
@@ -183,7 +148,7 @@ const Page: React.FC = () => {
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
             <Button
-              onClick={() => router.push(`/user-management/updateuser/${info.row.original.userId}`)}
+              onClick={() => router.push(`/user-management/updateuser/${info.row.original.employeeId}`)}
               className='bg-[#7b91b1] text-white p-0 rounded-sm'
               sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
             >
@@ -208,6 +173,13 @@ const Page: React.FC = () => {
     [columnHelper]
   )
 
+  // Define fuzzy filter function
+  const fuzzyFilter: FilterFn<Timesheet> = (row, columnId, filterValue) => {
+    const cellValue = row.getValue(columnId)
+
+    return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+  }
+
   const table = useReactTable({
     data: paginatedData,
     columns,
@@ -215,12 +187,13 @@ const Page: React.FC = () => {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    filterFns: {}
+    filterFns: {
+      fuzzy: fuzzyFilter // Add the fuzzy filter here
+    }
   })
 
   return (
-    <div className='container mx-auto p-4'>
-      {/* Conditionally render the AddUser component or the User Table */}
+    <Box>
       {isAddUserOpen ? (
         <div>
           <AddUser
@@ -233,35 +206,29 @@ const Page: React.FC = () => {
         </div>
       ) : (
         <div>
-          <div className='flex justify-between items-center mb-4'>
-            <h1 className='text-2xl font-bold text-blue-900'>User Management</h1>
-            <button
-              className='text-blue px-8 py-3 rounded-lg hover:bg-green-500'
-              style={{ backgroundColor: '#cbff8c', color: '0c3479', fontWeight: '500' }}
-              onClick={handleAddUserClick}
-            >
-              + ADD USER
-            </button>
-          </div>
-
           <Card className='mt-10'>
-            <TableContainer component={Paper}>
+            <Box className='flex items-center justify-between m-5'>
+              <SearchFilter
+                label='Search'
+                value={searchTerm}
+                onChange={setSearchTerm}
+                placeholder='Search all fields'
+              />
+              <Button
+                className=' px-8 py-2 rounded-md bg-primary text-white'
+                style={{ backgroundColor: 'primary', fontWeight: '500', cursor: 'pointer' }}
+                onClick={handleAddUserClick}
+              >
+                + ADD USER
+              </Button>
+            </Box>
+            <TableContainer component={Paper} className='shadow-none '>
               <Table>
-                <TableHead className='bg-[#f3ffe5]'>
+                <TableHead>
                   {table.getHeaderGroups().map(headerGroup => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map(header => (
-                        <TableCell
-                          className='text-[#0c3479] font-bold'
-                          key={header.id}
-                          onClick={header.column.getToggleSortingHandler()}
-                          style={{
-                            cursor: 'pointer',
-                            padding: '12px 6px', // Increased padding
-                            height: '60px', // Increased height
-                            lineHeight: '24px' // Adjust line height
-                          }}
-                        >
+                        <TableCell key={header.id} onClick={header.column.getToggleSortingHandler()}>
                           {header.isPlaceholder
                             ? null
                             : typeof header.column.columnDef.header === 'function'
@@ -277,20 +244,11 @@ const Page: React.FC = () => {
                     </TableRow>
                   ))}
                 </TableHead>
-
                 <TableBody>
-                  {table.getRowModel().rows.map((row, index) => (
-                    <TableRow
-                      key={row.id}
-                      sx={{
-                        backgroundColor: index % 2 === 0 ? 'transparent' : '#f9f9f9',
-                        border: '1px solid #ddd',
-                        lineHeight: '1.4', // Reduce line height
-                        padding: '4px' // Reduce padding in rows
-                      }}
-                    >
+                  {table.getRowModel().rows.map(row => (
+                    <TableRow key={row.id}>
                       {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id} sx={{ border: '1px solid #ddd', padding: '6px' }}>
+                        <TableCell key={cell.id}>
                           {cell.column.columnDef.cell
                             ? typeof cell.column.columnDef.cell === 'function'
                               ? cell.column.columnDef.cell(cell.getContext())
@@ -311,7 +269,7 @@ const Page: React.FC = () => {
           </Card>
         </div>
       )}
-    </div>
+    </Box>
   )
 }
 

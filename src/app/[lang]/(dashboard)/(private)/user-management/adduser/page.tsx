@@ -7,20 +7,19 @@ import Swal from 'sweetalert2'
 
 import CustomTextInput from '../../../../../Custom-Cpmponents/input/custominput'
 import Dropdown from '../../../../../Custom-Cpmponents/Select-dropdown/dropdown'
-import DatePickerInput from '../../../../../Custom-Cpmponents/input/Datepickerinput'
 
 interface UserData {
   firstName: string
   lastName: string
-  userId: string
+  employeeId: string
   email: string
   contactNumber: string
-  position: string
+  password: any
   company: string
-  parentCompany: string
+  position: string
   clientName: string
   project: string
-  employeeType: string
+  employeeTypes: string
   activationDate: string
   endDate: string
   entitlements: string
@@ -35,23 +34,21 @@ interface AddUserProps {
   entitlements: string[]
 }
 
-const entitlementOptions = ['Standard', 'Premium', 'Custom']
-const projectOptions = ['Project A', 'Project B', 'Project C', 'Project D']
-const employeeTypes = ['Full-Time', 'Part-Time', 'Locally Hired', 'Freelancer', 'Contractor']
+const positionTypes = ['Project-Manager', 'Team-Lead', 'Developer', 'Designer', 'Tester']
 
 const AddUser: React.FC<AddUserProps> = ({ onClose }) => {
   const [userData, setUserData] = useState<UserData>({
     firstName: '',
     lastName: '',
-    userId: '',
+    employeeId: '',
     email: '',
     contactNumber: '',
-    position: '',
+    password: '',
     company: '',
-    parentCompany: '',
+    position: '',
     clientName: '',
     project: '',
-    employeeType: '',
+    employeeTypes: '',
     activationDate: '',
     endDate: '',
     entitlements: '',
@@ -193,12 +190,12 @@ const AddUser: React.FC<AddUserProps> = ({ onClose }) => {
             {/* User ID */}
             <Grid item xs={12} sm={4}>
               <CustomTextInput
-                label='User ID'
-                placeholder='User ID'
-                value={userData.userId}
-                onChange={value => handleInputChange('userId', value)}
-                error={!!errors.userId}
-                helperText={errors.userId}
+                label='Employee ID'
+                placeholder='Employee ID'
+                value={userData.employeeId}
+                onChange={value => handleInputChange('employeeId', value)}
+                error={!!errors.employeeId}
+                helperText={errors.employeeId}
                 required
               />
             </Grid>
@@ -232,12 +229,13 @@ const AddUser: React.FC<AddUserProps> = ({ onClose }) => {
             {/* Position */}
             <Grid item xs={12} sm={4}>
               <CustomTextInput
-                label='Position'
-                placeholder='Position'
-                value={userData.position}
-                onChange={value => handleInputChange('position', value)}
-                error={!!errors.position}
-                helperText={errors.position}
+                label='Password'
+                type='password'
+                placeholder='Password'
+                value={userData.password}
+                onChange={value => handleInputChange('password', value)}
+                error={!!errors.password}
+                helperText={errors.password}
                 required
               />
             </Grid>
@@ -245,100 +243,24 @@ const AddUser: React.FC<AddUserProps> = ({ onClose }) => {
             {/* Parent Company */}
             <Grid item xs={12} sm={4}>
               <Dropdown
-                label='Parent Company'
-                options={['FCC Construcción', 'TechCorp', 'DesignPro', 'FilmCo', 'BuildWorks']}
-                selectedOption={userData.parentCompany}
-                onSelect={value => handleInputChange('parentCompany', value)}
-                error={!!errors.parentCompany}
-                helperText={errors.parentCompany}
-              />
-            </Grid>
-
-            {/* Client Name */}
-            <Grid item xs={12} sm={4}>
-              <CustomTextInput
-                label='Client Name'
-                placeholder='Client Name'
-                value={userData.clientName}
-                onChange={value => handleInputChange('clientName', value)}
-                error={!!errors.clientName}
-                helperText={errors.clientName}
+                label='Position'
+                options={positionTypes}
+                selectedOption={userData.position}
+                onSelect={value => handleInputChange('position', value)}
+                error={!!errors.position}
+                helperText={errors.position}
                 required
               />
             </Grid>
 
-            {/* Project */}
-            <Grid item xs={12} sm={4}>
-              <Dropdown
-                label='Project'
-                options={projectOptions}
-                selectedOption={userData.project}
-                onSelect={value => handleInputChange('project', value)}
-                error={!!errors.project}
-                helperText={errors.project}
-                required
-              />
-            </Grid>
-
-            {/* Contact Reference */}
-            <Grid item xs={12} sm={4}>
-              <CustomTextInput
-                label='Contact Reference'
-                placeholder='Contact Reference'
-                value={userData.contactReference}
-                onChange={value => handleInputChange('contactReference', value)}
-                error={!!errors.contactReference}
-                helperText={errors.contactReference}
-                required
-              />
-            </Grid>
-
-            {/* Employee Type */}
             <Grid item xs={12} sm={4}>
               <Dropdown
                 label='Employee Type'
-                options={employeeTypes}
-                selectedOption={userData.employeeType}
-                onSelect={value => handleInputChange('employeeType', value)}
-                error={!!errors.employeeType}
-                helperText={errors.employeeType}
-                required
-              />
-            </Grid>
-
-            {/* Entitlements */}
-            <Grid item xs={12} sm={4}>
-              <Dropdown
-                label='Entitlements'
-                options={entitlementOptions}
-                selectedOption={userData.entitlements}
-                onSelect={value => handleInputChange('entitlements', value)}
-                error={!!errors.entitlements}
-                helperText={errors.entitlements}
-                required
-              />
-            </Grid>
-
-            {/* Activation Date */}
-            <Grid item xs={12} sm={4}>
-              <DatePickerInput
-                label='Activation Date'
-                value={userData.activationDate}
-                onChange={value => handleInputChange('activationDate', value)}
-                error={!!errors.activationDate}
-                helperText={errors.activationDate}
-                required
-              />
-            </Grid>
-
-            {/* End Date */}
-            <Grid item xs={12} sm={4}>
-              <DatePickerInput
-                label='End Date'
-                value={userData.endDate}
-                onChange={value => handleInputChange('endDate', value)}
-                error={!!errors.endDate}
-                helperText={errors.endDate}
+                options={['user']}
+                selectedOption={userData.employeeTypes}
+                onSelect={value => handleInputChange('employeeTypes', value)}
+                error={!!errors.employeeTypes}
+                helperText={errors.employeeTypes}
                 required
               />
             </Grid>
@@ -347,10 +269,9 @@ const AddUser: React.FC<AddUserProps> = ({ onClose }) => {
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Button
               variant='contained'
-              className='text-primary bg-#cbff8c] focus:bg-[#cbff8c] hover:bg-[#cbff8c]'
+              className=' bg-primary text-transparent]'
               onClick={handleAddUser}
               sx={{
-                backgroundColor: '#cbff8c',
                 fontWeight: '600'
               }}
             >
