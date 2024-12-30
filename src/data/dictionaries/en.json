@@ -103,6 +103,7 @@
     "disabledMenu": "Disabled Menu",
     "usermanagement": "User Management",
     "projectmanagement": "Project Management",
-    "projecttracking": "Project Tracking"
+    "projecttracking": "Project Tracking",
+    "adduser": "Add User"
   }
 }

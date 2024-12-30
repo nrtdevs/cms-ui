@@ -103,6 +103,7 @@
     "disabledMenu": "قائمة المعوقين",
     "usermanagement": "إدارة المستخدم",
     "projectmanagement": "إدارة المشروع",
-    "projecttracking": "تتبع المشروع"
+    "projecttracking": "تتبع المشروع",
+    "adduser":"إضافة مستخدم"
   }
 }

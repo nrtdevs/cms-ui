@@ -103,6 +103,7 @@
     "disabledMenu": "Menu désactivé",
     "usermanagement": "Gestion des utilisateurs",
     "projectmanagement": "Gestion de projet",
-    "projecttracking": "Suivi de projet"
+    "projecttracking": "Suivi de projet",
+    "adduser": " Ajouter un utilisateur"
   }
 }
