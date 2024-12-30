@@ -14,16 +14,18 @@ const StyledPaginationItem = styled(PaginationItem)(({ theme }) => ({
   fontSize: '0.9rem',
   boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.3)',
   '&.Mui-selected': {
-    backgroundColor: '#F3FFE5',
-    color: theme.palette.common.black,
+    backgroundColor: theme.palette.primary.main,
+
+    color: theme.palette.common.white,
     fontWeight: 'bold'
   },
   '&:hover': {
-    backgroundColor: '#CBFF8C'
+    backgroundColor: theme.palette.primary.main ,
+     color: theme.palette.common.white
   },
   '&:focus': {
     outline: 'none',
-    backgroundColor: '#CBFF8C'
+    backgroundColor: theme.palette.primary.main // Correct reference to primary color
   }
 }))
 
