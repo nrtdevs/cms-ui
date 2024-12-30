@@ -29,7 +29,8 @@ import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
 
 const users = Array.from({ length: 100 }, (_, index) => ({
   id: index + 1,
-  name: `User ${index + 1}`,
+  firstname: `User`,
+  lastname: ` ${index + 1}`,
   employeeId: `P${String(index + 1).padStart(5, '0')}`,
   email: `user${index + 1}@example.com`,
   contact: `+33-700-555-${String(200 + index)}`,
@@ -41,23 +42,22 @@ const users = Array.from({ length: 100 }, (_, index) => ({
     'Product Manager',
     'Senior Designer'
   ][index % 6],
+  fullname: `First ${index + 1} Last ${index + 1}`,
   company: `Company ${index + 1}`,
-  employeeType: ['Full-time', 'Part-time'][index % 2],
-  activationDate: `2023-01-${String(index + 1).padStart(2, '0')}`,
-  endDate: `2023-12-${String(index + 1).padStart(2, '0')}`
+  employeeType: `Type ${index % 3}`
 }))
 
 interface Timesheet {
   id: number
-  name: string
+  firstname: string
+  lastname: string
   employeeId: any
   email: string
   contact: string
   position: string
   company: string
   employeeType: string
-  activationDate: string
-  endDate: string
+  fullname: string
 }
 
 const Page: React.FC = () => {
@@ -73,6 +73,7 @@ const Page: React.FC = () => {
 
   const [currentPage, setCurrentPage] = useState(1)
 
+  // Apply the search term to the entire dataset (not just the paginated data)
   const filteredData = useMemo(() => {
     if (!searchTerm) return users
 
@@ -81,6 +82,7 @@ const Page: React.FC = () => {
     )
   }, [searchTerm])
 
+  // Paginate the filtered data
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * rowsPerPage
 
@@ -105,11 +107,11 @@ const Page: React.FC = () => {
         header: '#',
         cell: info => <Typography sx={{ whiteSpace: 'nowrap' }}>{info.row.original.id}</Typography>
       }),
-      columnHelper.accessor('name', {
+      columnHelper.accessor('fullname', {
         header: 'EMPLOYEE NAME',
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.row.original.name}
+            {info.row.original.fullname}
           </Typography>
         )
       }),
@@ -228,7 +230,11 @@ const Page: React.FC = () => {
                   {table.getHeaderGroups().map(headerGroup => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map(header => (
-                        <TableCell key={header.id} onClick={header.column.getToggleSortingHandler()}>
+                        <TableCell
+                          key={header.id}
+                          onClick={header.column.getToggleSortingHandler()}
+                          className='text-primary font-bold cursor-pointer'
+                        >
                           {header.isPlaceholder
                             ? null
                             : typeof header.column.columnDef.header === 'function'
