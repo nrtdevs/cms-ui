@@ -11,9 +11,10 @@ interface InputProps {
   error?: boolean
   helperText?: string
   type?: 'text' | 'password' | 'email' | 'number' // You can extend this as needed
+  rows?: number // To specify the number of rows for multiline input
 }
 
-const CustomTextInput: React.FC<InputProps> = ({
+const CustomDescriptionInput: React.FC<InputProps> = ({
   label,
   value,
   onChange,
@@ -21,7 +22,8 @@ const CustomTextInput: React.FC<InputProps> = ({
   required = false,
   error = false,
   helperText = '',
-  type = 'text'
+  type = 'text',
+  rows = 2 // Default rows for description input
 }) => {
   return (
     <Grid item xs={12} sm={12}>
@@ -39,10 +41,12 @@ const CustomTextInput: React.FC<InputProps> = ({
         helperText={error ? helperText : ''}
         type={type}
         variant='outlined'
-        sx={{ height: '40px', '& .MuiInputBase-root': { height: '40px' } }}
+        multiline // Allows multiple lines
+        rows={rows} // Specifies the number of visible rows for the description input
+        sx={{ '& .MuiInputBase-root': { minHeight: '60px' } }} // Adjust height as needed
       />
     </Grid>
   )
 }
 
-export default CustomTextInput
+export default CustomDescriptionInput

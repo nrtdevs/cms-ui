@@ -2,8 +2,6 @@
 
 import React, { useMemo, useState } from 'react'
 
-import { useRouter } from 'next/navigation'
-
 import type { ButtonProps } from '@mui/material'
 import {
   Typography,
@@ -20,14 +18,22 @@ import {
   Stack
 } from '@mui/material'
 
-import type { ColumnDef } from '@tanstack/react-table'
+import {
+  useReactTable,
+  type ColumnDef,
+  getCoreRowModel,
+  getSortedRowModel,
+  type SortingState,
+  type FilterFn
+} from '@tanstack/react-table'
 
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
 
-import OpenDialogOnElementClick from '@/components/dialogs/OpenDialogOnElementClick'
-
 import EditprojectInfo from './editproject'
 import ViewProjectInfo from './viewproject'
+import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
+import AddProjectInfo from './addproject'
+import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
 
 type Project = {
   id: number
@@ -64,44 +70,88 @@ const buttonviewProps: ButtonProps = {
   children: <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
 }
 
+const buttonaddrops: ButtonProps = {
+  variant: 'contained',
+  className: 'bg-primary text-white  rounded-sm',
+  children: 'Add Project'
+}
+
 const UserProjectData: React.FC = () => {
-  const router = useRouter()
+  const [sorting, setSorting] = React.useState<SortingState>([])
+
   const [searchTerm, setSearchTerm] = useState('')
 
-  const data: Project[] = [
-    {
-      id: 1,
-      projectname: 'Project Alpha',
-      projectdescription: 'A groundbreaking project.',
-      skills: ['React', 'Node.js'],
-      bidammount: 1500,
-      platform: 'Web',
-      bid_date: '2024-02-01',
-      activation_date: '2024-01-01',
-      end_date: '2024-06-01',
-      clientname: 'John Doe',
-      status: 'Active',
-      clientemail: 'john.doe@example.com',
-      clientcontact: '1234567890',
-      clientcompany: 'Doe Enterprises'
-    },
-    {
-      id: 2,
-      projectname: 'Project Beta',
-      projectdescription: 'An innovative app.',
-      skills: ['Angular', 'TypeScript'],
-      bidammount: 2000,
-      platform: 'Mobile',
-      bid_date: '2024-02-01',
-      activation_date: '2024-02-01',
-      end_date: '2024-08-01',
-      clientname: 'Jane Smith',
-      status: 'Completed',
-      clientemail: 'jane.smith@example.com',
-      clientcontact: '9876543210',
-      clientcompany: 'Smith Corp'
+  const rowsPerPage = 10
+
+  const data = useMemo(
+    () => [
+      {
+        id: 1,
+        projectname: 'Project Alpha',
+        projectdescription: 'A groundbreaking project.',
+        skills: ['React', 'Node.js'],
+        bidammount: 1500,
+        platform: 'Web',
+        bid_date: '2024-02-01',
+        activation_date: '2024-01-01',
+        end_date: '2024-06-01',
+        clientname: 'John Doe',
+        status: 'Active',
+        clientemail: 'john.doe@example.com',
+        clientcontact: '1234567890',
+        clientcompany: 'Doe Enterprises'
+      },
+      {
+        id: 2,
+        projectname: 'Project Beta',
+        projectdescription: 'An innovative app.',
+        skills: ['Angular', 'TypeScript'],
+        bidammount: 2000,
+        platform: 'Mobile',
+        bid_date: '2024-02-01',
+        activation_date: '2024-02-01',
+        end_date: '2024-08-01',
+        clientname: 'Jane Smith',
+        status: 'Completed',
+        clientemail: 'jane.smith@example.com',
+        clientcontact: '9876543210',
+        clientcompany: 'Smith Corp'
+      }
+    ],
+    []
+  )
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value.toLowerCase())
+  }
+
+  const filteredData = useMemo(
+    () =>
+      data.filter(project => Object.values(project).some(value => value.toString().toLowerCase().includes(searchTerm))),
+    [data, searchTerm]
+  )
+
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage)
+
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const handlePageChange = (page: number) => {
+    if (page !== currentPage) {
+      setCurrentPage(page)
     }
-  ]
+  }
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * rowsPerPage
+
+    return filteredData.slice(startIndex, startIndex + rowsPerPage)
+  }, [filteredData, currentPage])
+
+  const fuzzyFilter: FilterFn<Project> = (row, columnId, filterValue) => {
+    const cellValue = row.getValue(columnId)
+
+    return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+  }
 
   const columns = useMemo<ColumnDef<Project>[]>(
     () => [
@@ -177,7 +227,7 @@ const UserProjectData: React.FC = () => {
       },
       {
         accessorKey: 'clientcompany',
-        header: 'Client Compony',
+        header: 'Client Company',
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
             {info.getValue<string>()}
@@ -207,6 +257,12 @@ const UserProjectData: React.FC = () => {
                 dialog={EditprojectInfo}
                 dialogProps={{ data: project }}
               />
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonviewProps}
+                dialog={ViewProjectInfo}
+                dialogProps={{ data: project }}
+              />
               <Button
                 variant='contained'
                 color='secondary'
@@ -216,27 +272,27 @@ const UserProjectData: React.FC = () => {
               >
                 <i style={{ fontSize: '15px' }} className='tabler-square-off' />
               </Button>
-              <OpenDialogOnElementClick
-                element={Button}
-                elementProps={buttonviewProps}
-                dialog={ViewProjectInfo}
-                dialogProps={{ data: project }}
-              />
             </Box>
           )
         }
       }
     ],
-    [router]
+    []
   )
 
-  const handleSearch = (value: string) => {
-    setSearchTerm(value.toLowerCase())
-  }
-
-  const filteredData = data.filter(project =>
-    Object.values(project).some(value => value.toString().toLowerCase().includes(searchTerm))
-  )
+  const table = useReactTable({
+    data: paginatedData,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    filterFns: {
+      fuzzy: fuzzyFilter
+    },
+    manualPagination: true,
+    pageCount: totalPages // Use totalPages for controlled pagination
+  })
 
   return (
     <Card>
@@ -249,40 +305,45 @@ const UserProjectData: React.FC = () => {
         }}
       >
         <SearchFilter label='Search' value={searchTerm} onChange={handleSearch} placeholder='Search all fields' />
-        <Button variant='contained' color='primary' onClick={() => console.log('Add New Project')}>
-          + Add Project
-        </Button>
+
+        <OpenDialogOnElementClick element={Button} elementProps={buttonaddrops} dialog={AddProjectInfo} />
       </Box>
-      <TableContainer component={Paper} className='shadow-none'>
+      <TableContainer component={Paper} className='shadow-none '>
         <Table>
           <TableHead>
-            <TableRow>
-              {columns.map(column => (
-                <TableCell
-                  key={column.id || (column as ColumnDef<Project> & { accessorKey?: string }).accessorKey}
-                  className='text-primary font-bold cursor-pointer'
-                >
-                  <Typography>{String(column.header)}</Typography>
-                </TableCell>
-              ))}
-            </TableRow>
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <TableCell
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                    className='text-primary font-bold cursor-pointer'
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : typeof header.column.columnDef.header === 'function'
+                        ? header.column.columnDef.header(header.getContext())
+                        : header.column.columnDef.header}
+                    {header.column.getIsSorted() === 'asc'
+                      ? ' 🔼'
+                      : header.column.getIsSorted() === 'desc'
+                        ? ' 🔽'
+                        : ''}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
           </TableHead>
           <TableBody>
-            {filteredData.map(project => (
-              <TableRow key={project.id}>
-                {columns.map(column => (
-                  <TableCell
-                    key={
-                      column.id ||
-                      ((column as ColumnDef<Project> & { accessorKey: keyof Project }).accessorKey as string)
-                    }
-                  >
-                    {typeof column.cell === 'function' &&
-                      column.cell({
-                        row: { original: project },
-                        getValue: () =>
-                          project[(column as ColumnDef<Project> & { accessorKey: keyof Project }).accessorKey]
-                      } as any)}
+            {table.getRowModel().rows.map(row => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map(cell => (
+                  <TableCell key={cell.id}>
+                    {cell.column.columnDef.cell
+                      ? typeof cell.column.columnDef.cell === 'function'
+                        ? cell.column.columnDef.cell(cell.getContext())
+                        : cell.getValue()
+                      : cell.getValue()}
                   </TableCell>
                 ))}
               </TableRow>
@@ -291,7 +352,9 @@ const UserProjectData: React.FC = () => {
         </Table>
       </TableContainer>
       <div className='flex items-center justify-center mt-10 mb-2 my-4'>
-        <Stack spacing={2}>{/* Pagination logic can be added here */}</Stack>
+        <Stack spacing={2}>
+          <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        </Stack>
       </div>
     </Card>
   )
