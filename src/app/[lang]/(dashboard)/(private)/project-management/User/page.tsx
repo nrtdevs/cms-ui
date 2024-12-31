@@ -2,8 +2,9 @@
 
 import React, { useMemo, useState } from 'react'
 
-import { useRouter } from 'next/navigation' // Updated import for Next.js 13+
+import { useRouter } from 'next/navigation'
 
+import type { ButtonProps } from '@mui/material'
 import {
   Typography,
   Button,
@@ -18,10 +19,15 @@ import {
   Card,
   Stack
 } from '@mui/material'
+
 import type { ColumnDef } from '@tanstack/react-table'
 
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
-import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
+
+import OpenDialogOnElementClick from '@/components/dialogs/OpenDialogOnElementClick'
+
+import EditprojectInfo from './editproject'
+import ViewProjectInfo from './viewproject'
 
 type Project = {
   id: number
@@ -30,6 +36,7 @@ type Project = {
   skills: string[]
   bidammount: number
   platform: string
+  bid_date: string
   activation_date: string
   end_date: string
   clientname: string
@@ -39,8 +46,26 @@ type Project = {
   clientcompany: string
 }
 
+const buttonProps: ButtonProps = {
+  variant: 'contained',
+  color: 'primary',
+  size: 'small',
+  className: 'bg-[#7b91b1] text-white p-0 rounded-sm',
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  children: <i style={{ fontSize: '15px' }} className='tabler-edit text-white' />
+}
+
+const buttonviewProps: ButtonProps = {
+  variant: 'contained',
+  color: 'primary',
+  size: 'small',
+  className: 'bg-primary text-white p-0 rounded-sm',
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  children: <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
+}
+
 const UserProjectData: React.FC = () => {
-  const router = useRouter() // Ensure this is used in a client component
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
 
   const data: Project[] = [
@@ -51,6 +76,7 @@ const UserProjectData: React.FC = () => {
       skills: ['React', 'Node.js'],
       bidammount: 1500,
       platform: 'Web',
+      bid_date: '2024-02-01',
       activation_date: '2024-01-01',
       end_date: '2024-06-01',
       clientname: 'John Doe',
@@ -66,6 +92,7 @@ const UserProjectData: React.FC = () => {
       skills: ['Angular', 'TypeScript'],
       bidammount: 2000,
       platform: 'Mobile',
+      bid_date: '2024-02-01',
       activation_date: '2024-02-01',
       end_date: '2024-08-01',
       clientname: 'Jane Smith',
@@ -92,33 +119,7 @@ const UserProjectData: React.FC = () => {
           </Typography>
         )
       },
-      {
-        accessorKey: 'projectdescription',
-        header: 'Description',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
-        )
-      },
-      {
-        accessorKey: 'bidammount',
-        header: 'Bid Amt',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
-        )
-      },
-      {
-        accessorKey: 'bidammount',
-        header: 'Bid Amt',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
-        )
-      },
+
       {
         accessorKey: 'skills',
         header: 'Skills',
@@ -138,6 +139,61 @@ const UserProjectData: React.FC = () => {
         )
       },
       {
+        accessorKey: 'bid_date',
+        header: 'Bid Date',
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        )
+      },
+      {
+        accessorKey: 'clientname',
+        header: 'Client Name',
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        )
+      },
+
+      {
+        accessorKey: 'clientemail',
+        header: 'Client Email',
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        )
+      },
+      {
+        accessorKey: 'clientcontact',
+        header: 'Client Contact',
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        )
+      },
+      {
+        accessorKey: 'clientcompany',
+        header: 'Client Compony',
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        )
+      },
+      {
+        accessorKey: 'bidammount',
+        header: 'Bid Amount',
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            ${info.getValue<number>().toLocaleString()}
+          </Typography>
+        )
+      },
+      {
         id: 'actions',
         header: 'Actions',
         cell: info => {
@@ -145,16 +201,12 @@ const UserProjectData: React.FC = () => {
 
           return (
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button
-                variant='contained'
-                color='primary'
-                size='small'
-                onClick={() => router.push(`/edit/${project.id}`)}
-                className='bg-[#7b91b1] text-white p-0 rounded-sm'
-                sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
-              >
-                <i style={{ fontSize: '15px' }} className='tabler-edit text-white' />
-              </Button>
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonProps}
+                dialog={EditprojectInfo}
+                dialogProps={{ data: project }}
+              />
               <Button
                 variant='contained'
                 color='secondary'
@@ -164,6 +216,12 @@ const UserProjectData: React.FC = () => {
               >
                 <i style={{ fontSize: '15px' }} className='tabler-square-off' />
               </Button>
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonviewProps}
+                dialog={ViewProjectInfo}
+                dialogProps={{ data: project }}
+              />
             </Box>
           )
         }
@@ -172,8 +230,8 @@ const UserProjectData: React.FC = () => {
     [router]
   )
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value.toLowerCase())
+  const handleSearch = (value: string) => {
+    setSearchTerm(value.toLowerCase())
   }
 
   const filteredData = data.filter(project =>
@@ -190,7 +248,7 @@ const UserProjectData: React.FC = () => {
           m: 5
         }}
       >
-        <SearchFilter label='Search' value={searchTerm} onChange={setSearchTerm} placeholder='Search all fields' />
+        <SearchFilter label='Search' value={searchTerm} onChange={handleSearch} placeholder='Search all fields' />
         <Button variant='contained' color='primary' onClick={() => console.log('Add New Project')}>
           + Add Project
         </Button>
@@ -200,7 +258,10 @@ const UserProjectData: React.FC = () => {
           <TableHead>
             <TableRow>
               {columns.map(column => (
-                <TableCell key={column.id} className='text-primary font-bold cursor-pointer'>
+                <TableCell
+                  key={column.id || (column as ColumnDef<Project> & { accessorKey?: string }).accessorKey}
+                  className='text-primary font-bold cursor-pointer'
+                >
                   <Typography>{String(column.header)}</Typography>
                 </TableCell>
               ))}
@@ -210,11 +271,18 @@ const UserProjectData: React.FC = () => {
             {filteredData.map(project => (
               <TableRow key={project.id}>
                 {columns.map(column => (
-                  <TableCell key={column.id || column.accessorKey}>
-                    {column.cell?.({
-                      row: { original: project },
-                      getValue: () => project[column.accessorKey as keyof Project]
-                    } as any)}
+                  <TableCell
+                    key={
+                      column.id ||
+                      ((column as ColumnDef<Project> & { accessorKey: keyof Project }).accessorKey as string)
+                    }
+                  >
+                    {typeof column.cell === 'function' &&
+                      column.cell({
+                        row: { original: project },
+                        getValue: () =>
+                          project[(column as ColumnDef<Project> & { accessorKey: keyof Project }).accessorKey]
+                      } as any)}
                   </TableCell>
                 ))}
               </TableRow>
@@ -223,9 +291,7 @@ const UserProjectData: React.FC = () => {
         </Table>
       </TableContainer>
       <div className='flex items-center justify-center mt-10 mb-2 my-4'>
-        <Stack spacing={2}>
-          {/* <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} /> */}
-        </Stack>
+        <Stack spacing={2}>{/* Pagination logic can be added here */}</Stack>
       </div>
     </Card>
   )

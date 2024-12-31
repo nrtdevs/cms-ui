@@ -278,7 +278,7 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
             <MenuItem href={`/${locale}/demo/pages/wizard-examples/checkout`}>
               {dictionary['navigation'].checkout}
             </MenuItem>
-            <MenuItem href={`/${locale}/demopages/wizard-examples/property-listing`}>
+            <MenuItem href={`/${locale}/demo/pages/wizard-examples/property-listing`}>
               {dictionary['navigation'].propertyListing}
             </MenuItem>
             <MenuItem href={`/${locale}/demo/pages/wizard-examples/create-deal`}>
@@ -296,7 +296,7 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
             <MenuItem href={`/${locale}/demo/pages/widget-examples/statistics`}>
               {dictionary['navigation'].statistics}
             </MenuItem>
-            <MenuItem href={`/${locale}/pages/widget-examples/charts`}>{dictionary['navigation'].charts}</MenuItem>
+            <MenuItem href={`/${locale}/demo/pages/widget-examples/charts`}>{dictionary['navigation'].charts}</MenuItem>
             <MenuItem href={`/${locale}/demo/pages/widget-examples/actions`}>
               {dictionary['navigation'].actions}
             </MenuItem>
