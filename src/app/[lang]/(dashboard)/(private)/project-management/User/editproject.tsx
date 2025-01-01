@@ -12,12 +12,15 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import Typography from '@mui/material/Typography'
 
+import { FormControlLabel, Switch } from '@mui/material'
+
 import CustomTextInput from '@/app/Custom-Cpmponents/input/custominput'
 import CustomTagInput from '@/app/Custom-Cpmponents/input/customtaginput'
 import DialogCloseButton from '@/components/dialogs/DialogCloseButton'
 import DatePickerInput from '@/app/Custom-Cpmponents/input/Datepickerinput'
 import CustomFileUpload from '@/app/Custom-Cpmponents/Upload-file/CustomfileUpload'
 import CustomDescriptionInput from '@/app/Custom-Cpmponents/input/customdescriptioinput'
+import Dropdown from '@/app/Custom-Cpmponents/Select-dropdown/dropdown'
 
 type Project = {
   projectname: string
@@ -31,6 +34,10 @@ type Project = {
   clientemail: string
   clientcontact: string
   clientcompany: string
+  status: string
+  projectlead: string
+  frontenddev: string
+  backenddev: string
 }
 
 type EditUserInfoProps = {
@@ -51,12 +58,19 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
     clientname: '',
     clientemail: '',
     clientcontact: '',
-    clientcompany: ''
+    clientcompany: '',
+    status: '',
+    projectlead: '',
+    frontenddev: '',
+    backenddev: ''
   })
 
   const [tags, setTags] = useState<string[]>([])
+  const [frontendtags, setfrontendTags] = useState<string[]>([])
+  const [backendtags, setbackendTags] = useState<string[]>([])
   const [file, setFile] = useState<File | null>(null) // Define the file state
   const [errors, setErrors] = useState<any>({})
+  const [useAssignTeam, setUseAssignTeam] = useState(false)
 
   const handleFileChange = (selectedFile: File | null) => {
     setFile(selectedFile) // Update file state
@@ -82,7 +96,11 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
       clientname: '',
       clientemail: '',
       clientcontact: '',
-      clientcompany: ''
+      clientcompany: '',
+      status: '',
+      projectlead: '',
+      frontenddev: '',
+      backenddev: ''
     })
   }
 
@@ -179,137 +197,223 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
       <form onSubmit={e => e.preventDefault()}>
         <DialogContent className='overflow-visible pbs-0 sm:pli-16'>
           <Grid container spacing={5}>
-            <Grid item xs={12}>
-              <Typography variant='h6' className='text-primary font-bold'>
-                Project Details
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextInput
-                label='Project Name'
-                placeholder='Project Name'
-                value={projectData.projectname}
-                onChange={e => handleInputChange('projectname', e)}
-                error={Boolean(errors.projectname)}
-                helperText={errors.projectname}
-              />
-            </Grid>
+            {!useAssignTeam && (
+              <>
+                <Grid item xs={12}>
+                  <Typography variant='h6' className='text-primary font-bold'>
+                    Project Details
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <CustomTextInput
+                    label='Project Name'
+                    placeholder='Project Name'
+                    value={projectData.projectname}
+                    onChange={e => handleInputChange('projectname', e)}
+                    error={Boolean(errors.projectname)}
+                    helperText={errors.projectname}
+                  />
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomTagInput
-                label='Skills'
-                tags={tags}
-                onChange={setTags}
-                options={options}
-                placeholder='Type a tag and press Enter'
-                error={Boolean(errors.skills)}
-                helperText={errors.skills}
-              />
-            </Grid>
+                <Grid item xs={12} sm={3}>
+                  <Dropdown
+                    label='Project Status'
+                    options={['Active', 'Pending', 'Completed', 'Blocked']}
+                    selectedOption={projectData.status}
+                    onSelect={value => handleInputChange('status', value)} // Use onSelect instead of onChange
+                  />
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomTextInput
-                label='Bid Amount'
-                placeholder='Bid Amount'
-                value={projectData.bidammount}
-                onChange={value => handleInputChange('bidammount', value)}
-                required
-                error={Boolean(errors.bidammount)}
-                helperText={errors.bidammount}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextInput
-                label='Platform'
-                placeholder='Platform'
-                value={projectData.platform}
-                onChange={e => handleInputChange('platform', e)}
-                error={Boolean(errors.platform)}
-                helperText={errors.platform}
-              />
-            </Grid>
+                <Grid item xs={12} sm={3}>
+                  <CustomTextInput
+                    label='Bid Amount'
+                    placeholder='Bid Amount'
+                    value={projectData.bidammount}
+                    onChange={value => handleInputChange('bidammount', value)}
+                    required
+                    error={Boolean(errors.bidammount)}
+                    helperText={errors.bidammount}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <CustomTextInput
+                    label='Platform'
+                    placeholder='Platform'
+                    value={projectData.platform}
+                    onChange={e => handleInputChange('platform', e)}
+                    error={Boolean(errors.platform)}
+                    helperText={errors.platform}
+                  />
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <DatePickerInput
-                label='Bid Date'
-                type='date'
-                value={projectData.bid_date}
-                onChange={value => handleInputChange('bid_date', value)}
-                required
-                error={Boolean(errors.bid_date)}
-                helperText={errors.bid_date}
-              />
-            </Grid>
+                <Grid item xs={12} sm={4}>
+                  <DatePickerInput
+                    label='Bid Date'
+                    type='date'
+                    value={projectData.bid_date}
+                    onChange={value => handleInputChange('bid_date', value)}
+                    required
+                    error={Boolean(errors.bid_date)}
+                    helperText={errors.bid_date}
+                  />
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomFileUpload
-                label='Upload Project File'
-                onChange={handleFileChange}
-                fileName={file ? file.name : ''}
-                error={file === null}
-                helperText={file === null ? 'Please upload a file.' : ''}
-              />
-            </Grid>
+                <Grid item xs={12} sm={4}>
+                  <CustomFileUpload
+                    label='Upload Project File'
+                    onChange={handleFileChange}
+                    fileName={file ? file.name : ''}
+                    error={file === null}
+                    helperText={file === null ? 'Please upload a file.' : ''}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <CustomTagInput
+                    label='Skills'
+                    tags={tags}
+                    onChange={setTags}
+                    options={options}
+                    placeholder='Type a tag and press Enter'
+                    error={Boolean(errors.skills)}
+                    helperText={errors.skills}
+                  />
+                </Grid>
 
-            <Grid item xs={12}>
-              <Typography variant='h6' className='mt-2 text-primary font-bold'>
-                Client Details
-              </Typography>
-            </Grid>
+                <Grid item xs={12}>
+                  <Typography variant='h6' className='mt-2 text-primary font-bold'>
+                    Client Details
+                  </Typography>
+                </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomTextInput
-                label='Client Name'
-                placeholder='Client Name'
-                value={projectData.clientname}
-                onChange={value => handleInputChange('clientname', value)}
-                required
-                error={Boolean(errors.clientname)}
-                helperText={errors.clientname}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextInput
-                placeholder='Client Email'
-                label='Client Email'
-                value={projectData.clientemail}
-                onChange={value => handleInputChange('clientemail', value)}
-                required
-                error={Boolean(errors.clientemail)}
-                helperText={errors.clientemail}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextInput
-                label='Client Contact'
-                placeholder='+919874561230'
-                value={projectData.clientcontact}
-                onChange={value => handleInputChange('clientcontact', value)}
-                required
-                error={Boolean(errors.clientcontact)}
-                helperText={errors.clientcontact}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextInput
-                label='Client Company'
-                placeholder='Client Company'
-                value={projectData.clientcompany}
-                onChange={value => handleInputChange('clientcompany', value)}
-              />
-            </Grid>
+                <Grid item xs={12} sm={3}>
+                  <CustomTextInput
+                    label='Client Name'
+                    placeholder='Client Name'
+                    value={projectData.clientname}
+                    onChange={value => handleInputChange('clientname', value)}
+                    required
+                    error={Boolean(errors.clientname)}
+                    helperText={errors.clientname}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <CustomTextInput
+                    placeholder='Client Email'
+                    label='Client Email'
+                    value={projectData.clientemail}
+                    onChange={value => handleInputChange('clientemail', value)}
+                    required
+                    error={Boolean(errors.clientemail)}
+                    helperText={errors.clientemail}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <CustomTextInput
+                    label='Client Contact'
+                    placeholder='+919874561230'
+                    value={projectData.clientcontact}
+                    onChange={value => handleInputChange('clientcontact', value)}
+                    required
+                    error={Boolean(errors.clientcontact)}
+                    helperText={errors.clientcontact}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <CustomTextInput
+                    label='Client Company'
+                    placeholder='Client Company'
+                    value={projectData.clientcompany}
+                    onChange={value => handleInputChange('clientcompany', value)}
+                  />
+                </Grid>
 
-            <Grid item xs={12}>
-              <CustomDescriptionInput
-                label='Project Description'
-                placeholder='Project Description'
-                value={projectData.projectdescription}
-                onChange={e => handleInputChange('projectdescription', e)}
-                required
-                error={Boolean(errors.projectdescription)}
-                helperText={errors.projectdescription}
-              />
-            </Grid>
+                <Grid item xs={12}>
+                  <CustomDescriptionInput
+                    label='Project Description'
+                    placeholder='Project Description'
+                    value={projectData.projectdescription}
+                    onChange={e => handleInputChange('projectdescription', e)}
+                    required
+                    error={Boolean(errors.projectdescription)}
+                    helperText={errors.projectdescription}
+                  />
+                </Grid>
+
+                {projectData.status === 'Active' && ( // Conditionally render if status is "Active"
+                  <>
+                    <Grid item xs={12} className='flex'>
+                      <Grid item xs={12} sm={6}>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={useAssignTeam}
+                              onChange={event => setUseAssignTeam(event.target.checked)}
+                            />
+                          }
+                          label='Go to Assign Developers Page'
+                        />
+                      </Grid>
+                    </Grid>
+                  </>
+                )}
+              </>
+            )}
+
+            {useAssignTeam && (
+              <>
+                <Grid item xs={12}>
+                  <Typography variant='h6' className='mt-2 text-primary font-bold'>
+                    Assign Developers
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CustomTagInput
+                    placeholder='Frontend Developer'
+                    label='Frontend Developer'
+                    tags={frontendtags}
+                    onChange={setfrontendTags}
+                    options={['shivam', 'gaurav', 'niraj']}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <CustomTagInput
+                    label='Backend Developer'
+                    placeholder='Backend Developer'
+                    tags={backendtags}
+                    onChange={setbackendTags}
+                    options={['shivam', 'gaurav', 'niraj']}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <Dropdown
+                    label='Project Lead'
+                    options={['Anil', 'Vivek']}
+                    selectedOption={projectData.projectlead}
+                    onSelect={value => handleInputChange('projectlead', value)}
+                  />
+                </Grid>
+
+                {projectData.status === 'Active' && ( // Conditionally render if status is "Active"
+                  <>
+                    <Grid item xs={12} className='flex'>
+                      <Grid item xs={6}>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={useAssignTeam}
+                              onChange={event => setUseAssignTeam(event.target.checked)}
+                            />
+                          }
+                          label='Go to Edit Project Page'
+                        />
+                      </Grid>
+                    </Grid>
+                  </>
+                )}
+              </>
+            )}
           </Grid>
         </DialogContent>
         <DialogActions className='justify-center pbs-0 sm:pbe-16 sm:pli-16'>

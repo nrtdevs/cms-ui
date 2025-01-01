@@ -96,7 +96,7 @@ const UserProjectData: React.FC = () => {
         activation_date: '2024-01-01',
         end_date: '2024-06-01',
         clientname: 'John Doe',
-        status: 'Active',
+        status: 'Pending',
         clientemail: 'john.doe@example.com',
         clientcontact: '1234567890',
         clientcompany: 'Doe Enterprises'
@@ -112,7 +112,7 @@ const UserProjectData: React.FC = () => {
         activation_date: '2024-02-01',
         end_date: '2024-08-01',
         clientname: 'Jane Smith',
-        status: 'Completed',
+        status: 'Sucess',
         clientemail: 'jane.smith@example.com',
         clientcontact: '9876543210',
         clientcompany: 'Smith Corp'
@@ -239,7 +239,17 @@ const UserProjectData: React.FC = () => {
         header: 'Bid Amount',
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            ${info.getValue<number>().toLocaleString()}
+            {info.getValue<string[]>().join(', ')}
+          </Typography>
+        )
+      },
+
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
           </Typography>
         )
       },

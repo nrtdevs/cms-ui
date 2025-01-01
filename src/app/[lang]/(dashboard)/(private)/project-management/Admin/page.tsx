@@ -255,6 +255,15 @@ const AdminProjectData: React.FC = () => {
         )
       },
       {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        )
+      },
+      {
         id: 'actions',
         header: 'Actions',
         cell: info => {
