@@ -4,12 +4,14 @@ import React from 'react'
 
 import { Box } from '@mui/material'
 
-import UserProjectData from './User/page'
+// import UserProjectData from './User/page'
+import AdminProjectData from './Admin/page'
 
 const ProjectsPage = () => {
   return (
     <Box>
-      <UserProjectData />
+      {/* <UserProjectData /> */}
+      <AdminProjectData />
     </Box>
   )
 }

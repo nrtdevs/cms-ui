@@ -4,7 +4,7 @@ import { Grid, Typography, FormControl, Select, MenuItem, FormHelperText } from 
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown'
 
 interface DropdownProps {
-  label: string
+  label?: string
   options: string[]
   selectedOption: string
   error?: boolean

@@ -147,7 +147,7 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
 
       // Clear the error if the field is filled
       if (value && errors[field]) {
-        setErrors(prevErrors => {
+        setErrors((prevErrors: any) => {
           const { [field]: _, ...rest } = prevErrors
 
           return rest
