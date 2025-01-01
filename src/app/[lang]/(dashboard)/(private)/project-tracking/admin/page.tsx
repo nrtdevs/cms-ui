@@ -33,11 +33,11 @@ import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
 import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
 
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
-import EditprojectInfo from '../User/editproject'
-import ViewProjectInfo from '../User/viewproject'
-import AddProjectInfo from '../User/addproject'
 
 import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdown'
+import EditprojectInfo from '../../project-management/User/editproject'
+import ViewProjectInfo from '../../project-management/User/viewproject'
+import AddProjectInfo from '../../project-management/User/addproject'
 
 type Project = {
   id: number
@@ -77,7 +77,7 @@ const buttonviewProps: ButtonProps = {
 const buttonaddrops: ButtonProps = {
   variant: 'contained',
   className: 'bg-primary text-white  rounded-sm',
-  children: 'Add Project'
+  children: 'Assign Developer'
 }
 
 const AdminProjectData: React.FC = () => {
