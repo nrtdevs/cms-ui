@@ -104,6 +104,7 @@
     "usermanagement": "User Management",
     "projectmanagement": "Project Management",
     "projecttracking": "Project Tracking",
-    "adduser": "Add User"
+    "adduser": "Add User",
+    "financialmanagement": "Financial Management"
   }
 }

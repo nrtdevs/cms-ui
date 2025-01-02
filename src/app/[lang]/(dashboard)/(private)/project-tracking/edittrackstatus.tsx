@@ -39,6 +39,7 @@ type Project = {
   activation_date: string
   testingteam: string[]
   end_date: string
+  Projectstartdate: ''
 }
 
 type EditUserInfoProps = {
@@ -54,7 +55,7 @@ const EditTrackStatus = ({ open, setOpen, data }: EditUserInfoProps) => {
     projectdescription: '',
     bidammount: '',
     skills: [],
-    anotherField: '',
+    Projectstartdate: '',
     bid_date: '',
     clientname: '',
     clientemail: '',
@@ -114,7 +115,8 @@ const EditTrackStatus = ({ open, setOpen, data }: EditUserInfoProps) => {
       currency: '',
       activation_date: '',
       clientcountry: '',
-      end_date: ''
+      end_date: '',
+      Projectstartdate: ''
     })
     setTags([])
     setFrontendTags([])
@@ -206,6 +208,16 @@ const EditTrackStatus = ({ open, setOpen, data }: EditUserInfoProps) => {
                 onSelect={value => handleInputChange('platform', value)}
                 error={Boolean(errors.platform)}
                 helperText={errors.platform}
+              />
+            </Grid>
+            <Grid item xs={10} sm={3}>
+              <Dropdown
+                label='Project Status'
+                options={['Pendind', 'Active', 'Completed', 'Inprogress']}
+                selectedOption={projectData.status}
+                onSelect={value => handleInputChange('status', value)}
+                error={Boolean(errors.status)}
+                helperText={errors.status}
               />
             </Grid>
             <Grid item xs={12} sm={3}>

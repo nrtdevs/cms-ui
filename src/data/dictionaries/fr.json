@@ -104,6 +104,7 @@
     "usermanagement": "Gestion des utilisateurs",
     "projectmanagement": "Gestion de projet",
     "projecttracking": "Suivi de projet",
-    "adduser": " Ajouter un utilisateur"
+    "adduser": " Ajouter un utilisateur",
+    "financialmanagement": "Gestion financière"
   }
 }

@@ -35,8 +35,7 @@ import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
 
 import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdown'
-
-import editTrackStatus from '../edittrackstatus'
+import EditTrackStatus from '../../project-tracking/edittrackstatus'
 
 type Project = {
   id: number
@@ -60,6 +59,8 @@ type Project = {
   Projectstartdate: string
   recivedammount: number
   pendingammount: number
+  expenses: number
+  profitOrLoss: string
 }
 
 const buttonProps: ButtonProps = {
@@ -113,8 +114,10 @@ const AdminProjectTracking: React.FC = () => {
         backenddev: ['gaurav'],
         testingteam: ['akash'],
         Projectstartdate: '2025-01-02',
-        recivedammount: 1200,
-        pendingammount: 300
+        recivedammount: 1500,
+        pendingammount: 500,
+        expenses: 10000,
+        profitOrLoss: '-10,000 (Loss)'
       },
       {
         id: 2,
@@ -137,8 +140,10 @@ const AdminProjectTracking: React.FC = () => {
         backenddev: ['gaurav'],
         testingteam: ['akash'],
         Projectstartdate: '2025-01-02',
-        recivedammount: 1500,
-        pendingammount: 500
+        recivedammount: 1200,
+        pendingammount: 300,
+        expenses: 10000,
+        profitOrLoss: '10,000 (Profit)'
       }
     ],
     []
@@ -246,6 +251,21 @@ const AdminProjectTracking: React.FC = () => {
       },
 
       {
+        accessorKey: 'profitOrLoss',
+        header: 'Profit-Loss',
+        cell: info => {
+          const value = info.getValue<string>()
+          const isProfit = value.includes('Profit')
+          const numericValue = parseFloat(value.replace(/[^0-9.-]/g, ''))
+
+          return (
+            <Typography color={isProfit ? 'green' : 'red'} sx={{ whiteSpace: 'nowrap' }}>
+              ${numericValue.toLocaleString()} ({isProfit ? 'Profit' : 'Loss'})
+            </Typography>
+          )
+        }
+      },
+      {
         id: 'actions',
         header: 'Actions',
         cell: info => {
@@ -256,13 +276,13 @@ const AdminProjectTracking: React.FC = () => {
               <OpenDialogOnElementClick
                 element={Button}
                 elementProps={buttonProps}
-                dialog={editTrackStatus}
+                dialog={EditTrackStatus}
                 dialogProps={{ data: project }}
               />
               <OpenDialogOnElementClick
                 element={Button}
                 elementProps={buttonviewProps}
-                dialog={editTrackStatus}
+                dialog={EditTrackStatus}
                 dialogProps={{ data: project }}
               />
               <Button
