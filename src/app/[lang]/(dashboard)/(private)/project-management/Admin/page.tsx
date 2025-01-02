@@ -38,6 +38,7 @@ import ViewProjectInfo from '../User/viewproject'
 import AddProjectInfo from '../User/addproject'
 
 import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdown'
+import Activeprojectstatus from '../assignteam'
 
 type Project = {
   id: number
@@ -54,6 +55,8 @@ type Project = {
   clientemail: string
   clientcontact: string
   clientcompany: string
+  currency: string
+  clientcountry: string
 }
 
 const buttonProps: ButtonProps = {
@@ -78,6 +81,15 @@ const buttonaddrops: ButtonProps = {
   variant: 'contained',
   className: 'bg-primary text-white  rounded-sm',
   children: 'Add Project'
+}
+
+const buttonActiveProps: ButtonProps = {
+  variant: 'contained',
+  color: 'primary',
+  size: 'small',
+  className: 'bg-[#5eba00] text-white p-0 rounded-sm',
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  children: <i style={{ fontSize: '15px' }} className='tabler-radioactive text-white' />
 }
 
 const AdminProjectData: React.FC = () => {
@@ -107,7 +119,9 @@ const AdminProjectData: React.FC = () => {
         bid_creater: 'Rihana',
         clientemail: 'john.doe@example.com',
         clientcontact: '1234567890',
-        clientcompany: 'Doe Enterprises'
+        clientcompany: 'Doe Enterprises',
+        currency: 'INR',
+        clientcountry: 'IND'
       },
       {
         id: 2,
@@ -124,7 +138,9 @@ const AdminProjectData: React.FC = () => {
         status: 'Completed',
         clientemail: 'jane.smith@example.com',
         clientcontact: '9876543210',
-        clientcompany: 'Smith Corp'
+        clientcompany: 'Smith Corp',
+        currency: 'USD',
+        clientcountry: 'USA'
       }
     ],
     []
@@ -250,7 +266,7 @@ const AdminProjectData: React.FC = () => {
         header: 'Bid Amount',
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            ${info.getValue<number>().toLocaleString()}
+            {info.getValue<number>().toLocaleString()}
           </Typography>
         )
       },
@@ -279,10 +295,17 @@ const AdminProjectData: React.FC = () => {
               />
               <OpenDialogOnElementClick
                 element={Button}
+                elementProps={buttonActiveProps}
+                dialog={Activeprojectstatus}
+                dialogProps={{ data: project }}
+              />
+              <OpenDialogOnElementClick
+                element={Button}
                 elementProps={buttonviewProps}
                 dialog={ViewProjectInfo}
                 dialogProps={{ data: project }}
               />
+
               <Button
                 variant='contained'
                 color='secondary'

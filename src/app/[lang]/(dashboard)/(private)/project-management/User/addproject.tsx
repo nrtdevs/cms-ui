@@ -7,6 +7,7 @@ import CustomTextInput from '@/app/Custom-Cpmponents/input/custominput'
 import DatePickerInput from '@/app/Custom-Cpmponents/input/Datepickerinput'
 import CustomDescriptionInput from '@/app/Custom-Cpmponents/input/customdescriptioinput'
 import CustomFileUpload from '@/app/Custom-Cpmponents/Upload-file/CustomfileUpload'
+import Dropdown from '@/app/Custom-Cpmponents/Select-dropdown/dropdown'
 
 interface AddProjectInfoProps {
   open: boolean
@@ -28,6 +29,8 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
     clientcontact: string
     clientcompany: string
     status: string
+    currency: string
+    clientcountry: string
   }>({
     projectname: '',
     projectdescription: '',
@@ -41,7 +44,9 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
     clientemail: '',
     clientcontact: '',
     clientcompany: '',
-    status: ''
+    status: '',
+    currency: '',
+    clientcountry: ''
   })
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({}) // Track errors
@@ -154,7 +159,7 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
                 Project Details
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={3}>
               <CustomTextInput
                 label='Project Name'
                 placeholder='Project Name'
@@ -166,20 +171,19 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <CustomTagInput
-                label='Skills'
-                tags={project.skills}
-                onChange={handleSkillsChange}
-                options={options}
-                placeholder='Type a tag and press Enter'
+            <Grid item xs={12} sm={2}>
+              <Dropdown
+                label='Currency'
+                options={['USD', 'EUR', 'RUB', 'INR']}
+                selectedOption={project.currency}
+                onSelect={value => handleChange('currency', value)}
                 required
-                error={isSubmitted && !!errors.skills} // Show error if no skills
-                helperText={isSubmitted && errors.skills ? errors.skills : undefined}
+                error={isSubmitted && !!errors.currency}
+                helperText={isSubmitted && errors.currency ? errors.currency : undefined}
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={3}>
               <CustomTextInput
                 label='Bid Amount'
                 placeholder='Bid Amount'
@@ -192,7 +196,7 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={3}>
               <CustomTextInput
                 label='Platform'
                 placeholder='Platform'
@@ -202,7 +206,7 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={3}>
               <DatePickerInput
                 label='Bid Date'
                 type='date'
@@ -214,7 +218,20 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={9}>
+              <CustomTagInput
+                label='Skills'
+                tags={project.skills}
+                onChange={handleSkillsChange}
+                options={options}
+                placeholder='Type a tag and press Enter'
+                required
+                error={isSubmitted && !!errors.skills} // Show error if no skills
+                helperText={isSubmitted && errors.skills ? errors.skills : undefined}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={3}>
               <CustomFileUpload
                 label='Upload Project File'
                 onChange={handleFileChange}
@@ -230,7 +247,7 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
                 Client Details
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={3}>
               <CustomTextInput
                 label='Client Name'
                 placeholder='Client Name'
@@ -241,7 +258,8 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
                 helperText={isSubmitted && errors.clientname ? errors.clientname : undefined}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+
+            <Grid item xs={12} sm={3}>
               <CustomTextInput
                 placeholder='Client Email'
                 label='Client Email'
@@ -252,7 +270,7 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
                 helperText={isSubmitted && errors.clientemail ? errors.clientemail : undefined} // Show error for invalid or missing email
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={3}>
               <CustomTextInput
                 label='Client Contact'
                 placeholder='+919874561230'
@@ -263,12 +281,23 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
                 helperText={isSubmitted && errors.clientcontact ? errors.clientcontact : undefined}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={3}>
               <CustomTextInput
                 label='Client Company'
                 placeholder='Client Company'
                 value={project.clientcompany}
                 onChange={value => handleChange('clientcompany', value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <CustomTextInput
+                label='Client Country'
+                placeholder='Client Country'
+                value={project.clientcountry}
+                onChange={value => handleChange('clientcountry', value)}
+                required
+                error={isSubmitted && !!errors.clientcountry}
+                helperText={isSubmitted && errors.clientcountry ? errors.clientcountry : undefined}
               />
             </Grid>
             <Grid item xs={12}>

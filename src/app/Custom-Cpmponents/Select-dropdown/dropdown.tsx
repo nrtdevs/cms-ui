@@ -11,6 +11,7 @@ interface DropdownProps {
   helperText?: string
   required?: boolean
   onSelect: (value: string) => void
+  style?: React.CSSProperties
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -20,6 +21,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   required = false,
   error = false,
   helperText = '',
+  style,
   onSelect
 }) => {
   return (
@@ -35,6 +37,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           IconComponent={props => <ArrowDropDown {...props} sx={{ fontSize: 30 }} />}
           sx={{ height: '40px', '& .MuiInputBase-root': { height: '40px' } }}
           displayEmpty
+          style={style}
         >
           <MenuItem value=''>
             <em>Select {label}</em>

@@ -35,9 +35,8 @@ import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
 
 import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdown'
-import EditprojectInfo from '../../project-management/User/editproject'
-import ViewProjectInfo from '../../project-management/User/viewproject'
-import AddProjectInfo from '../../project-management/User/addproject'
+
+import editTrackStatus from '../edittrackstatus'
 
 type Project = {
   id: number
@@ -74,13 +73,7 @@ const buttonviewProps: ButtonProps = {
   children: <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
 }
 
-const buttonaddrops: ButtonProps = {
-  variant: 'contained',
-  className: 'bg-primary text-white  rounded-sm',
-  children: 'Assign Developer'
-}
-
-const AdminProjectData: React.FC = () => {
+const AdminProjectTracking: React.FC = () => {
   // const currentUser = ''
 
   const [selectedManager, setSelectedManager] = useState('')
@@ -265,13 +258,13 @@ const AdminProjectData: React.FC = () => {
               <OpenDialogOnElementClick
                 element={Button}
                 elementProps={buttonProps}
-                dialog={EditprojectInfo}
+                dialog={editTrackStatus}
                 dialogProps={{ data: project }}
               />
               <OpenDialogOnElementClick
                 element={Button}
                 elementProps={buttonviewProps}
-                dialog={ViewProjectInfo}
+                dialog={editTrackStatus}
                 dialogProps={{ data: project }}
               />
               <Button
@@ -330,8 +323,6 @@ const AdminProjectData: React.FC = () => {
             />
           </Grid>
         </Grid>
-
-        <OpenDialogOnElementClick element={Button} elementProps={buttonaddrops} dialog={AddProjectInfo} />
       </Box>
 
       <TableContainer component={Paper} className='shadow-none '>
@@ -386,4 +377,4 @@ const AdminProjectData: React.FC = () => {
   )
 }
 
-export default AdminProjectData
+export default AdminProjectTracking
