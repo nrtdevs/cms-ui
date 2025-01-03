@@ -108,8 +108,11 @@ const CustomTagInput: React.FC<TagInputProps> = ({
           />
         )}
         renderTags={value =>
+          value.map((option) => (
+        renderTags={value =>
           value.map(option => (
             <Chip
+              key={option} // Directly using the option as the key
               key={option} // Directly using the option as the key
               label={option}
               onDelete={() => handleDeleteTag(option)}
