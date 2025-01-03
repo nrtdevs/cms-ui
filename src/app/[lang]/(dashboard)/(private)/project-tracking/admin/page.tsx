@@ -37,6 +37,8 @@ import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialog
 import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdown'
 
 import editTrackStatus from '../edittrackstatus'
+import ViewTrackStatus from '../viewtrackstatus'
+import AddProjectsprint from '../addprojectsprint'
 
 type Project = {
   id: number
@@ -60,6 +62,7 @@ type Project = {
   Projectstartdate: string
   recivedammount: number
   pendingammount: number
+  clientcountry: string
 }
 
 const buttonProps: ButtonProps = {
@@ -80,6 +83,15 @@ const buttonviewProps: ButtonProps = {
   children: <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
 }
 
+const buttonaddmoduleProps: ButtonProps = {
+  variant: 'contained',
+  color: 'primary',
+  size: 'small',
+  className: 'bg-[#5eba00] text-white p-0 rounded-sm',
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  children: <i style={{ fontSize: '15px' }} className='tabler-plus text-white' />
+}
+
 const AdminProjectTracking: React.FC = () => {
   // const currentUser = ''
 
@@ -97,6 +109,7 @@ const AdminProjectTracking: React.FC = () => {
         projectname: 'Project Alpha',
         projectdescription: 'A groundbreaking project.',
         skills: ['React', 'Node.js'],
+        currency: 'USD',
         Actualbidammount: 1500,
         platform: 'Web',
         bid_date: '2024-02-01',
@@ -114,7 +127,8 @@ const AdminProjectTracking: React.FC = () => {
         testingteam: ['akash'],
         Projectstartdate: '2025-01-02',
         recivedammount: 1200,
-        pendingammount: 300
+        pendingammount: 300,
+        clientcountry: 'India'
       },
       {
         id: 2,
@@ -128,7 +142,8 @@ const AdminProjectTracking: React.FC = () => {
         activation_date: '2024-02-01',
         end_date: '2024-08-01',
         clientname: 'Jane Smith',
-        status: 'InProgress',
+        status: 'In Progress',
+        currency: 'INR',
         clientemail: 'jane.smith@example.com',
         clientcontact: '9876543210',
         clientcompany: 'Smith Corp',
@@ -138,7 +153,8 @@ const AdminProjectTracking: React.FC = () => {
         testingteam: ['akash'],
         Projectstartdate: '2025-01-02',
         recivedammount: 1500,
-        pendingammount: 500
+        pendingammount: 500,
+        clientcountry: 'USA'
       }
     ],
     []
@@ -189,15 +205,7 @@ const AdminProjectTracking: React.FC = () => {
           </Typography>
         )
       },
-      {
-        accessorKey: 'status',
-        header: 'Status',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
-        )
-      },
+
       {
         accessorKey: 'Projectstartdate',
         header: 'Start Date',
@@ -227,22 +235,58 @@ const AdminProjectTracking: React.FC = () => {
         )
       },
       {
-        accessorKey: 'recivedammount',
-        header: 'Recived Amount',
+        accessorKey: 'clientname',
+        header: 'Client Name',
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            ${info.getValue<number>().toLocaleString()}
+            {info.getValue<string>()}
           </Typography>
         )
       },
       {
-        accessorKey: 'pendingammount',
-        header: 'Pending Amount',
+        accessorKey: 'clientcountry',
+        header: 'Client Country',
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            ${info.getValue<number>().toLocaleString()}
+            {info.getValue<string>()}
           </Typography>
         )
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: info => {
+          const status = info.getValue<string>()
+          let borderColor, textColor
+
+          // Set colors based on status
+          if (status === 'Active') {
+            borderColor = '#198754' // Green
+            textColor = '#198754' // Green
+          } else if (status === 'In Progress') {
+            borderColor = '#dfa418' // Orange
+            textColor = '#dfa418' // Orange
+          } else if (status === 'Completed') {
+            borderColor = 'blue' // Blue
+            textColor = 'blue' // Blue
+          }
+
+          return (
+            <Button
+              color='inherit'
+              style={{
+                whiteSpace: 'nowrap',
+                borderColor: borderColor, // Apply the appropriate border color
+                backgroundColor: 'transparent',
+                borderStyle: 'solid',
+                borderWidth: '2px',
+                color: textColor // Apply the appropriate text color
+              }}
+            >
+              {status}
+            </Button>
+          )
+        }
       },
 
       {
@@ -261,19 +305,16 @@ const AdminProjectTracking: React.FC = () => {
               />
               <OpenDialogOnElementClick
                 element={Button}
-                elementProps={buttonviewProps}
-                dialog={editTrackStatus}
+                elementProps={buttonaddmoduleProps}
+                dialog={AddProjectsprint}
                 dialogProps={{ data: project }}
               />
-              <Button
-                variant='contained'
-                color='secondary'
-                size='small'
-                className='bg-[#fc7182] text-white p-0 rounded-sm ml-1'
-                sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
-              >
-                <i style={{ fontSize: '15px' }} className='tabler-square-off' />
-              </Button>
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonviewProps}
+                dialog={ViewTrackStatus}
+                dialogProps={{ data: project }}
+              />
             </Box>
           )
         }

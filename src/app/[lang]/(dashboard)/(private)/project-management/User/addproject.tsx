@@ -143,7 +143,14 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth='md'>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth='md'
+      aria-labelledby='dialog-title'
+      aria-hidden={false}
+    >
       <DialogTitle variant='h4' className='flex gap-2 flex-col text-primary text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
         Add Project Information
         <Typography component='span' className='flex flex-col text-center'>

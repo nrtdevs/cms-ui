@@ -11,18 +11,18 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 
-// Custom Component Imports
 import CustomTextInput from '@/app/Custom-Cpmponents/input/custominput'
 import DialogCloseButton from '@/components/dialogs/DialogCloseButton'
 import CustomFileUpload from '@/app/Custom-Cpmponents/Upload-file/CustomfileUpload'
 import Dropdown from '@/app/Custom-Cpmponents/Select-dropdown/dropdown'
 import CustomTagInput from '@/app/Custom-Cpmponents/input/customtaginput'
+import DatePickerInput from '@/app/Custom-Cpmponents/input/Datepickerinput'
 
 type Project = {
   projectname: string
   platform: string
   projectdescription: string
-  bidammount: string
+  Actualbidammount: string
   skills: string[]
   anotherField?: string
   bid_date: string
@@ -39,7 +39,7 @@ type Project = {
   activation_date: string
   testingteam: string[]
   end_date: string
-  Projectstartdate: ''
+  Projectstartdate: string
 }
 
 type EditUserInfoProps = {
@@ -53,7 +53,7 @@ const EditTrackStatus = ({ open, setOpen, data }: EditUserInfoProps) => {
     projectname: '',
     platform: '',
     projectdescription: '',
-    bidammount: '',
+    Actualbidammount: '',
     skills: [],
     Projectstartdate: '',
     bid_date: '',
@@ -73,9 +73,9 @@ const EditTrackStatus = ({ open, setOpen, data }: EditUserInfoProps) => {
   })
 
   const [tags, setTags] = useState<string[]>([])
-  const [frontendTags, setFrontendTags] = useState<string[]>([])
-  const [backendTags, setBackendTags] = useState<string[]>([])
-  const [testingTags, setTestingTags] = useState<string[]>([])
+  const [frontendtags, setfrontendTags] = useState<string[]>([])
+  const [backendtags, setbackendTags] = useState<string[]>([])
+  const [testingtags, settestingtagsTags] = useState<string[]>([])
   const [file, setFile] = useState<File | null>(null)
   const [errors, setErrors] = useState<any>({})
 
@@ -87,11 +87,25 @@ const EditTrackStatus = ({ open, setOpen, data }: EditUserInfoProps) => {
     if (data) {
       setProjectData(data)
       setTags(data.skills)
-      setFrontendTags(data.frontenddev)
-      setBackendTags(data.backenddev)
-      setTestingTags(data.testingteam)
+      setfrontendTags(data.frontenddev)
+      setbackendTags(data.backenddev)
+      settestingtagsTags(data.testingteam)
     }
   }, [data])
+
+  const formvalidation = (): boolean => {
+    const validationErrors: any = {}
+
+    if (!projectData.projectname) validationErrors.projectname = 'Project name is required.'
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+
+      return false // Return false if there are errors
+    }
+
+    return true // Return true if there are no errors
+  }
 
   const handleClose = () => {
     setOpen(false)
@@ -99,7 +113,7 @@ const EditTrackStatus = ({ open, setOpen, data }: EditUserInfoProps) => {
       projectname: '',
       platform: '',
       projectdescription: '',
-      bidammount: '',
+      Actualbidammount: '',
       skills: [],
       anotherField: '',
       bid_date: '',
@@ -119,55 +133,28 @@ const EditTrackStatus = ({ open, setOpen, data }: EditUserInfoProps) => {
       Projectstartdate: ''
     })
     setTags([])
-    setFrontendTags([])
-    setBackendTags([])
-    setTestingTags([])
+    setfrontendTags([])
+    setbackendTags([])
+    settestingtagsTags([])
     setFile(null)
     setErrors({})
   }
 
+  console.log('Project Data:', projectData)
+
   const handleSave = () => {
-    const validationErrors: any = {}
+    if (formvalidation()) {
+      const updatedProjectData = {
+        ...projectData,
+        skills: tags,
+        frontenddev: frontendtags,
+        backenddev: backendtags,
+        testingteam: testingtags
+      }
 
-    if (!projectData.projectname) validationErrors.projectname = 'Project name is required.'
-    if (!projectData.platform) validationErrors.platform = 'Platform is required.'
-    if (!projectData.clientname) validationErrors.clientname = 'Client name is required.'
-    if (!projectData.clientemail) validationErrors.clientemail = 'Client email is required.'
-    if (!projectData.clientcontact) validationErrors.clientcontact = 'Client contact is required.'
-    if (!projectData.projectdescription) validationErrors.projectdescription = 'Project description is required.'
-    if (!projectData.bidammount) validationErrors.bidammount = 'Bid amount is required.'
-
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-
-    if (projectData.clientemail && !emailPattern.test(projectData.clientemail)) {
-      validationErrors.clientemail = 'Please enter a valid email address.'
+      console.log('Saved Data:', updatedProjectData)
+      setOpen(false)
     }
-
-    const phonePattern = /^[+91]\d{10}$/
-
-    if (projectData.clientcontact && !phonePattern.test(projectData.clientcontact)) {
-      validationErrors.clientcontact = 'Please enter a valid phone number (e.g., +919876543210).'
-    }
-
-    if (tags.length === 0) validationErrors.skills = 'At least one skill is required.'
-    if (!projectData.bid_date) validationErrors.bid_date = 'Bid date is required.'
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
-
-      return
-    }
-
-    const updatedProjectData = {
-      ...projectData,
-      skills: tags,
-      frontenddev: frontendTags,
-      backenddev: backendTags,
-      testingteam: testingTags
-    }
-
-    console.log('Saved Data:', updatedProjectData)
-    setOpen(false)
   }
 
   const handleInputChange = (field: keyof Project, value: string) => {
@@ -185,69 +172,126 @@ const EditTrackStatus = ({ open, setOpen, data }: EditUserInfoProps) => {
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth='md' fullWidth>
-      <DialogCloseButton onClick={handleClose} />
-      <DialogTitle>Edit Project Information</DialogTitle>
+    <Dialog
+      fullWidth
+      open={open}
+      onClose={handleClose}
+      maxWidth='md'
+      scroll='body'
+      sx={{ '& .MuiDialog-paper': { overflow: 'visible' } }}
+    >
+      <DialogCloseButton onClick={() => setOpen(false)} disableRipple>
+        <i className='tabler-x' />
+      </DialogCloseButton>
+      <DialogTitle variant='h4' className='flex gap-2 flex-col text-primary text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
+        Edit Tracking Information
+      </DialogTitle>
       <form onSubmit={e => e.preventDefault()}>
         <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={10} sm={4}>
+          <Grid container spacing={5}>
+            <Grid item xs={12} sm={3}>
               <CustomTextInput
-                label='Project Name'
+                label='Project'
                 value={projectData.projectname}
                 onChange={value => handleInputChange('projectname', value)}
                 error={Boolean(errors.projectname)}
                 helperText={errors.projectname}
               />
             </Grid>
-            <Grid item xs={10} sm={3}>
+            <Grid item xs={12} sm={3}>
               <Dropdown
-                label='Platform'
-                options={['Web', 'Mobile', 'Desktop']}
-                selectedOption={projectData.platform}
-                onSelect={value => handleInputChange('platform', value)}
-                error={Boolean(errors.platform)}
-                helperText={errors.platform}
-              />
-            </Grid>
-            <Grid item xs={10} sm={3}>
-              <Dropdown
-                label='Project Status'
-                options={['Pendind', 'Active', 'Completed', 'Inprogress']}
+                label='Status'
+                options={['In Progress', 'Active', 'On-Hold', 'Cancelled']}
                 selectedOption={projectData.status}
                 onSelect={value => handleInputChange('status', value)}
-                error={Boolean(errors.status)}
-                helperText={errors.status}
               />
             </Grid>
+
             <Grid item xs={12} sm={3}>
-              <CustomFileUpload
-                label='Upload Project File'
-                onChange={handleFileChange}
-                fileName={file ? file.name : ''}
-                error={!file}
-                helperText={!file ? 'Please upload a file.' : ''}
+              <Dropdown
+                label='Currency'
+                options={['USD', 'EUR', 'RUB', 'INR']}
+                selectedOption={projectData.currency}
+                onSelect={value => handleInputChange('currency', value)}
               />
             </Grid>
-            <Grid item xs={12}>
+
+            <Grid item xs={12} sm={3}>
               <CustomTextInput
-                label='Project Description'
-                value={projectData.projectdescription}
-                onChange={value => handleInputChange('projectdescription', value)}
-                error={Boolean(errors.projectdescription)}
-                helperText={errors.projectdescription}
+                label='Total Budget'
+                value={projectData.Actualbidammount}
+                onChange={value => handleInputChange('Actualbidammount', value)}
               />
             </Grid>
-            <Grid item xs={12}>
+
+            <Grid item xs={12} sm={4}>
+              <DatePickerInput
+                label='Start Date'
+                value={projectData.activation_date}
+                onChange={value => handleInputChange('activation_date', value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <DatePickerInput
+                label='Deadline'
+                value={projectData.end_date}
+                onChange={value => handleInputChange('end_date', value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Dropdown
+                label='Tech Lead'
+                options={['Anil', 'Vivek']}
+                selectedOption={projectData.projectlead}
+                onSelect={value => handleInputChange('projectlead', value)}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <CustomTagInput
+                placeholder='Frontend Developer'
+                label='Frontend Developer'
+                tags={frontendtags}
+                onChange={setfrontendTags}
+                options={['shivam', 'gaurav', 'niraj']}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <CustomTagInput
+                label='Backend Developer'
+                placeholder='Backend Developer'
+                tags={backendtags}
+                onChange={setbackendTags}
+                options={['shivam', 'gaurav', 'niraj']}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <CustomTagInput
+                label='Testing Team'
+                tags={testingtags}
+                onChange={settestingtagsTags}
+                options={['Akash']}
+                placeholder='Type a tag and press Enter'
+                error={Boolean(errors.testingteam)}
+                helperText={errors.testingteam}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
               <CustomTagInput
                 label='Tech Stack'
                 tags={tags}
                 onChange={setTags}
-                options={['React', 'Node.js', 'Angular']}
-                placeholder='Add a skill'
+                options={[]}
+                placeholder='Type a tag and press Enter'
                 error={Boolean(errors.skills)}
                 helperText={errors.skills}
               />
+            </Grid>
+
+            <Grid item xs={12} sm={12}>
+              <CustomFileUpload label='Upload File' onChange={handleFileChange} fileName={file ? file.name : ''} />
             </Grid>
           </Grid>
         </DialogContent>
