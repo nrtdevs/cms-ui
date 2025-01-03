@@ -96,7 +96,7 @@ const buttonActiveProps: ButtonProps = {
   size: 'small',
   className: 'bg-[#5eba00] text-white p-0 rounded-sm',
   sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
-  children: <i style={{ fontSize: '15px' }} className='tabler-radioactive text-white' />
+  children: <i style={{ fontSize: '15px' }} className='tabler-checks text-white' />
 }
 
 const AdminProjectData: React.FC = () => {
@@ -320,7 +320,7 @@ const AdminProjectData: React.FC = () => {
                 className='bg-[#fc7182] text-white p-0 rounded-sm ml-1'
                 sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
               >
-                <i style={{ fontSize: '15px' }} className='tabler-square-off' />
+                <i style={{ fontSize: '15px' }} className='tabler-circle-letter-x' />
               </Button>
             </Box>
           )
