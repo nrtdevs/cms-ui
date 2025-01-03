@@ -140,6 +140,8 @@ const EditTrackStatus = ({ open, setOpen, data }: EditUserInfoProps) => {
     setErrors({})
   }
 
+  console.log('Project Data:', projectData)
+
   const handleSave = () => {
     if (formvalidation()) {
       const updatedProjectData = {

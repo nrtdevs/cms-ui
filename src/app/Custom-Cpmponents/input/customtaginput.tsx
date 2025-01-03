@@ -108,7 +108,7 @@ const CustomTagInput: React.FC<TagInputProps> = ({
           />
         )}
         renderTags={value =>
-          value.map(option => (
+          value.map((option) => (
             <Chip
               key={option} // Directly using the option as the key
               label={option}

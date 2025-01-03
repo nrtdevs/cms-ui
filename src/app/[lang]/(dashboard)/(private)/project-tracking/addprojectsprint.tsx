@@ -1,9 +1,9 @@
 'use client'
 
 // React Imports
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
+import { useForm, useFieldArray } from 'react-hook-form'
 
 // MUI Imports
 import Grid from '@mui/material/Grid'
@@ -12,94 +12,86 @@ import Button from '@mui/material/Button'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
+import { TextField } from '@mui/material'
 
-// Custom Components
 import DialogCloseButton from '@/components/dialogs/DialogCloseButton'
 import CustomTextInput from '@/app/Custom-Cpmponents/input/custominput'
 import DatePickerInput from '@/app/Custom-Cpmponents/input/Datepickerinput'
-import Dropdown from '@/app/Custom-Cpmponents/Select-dropdown/dropdown'
 
-import CustomTagInput from '@/app/Custom-Cpmponents/input/customtaginput'
-
-// Define form data types
-interface FormValues {
+type Project = {
   projectname: string
-  sprints: {
-    sprintname: string
-    addmodule: string[]
-    sprintStartDate: string
-    sprintEndDate: string
-    totalSprintAmount: string
-    receivedAmount: string
-    pendingAmount: string
-    currency: string
-  }[]
+}
+
+type SprintData = {
+  sprintname: string
+  addmodule: string
+  sprintStartDate: string
+  sprintEndDate: string
+  totalSprintAmount: string
+  receivedAmount: string
+  pendingAmount: string
 }
 
 type EditUserInfoProps = {
   open: boolean
   setOpen: (open: boolean) => void
-  data?: { projectname: string }
+  data?: Project
 }
 
 const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
-  // Default sprint object to reuse when appending
-  const defaultSprint = {
-    sprintname: '',
-    addmodule: [],
-    sprintStartDate: '',
-    sprintEndDate: '',
-    totalSprintAmount: '',
-    receivedAmount: '',
-    pendingAmount: '',
-    currency: ''
-  }
-
   const {
     control,
     handleSubmit,
+
     setValue,
     formState: { errors }
-  } = useForm<FormValues>({
+  } = useForm({
     defaultValues: {
-      projectname: data?.projectname,
-      sprints: [defaultSprint]
+      projectname: data?.projectname || '',
+      sprints: [
+        {
+          sprintname: '',
+          addmodule: '',
+          sprintStartDate: '',
+          sprintEndDate: '',
+          totalSprintAmount: '',
+          receivedAmount: '',
+          pendingAmount: ''
+        }
+      ]
     }
   })
-
-  const [options] = useState<string[]>(['Option 1', 'Option 2', 'Option 3'])
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'sprints'
   })
 
-  // Handle default values on edit
   useEffect(() => {
     if (data) {
       setValue('projectname', data.projectname)
     }
   }, [data, setValue])
 
-  // Handle dialog close
   const handleClose = () => {
     setOpen(false)
     setValue('projectname', '')
-    setValue('sprints', [defaultSprint])
+    setValue('sprints', [
+      {
+        sprintname: '',
+        addmodule: '',
+        sprintStartDate: '',
+        sprintEndDate: '',
+        totalSprintAmount: '',
+        receivedAmount: '',
+        pendingAmount: ''
+      }
+    ])
   }
 
-  // Handle form submission
-  const handleSave = (formData: FormValues) => {
-    console.log('Saved Data:', formData)
+  const handleSave = (data: any) => {
+    console.log('Saved Data:', data)
     setOpen(false)
-  }
-
-  // Custom validation for sprint name duplication
-  const validateSprintNames = (value: string, index: number) => {
-    const sprintNames = fields.map(field => field.sprintname)
-    const duplicates = sprintNames.filter((name, i) => name === value && i !== index)
-
-    return duplicates.length === 0 || 'Sprint name must be unique'
   }
 
   return (
@@ -111,7 +103,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
       scroll='body'
       sx={{ '& .MuiDialog-paper': { overflow: 'visible' } }}
     >
-      <DialogCloseButton onClick={handleClose} disableRipple>
+      <DialogCloseButton onClick={() => setOpen(false)} disableRipple>
         <i className='tabler-x' />
       </DialogCloseButton>
       <DialogTitle variant='h4' className='flex gap-2 flex-col text-primary text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
@@ -121,177 +113,95 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
         <DialogContent>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <CustomTextInput
-                label='Project Name'
-                placeholder='Enter Project Name'
-                value={data?.projectname || ''}
-                onChange={() => {}}
-                disabled={true}
-              />
+              <TextField label='Project Name' variant='outlined' fullWidth value={data?.projectname} disabled />
             </Grid>
             <Grid item xs={12}>
               <div>
                 {fields.map((field, index) => (
                   <Grid container spacing={3} key={field.id}>
                     <Grid item xs={12} sm={6}>
-                      <Controller
-                        control={control}
-                        name={`sprints.${index}.sprintname`}
-                        rules={{
-                          validate: value => validateSprintNames(value, index)
-                        }}
-                        render={({ field }) => (
-                          <CustomTextInput
-                            label='Sprint Name'
-                            placeholder='Enter Sprint Name'
-                            {...field}
-                            error={!!errors.sprints?.[index]?.sprintname}
-                            helperText={errors.sprints?.[index]?.sprintname?.message}
-                          />
-                        )}
+                      <CustomTextInput
+                        label='Sprint Name'
+                        placeholder='Enter Sprint Name'
+                        value={field.sprintname}
+                        onChange={value => setValue(`sprints.${index}.sprintname`, value)}
+                        error={!!errors.sprints?.[index]?.sprintname}
+                        helperText={errors.sprints?.[index]?.sprintname?.message}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <Controller
-                        control={control}
-                        name={`sprints.${index}.addmodule`}
-                        render={({ field }) => (
-                          <CustomTagInput
-                            label='Select Tags'
-                            tags={field.value}
-                            onChange={(value: string[]) => setValue(`sprints.${index}.addmodule`, value)}
-                            options={options}
-                            placeholder='Type and select tags'
-                          />
-                        )}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                      <Controller
-                        control={control}
-                        name={`sprints.${index}.sprintStartDate`}
-                        render={({ field }) => (
-                          <DatePickerInput
-                            label='Sprint Start Date'
-                            placeholder='Enter Sprint Start Date'
-                            type='date'
-                            {...field}
-                          />
-                        )}
+                      <CustomTextInput
+                        label='Add Module'
+                        placeholder='Enter Add Module'
+                        value={field.addmodule}
+                        onChange={value => setValue(`sprints.${index}.addmodule`, value)}
+                        error={!!errors.sprints?.[index]?.addmodule}
+                        helperText={errors.sprints?.[index]?.addmodule?.message}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <Controller
-                        control={control}
-                        name={`sprints.${index}.sprintEndDate`}
-                        render={({ field }) => (
-                          <DatePickerInput
-                            label='Sprint End Date'
-                            placeholder='Enter Sprint End Date'
-                            type='date'
-                            {...field}
-                          />
-                        )}
+                      <DatePickerInput
+                        label='Sprint Start Date'
+                        placeholder='Enter Sprint Start Date'
+                        type='date'
+                        value={field.sprintStartDate}
+                        onChange={value => setValue(`sprints.${index}.sprintStartDate`, value)}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={3}>
-                      <Controller
-                        control={control}
-                        name={`sprints.${index}.currency`}
-                        render={({ field }) => (
-                          <Dropdown
-                            label='Currency'
-                            options={['USD', 'EUR', 'RUB', 'INR']}
-                            selectedOption={field.value || ''}
-                            onSelect={value => setValue(`sprints.${index}.currency`, value)}
-                          />
-                        )}
+                    <Grid item xs={12} sm={6}>
+                      <DatePickerInput
+                        label='Sprint End Date'
+                        placeholder='Enter Sprint End Date'
+                        type='date'
+                        value={field.sprintEndDate}
+                        onChange={value => setValue(`sprints.${index}.sprintEndDate`, value)}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={3}>
-                      <Controller
-                        control={control}
-                        name={`sprints.${index}.totalSprintAmount`}
-                        rules={{
-                          pattern: {
-                            value: /^[0-9]*\.?[0-9]+$/,
-                            message: 'Please enter a valid number'
-                          }
-                        }}
-                        render={({ field }) => (
-                          <CustomTextInput
-                            label='Total Sprint Amount'
-                            placeholder='Enter Total Sprint Amount'
-                            {...field}
-                            error={!!errors.sprints?.[index]?.totalSprintAmount}
-                            helperText={errors.sprints?.[index]?.totalSprintAmount?.message}
-                          />
-                        )}
+                    <Grid item xs={12} sm={6}>
+                      <CustomTextInput
+                        label='Total Sprint Amount'
+                        placeholder='Enter Total Sprint Amount'
+                        value={field.totalSprintAmount}
+                        onChange={value => setValue(`sprints.${index}.totalSprintAmount`, value)}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={3}>
-                      <Controller
-                        control={control}
-                        name={`sprints.${index}.receivedAmount`}
-                        rules={{
-                          pattern: {
-                            value: /^[0-9]*\.?[0-9]+$/,
-                            message: 'Please enter a valid number'
-                          }
-                        }}
-                        render={({ field }) => (
-                          <CustomTextInput
-                            label='Received Amount'
-                            placeholder='Enter Received Amount'
-                            {...field}
-                            error={!!errors.sprints?.[index]?.receivedAmount}
-                            helperText={errors.sprints?.[index]?.receivedAmount?.message}
-                          />
-                        )}
+                    <Grid item xs={12} sm={6}>
+                      <CustomTextInput
+                        label='Received Amount'
+                        placeholder='Enter Received Amount'
+                        value={field.receivedAmount}
+                        onChange={value => setValue(`sprints.${index}.receivedAmount`, value)}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={3}>
-                      <Controller
-                        control={control}
-                        name={`sprints.${index}.pendingAmount`}
-                        rules={{
-                          pattern: {
-                            value: /^[0-9]*\.?[0-9]+$/,
-                            message: 'Please enter a valid number'
-                          }
-                        }}
-                        render={({ field }) => (
-                          <CustomTextInput
-                            label='Pending Amount'
-                            placeholder='Enter Pending Amount'
-                            {...field}
-                            error={!!errors.sprints?.[index]?.pendingAmount}
-                            helperText={errors.sprints?.[index]?.pendingAmount?.message}
-                          />
-                        )}
+                    <Grid item xs={12} sm={6}>
+                      <CustomTextInput
+                        label='Pending Amount'
+                        placeholder='Enter Pending Amount'
+                        value={field.pendingAmount}
+                        onChange={value => setValue(`sprints.${index}.pendingAmount`, value)}
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <Button
-                        variant='outlined'
-                        color='error'
-                        onClick={() => remove(index)}
-                        sx={{
-                          borderColor: 'red',
-                          color: 'red',
-                          marginBottom: '5px',
-                          '&:hover': {
-                            backgroundColor: 'rgba(217, 28, 28, 0.874)'
-                          }
-                        }}
-                      >
+                      <Button variant='outlined' onClick={() => remove(index)}>
                         Remove Sprint
                       </Button>
                     </Grid>
                   </Grid>
                 ))}
-                <Button variant='outlined' className='mt-5' onClick={() => append(defaultSprint)}>
+                <Button
+                  variant='outlined'
+                  onClick={() =>
+                    append({
+                      sprintname: '',
+                      addmodule: '',
+                      sprintStartDate: '',
+                      sprintEndDate: '',
+                      totalSprintAmount: '',
+                      receivedAmount: '',
+                      pendingAmount: ''
+                    })
+                  }
+                >
                   Add Sprint
                 </Button>
               </div>
