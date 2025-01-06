@@ -2,7 +2,6 @@
 
 import React, { useMemo, useState } from 'react'
 
-import { useParams, useRouter } from 'next/navigation'
 import type { ButtonProps } from '@mui/material'
 
 import {
@@ -28,7 +27,7 @@ import AddUser from './adduser/page'
 import Paginator from '../../../../Custom-Cpmponents/paginator/Paginator'
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
-import UserUpdate from './updateuser/[slug]/page'
+
 import EditUserInfo from './editUser'
 import ViewUserInfo from './viewuser'
 
@@ -92,12 +91,8 @@ const buttonaddrops: ButtonProps = {
 const Page: React.FC = () => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const columnHelper = createColumnHelper<Timesheet>()
-  const [isAddUserOpen, setIsAddUserOpen] = useState(false)
+
   const [searchTerm, setSearchTerm] = useState('')
-  const router = useRouter()
-
-  const local: any = useParams()
-
 
   const rowsPerPage = 10
 
@@ -174,15 +169,6 @@ const Page: React.FC = () => {
         cell: info => {
           const user = info.row.original
 
-          if (!user) {
-            console.error('Error: Employee ID not found for this row.')
-            return (
-              <Typography color='error' sx={{ fontSize: '0.75rem' }}>
-                No Actions Available
-              </Typography>
-            )
-          }
-
           return (
             <Box sx={{ display: 'flex', gap: 1 }}>
               <OpenDialogOnElementClick
@@ -213,6 +199,7 @@ const Page: React.FC = () => {
     ],
     [columnHelper]
   )
+
   // Define fuzzy filter function
   const fuzzyFilter: FilterFn<Timesheet> = (row, columnId, filterValue) => {
     const cellValue = row.getValue(columnId)
