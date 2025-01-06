@@ -321,12 +321,7 @@ const AdminProjectTracking: React.FC = () => {
                 dialog={AddProjectsprint}
                 dialogProps={{ data: project }}
               />
-              <OpenDialogOnElementClick
-                element={Button}
-                elementProps={buttonviewProps}
-                dialog={ViewTrackStatus}
-                dialogProps={{ data: project }}
-              />
+              <Button {...buttonviewProps} onClick={() => handleViewTrackStatusClick(project)} />
             </Box>
           )
         }
