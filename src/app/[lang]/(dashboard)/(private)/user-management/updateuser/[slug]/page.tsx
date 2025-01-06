@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useEffect, useState } from 'react'
 
 import { useParams, useRouter } from 'next/navigation'
@@ -38,7 +36,6 @@ const users = Array.from({ length: 100 }, (_, index) => ({
   userId: `P${String(index + 1).padStart(5, '0')}`,
   email: `user${index + 1}@example.com`,
   contactNumber: `+33-700-555-${String(200 + index)}`,
-
   position: [
     'Project Director',
     'Senior Developer',
@@ -58,7 +55,6 @@ const UserUpdate: React.FC = () => {
 
   useEffect(() => {
     const user = users.find(user => user.userId === String(slug))
-
     setUserData(user || null)
   }, [slug])
 
@@ -211,8 +207,7 @@ const UserUpdate: React.FC = () => {
               />
             </Grid>
 
-            {/*  position  */}
-
+            {/* Position */}
             <Grid item xs={12} sm={4}>
               <Dropdown
                 label='Position'

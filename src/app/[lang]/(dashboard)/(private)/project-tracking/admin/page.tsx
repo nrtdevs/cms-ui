@@ -316,7 +316,6 @@ const AdminProjectTracking: React.FC = () => {
               selectedOption={selectedManager}
               onSelect={value => {
                 setSelectedManager(value)
-                console.log('Selected Bid Creator:', value)
               }}
             />
           </Grid>

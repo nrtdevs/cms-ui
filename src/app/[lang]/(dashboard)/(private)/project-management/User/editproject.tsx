@@ -152,7 +152,6 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
 
     const updatedProjectData = { ...projectData, skills: tags }
 
-    console.log('Saved Data:', updatedProjectData)
     setOpen(false)
   }
 
