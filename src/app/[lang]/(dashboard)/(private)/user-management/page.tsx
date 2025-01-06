@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from 'react'
 
 import { useParams, useRouter } from 'next/navigation'
+import type { ButtonProps } from '@mui/material'
 
 import {
   Button,
@@ -26,6 +27,10 @@ import AddUser from './adduser/page'
 
 import Paginator from '../../../../Custom-Cpmponents/paginator/Paginator'
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
+import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
+import UserUpdate from './updateuser/[slug]/page'
+import EditUserInfo from './editUser'
+import ViewUserInfo from './viewuser'
 
 const users = Array.from({ length: 100 }, (_, index) => ({
   id: index + 1,
@@ -60,6 +65,30 @@ interface Timesheet {
   fullname: string
 }
 
+const buttonProps: ButtonProps = {
+  variant: 'contained',
+  color: 'primary',
+  size: 'small',
+  className: 'bg-[#7b91b1] text-white p-0 rounded-sm',
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  children: <i style={{ fontSize: '15px' }} className='tabler-edit text-white' />
+}
+
+const buttonviewProps: ButtonProps = {
+  variant: 'contained',
+  color: 'primary',
+  size: 'small',
+  className: 'bg-primary text-white p-0 rounded-sm',
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  children: <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
+}
+
+const buttonaddrops: ButtonProps = {
+  variant: 'contained',
+  className: 'bg-primary text-white  rounded-sm',
+  children: 'Add User'
+}
+
 const Page: React.FC = () => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const columnHelper = createColumnHelper<Timesheet>()
@@ -69,7 +98,6 @@ const Page: React.FC = () => {
 
   const local: any = useParams()
 
-  console.log(local.lang, 'fjksdhgfkjhgsd')
 
   const rowsPerPage = 10
 
@@ -95,14 +123,6 @@ const Page: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
-  }
-
-  const handleAddUserClick = () => {
-    setIsAddUserOpen(true)
-  }
-
-  const handleCloseAddUser = () => {
-    setIsAddUserOpen(false)
   }
 
   const columns = useMemo(
@@ -151,35 +171,48 @@ const Page: React.FC = () => {
       columnHelper.display({
         id: 'actions',
         header: 'Actions',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            <Button
-              onClick={() => router.push(`/${local.lang}/user-management/updateuser/${info.row.original.employeeId}`)}
-              className='bg-[#7b91b1] text-white p-0 rounded-sm'
-              sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
-            >
-              <i style={{ fontSize: '15px' }} className='tabler-edit text-white' />
-            </Button>
+        cell: info => {
+          const user = info.row.original
 
-            <Button
-              className='bg-[#fc7182] text-white p-0 rounded-sm ml-1'
-              sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
-            >
-              <i style={{ fontSize: '15px' }} className='tabler-square-off' />
-            </Button>
-            <Button
-              className='bg-[#55d6c3] text-white p-0 rounded-sm ml-1'
-              sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
-            >
-              <i style={{ fontSize: '15px' }} className='tabler-square-rounded-x' />
-            </Button>
-          </Typography>
-        )
+          if (!user) {
+            console.error('Error: Employee ID not found for this row.')
+            return (
+              <Typography color='error' sx={{ fontSize: '0.75rem' }}>
+                No Actions Available
+              </Typography>
+            )
+          }
+
+          return (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonProps}
+                dialog={EditUserInfo}
+                dialogProps={{ data: user }}
+              />
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonviewProps}
+                dialog={ViewUserInfo}
+                dialogProps={{ data: user }}
+              />
+              <Button
+                variant='contained'
+                color='secondary'
+                size='small'
+                className='bg-[#fc7182] text-white p-0 rounded-sm ml-1'
+                sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
+              >
+                <i style={{ fontSize: '15px' }} className='tabler-square-off' />
+              </Button>
+            </Box>
+          )
+        }
       })
     ],
     [columnHelper]
   )
-
   // Define fuzzy filter function
   const fuzzyFilter: FilterFn<Timesheet> = (row, columnId, filterValue) => {
     const cellValue = row.getValue(columnId)
@@ -200,87 +233,62 @@ const Page: React.FC = () => {
   })
 
   return (
-    <Box>
-      {isAddUserOpen ? (
-        <div>
-          <AddUser
-            onClose={handleCloseAddUser}
-            parentCompanies={[]}
-            projects={[]}
-            employeeTypes={[]}
-            entitlements={[]}
-          />
-        </div>
-      ) : (
-        <div>
-          <Card className='mt-10'>
-            <Box className='flex items-center justify-between m-5'>
-              <SearchFilter
-                label='Search'
-                value={searchTerm}
-                onChange={setSearchTerm}
-                placeholder='Search all fields'
-              />
-              <Button
-                className=' px-8 py-2 rounded-md bg-primary text-white'
-                style={{ backgroundColor: 'primary', fontWeight: '500', cursor: 'pointer' }}
-                onClick={handleAddUserClick}
-              >
-                + ADD USER
-              </Button>
-            </Box>
-            <TableContainer component={Paper} className='shadow-none '>
-              <Table>
-                <TableHead>
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map(header => (
-                        <TableCell
-                          key={header.id}
-                          onClick={header.column.getToggleSortingHandler()}
-                          className='text-primary font-bold cursor-pointer'
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : typeof header.column.columnDef.header === 'function'
-                              ? header.column.columnDef.header(header.getContext())
-                              : header.column.columnDef.header}
-                          {header.column.getIsSorted() === 'asc'
-                            ? ' 🔼'
-                            : header.column.getIsSorted() === 'desc'
-                              ? ' 🔽'
-                              : ''}
-                        </TableCell>
-                      ))}
-                    </TableRow>
+    <Card>
+      <Box className='mt-10'>
+        <Box className='flex items-center justify-between m-5'>
+          <SearchFilter label='Search' value={searchTerm} onChange={setSearchTerm} placeholder='Search all fields' />
+          <OpenDialogOnElementClick element={Button} elementProps={buttonaddrops} dialog={AddUser} />
+        </Box>
+        <TableContainer component={Paper} className='shadow-none '>
+          <Table>
+            <TableHead>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <TableCell
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      className='text-primary font-bold cursor-pointer'
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : typeof header.column.columnDef.header === 'function'
+                          ? header.column.columnDef.header(header.getContext())
+                          : header.column.columnDef.header}
+                      {header.column.getIsSorted() === 'asc'
+                        ? ' 🔼'
+                        : header.column.getIsSorted() === 'desc'
+                          ? ' 🔽'
+                          : ''}
+                    </TableCell>
                   ))}
-                </TableHead>
-                <TableBody>
-                  {table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id}>
-                          {cell.column.columnDef.cell
-                            ? typeof cell.column.columnDef.cell === 'function'
-                              ? cell.column.columnDef.cell(cell.getContext())
-                              : cell.getValue()
-                            : cell.getValue()}
-                        </TableCell>
-                      ))}
-                    </TableRow>
+                </TableRow>
+              ))}
+            </TableHead>
+            <TableBody>
+              {table.getRowModel().rows.map(row => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell key={cell.id}>
+                      {cell.column.columnDef.cell
+                        ? typeof cell.column.columnDef.cell === 'function'
+                          ? cell.column.columnDef.cell(cell.getContext())
+                          : cell.getValue()
+                        : cell.getValue()}
+                    </TableCell>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <div className='flex items-center justify-center mt-10 mb-2 my-4'>
-              <Stack spacing={2}>
-                <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-              </Stack>
-            </div>
-          </Card>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <div className='flex items-center justify-center mt-10 mb-2 my-4'>
+          <Stack spacing={2}>
+            <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+          </Stack>
         </div>
-      )}
-    </Box>
+      </Box>
+    </Card>
   )
 }
 

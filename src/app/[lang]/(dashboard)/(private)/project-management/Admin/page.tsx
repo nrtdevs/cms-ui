@@ -59,13 +59,14 @@ type Project = {
   clientcountry: string
 }
 
+// Button Props for edit and view icons with better styling
 const buttonProps: ButtonProps = {
   variant: 'contained',
   color: 'primary',
   size: 'small',
   className: 'bg-[#7b91b1] text-white p-0 rounded-sm',
-  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
-  children: <i style={{ fontSize: '15px' }} className='tabler-edit text-white' />
+  sx: { fontSize: '0.75rem', minWidth: '30px', minHeight: '30px', padding: '4px' }, // Adjusted for better appearance
+  children: <i style={{ fontSize: '16px' }} className='tabler-edit text-white' />
 }
 
 const buttonviewProps: ButtonProps = {
@@ -73,13 +74,19 @@ const buttonviewProps: ButtonProps = {
   color: 'primary',
   size: 'small',
   className: 'bg-primary text-white p-0 rounded-sm',
-  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
-  children: <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
+  sx: { fontSize: '0.75rem', minWidth: '30px', minHeight: '30px', padding: '4px' }, // Adjusted for better appearance
+  children: <i style={{ fontSize: '16px' }} className='tabler-eye text-white' />
 }
 
+// "Add Project" Button with better styling
 const buttonaddrops: ButtonProps = {
   variant: 'contained',
-  className: 'bg-primary text-white  rounded-sm',
+  className: 'bg-primary text-white rounded-sm',
+  sx: {
+    padding: '10px 10px 10px 10px', // Reduce the padding
+    fontSize: '0.875rem', // Slightly larger font size for better readability
+    minWidth: '100px' // Fixed width for button
+  },
   children: 'Add Project'
 }
 
@@ -344,29 +351,38 @@ const AdminProjectData: React.FC = () => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          m: 5
+          m: 5,
+          gap: '10px'
         }}
       >
-        <Grid container spacing={2} alignItems='center'>
-          <Grid item xs={12} sm={5} md={3}>
+        {/* Left Group: Search and Filter */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            width: '50%' // Ensure the left group takes up full width
+          }}
+        >
+          {/* Search Filter Wrapper */}
+          <Box sx={{ flex: 1 }}>
             <SearchFilter label='Search' value={searchTerm} onChange={handleSearch} placeholder='Search all fields' />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3} className='mb-1'>
+          </Box>
+
+          {/* Filter Dropdown Wrapper */}
+          <Box sx={{ flex: 1 }}>
             <FilterDropdown
               options={bidCreators}
               selectedOption={selectedManager}
-              onSelect={value => {
-                setSelectedManager(value)
-                console.log('Selected Bid Creator:', value)
-              }}
+              onSelect={value => setSelectedManager(value)}
             />
-          </Grid>
-        </Grid>
-
+          </Box>
+        </Box>
+        {/* Right Group: Add Project Button */}
         <OpenDialogOnElementClick element={Button} elementProps={buttonaddrops} dialog={AddProjectInfo} />
       </Box>
 
-      <TableContainer component={Paper} className='shadow-none '>
+      <TableContainer component={Paper} className='shadow-none'>
         <Table>
           <TableHead>
             {table.getHeaderGroups().map(headerGroup => (
@@ -409,6 +425,8 @@ const AdminProjectData: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Paginator */}
       <div className='flex items-center justify-center mt-10 mb-2 my-4'>
         <Stack spacing={2}>
           <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
