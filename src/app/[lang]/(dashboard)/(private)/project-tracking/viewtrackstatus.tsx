@@ -1,6 +1,21 @@
 import React, { useState } from 'react'
 
-import { Button, Tabs, Tab, Box, Typography, TableContainer, Paper, Grid } from '@mui/material'
+import type { ButtonProps } from '@mui/material'
+import {
+  Button,
+  Tabs,
+  Tab,
+  Box,
+  Typography,
+  TableContainer,
+  Paper,
+  Grid,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody
+} from '@mui/material'
 
 import SprintEditDialog from './admin/editprojectsprint'
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
@@ -118,8 +133,19 @@ const buttonaddmoduleProps: ButtonProps = {
 
 const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
   const [selectedTab, setSelectedTab] = useState(0)
-  const [openEditDialog, setOpenEditDialog] = useState(false)
-  const [currentSprintData, setCurrentSprintData] = useState<any>(null)
+
+  // const [openDialog, setOpenDialog] = useState(false)
+  // const [selectedSprint, setSelectedSprint] = useState(null)
+
+  // const handleOpenDialog = (sprint: any) => {
+  //   setSelectedSprint(sprint)
+  //   setOpenDialog(true)
+  // }
+
+  // const handleCloseDialog = () => {
+  //   setOpenDialog(false)
+  //   setSelectedSprint(null)
+  // }
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue)
@@ -318,46 +344,60 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
             </TableContainer>
           )}
 
-          {selectedTab === 3 && currentProjectSprint && (
-            <TableContainer component={Paper} sx={{ padding: 2, backgroundColor: 'transparent' }}>
-              <Typography variant='h5' color='primary' gutterBottom>
-                Project Modules for {data?.projectname}
-              </Typography>
-              <Grid container spacing={2}>
-                {currentProjectSprint.sprints.map((sprint, index) => (
-                  <Grid item xs={12} md={6} key={index}>
-                    <Typography variant='h6' color='textSecondary'>
-                      {sprint.sprintname}
-                    </Typography>
-                    <Typography variant='body1'>Start Date: {sprint.sprintStartDate}</Typography>
-                    <Typography variant='body1'>End Date: {sprint.sprintEndDate}</Typography>
-                    <Typography variant='body1'>
-                      Total Sprint Amount: {sprint.currency} {sprint.totalSprintAmount}
-                    </Typography>
-                    <Typography variant='body1'>
-                      Received Amount: {sprint.currency} {sprint.receivedAmount}
-                    </Typography>
-                    <Typography variant='body1'>
-                      Pending Amount: {sprint.currency} {sprint.pendingAmount}
-                    </Typography>
-                    <Typography variant='body1'>Modules: {sprint.addmodule.join(', ')}</Typography>
-                  </Grid>
-                ))}
-              </Grid>
-              <Grid>
-                <OpenDialogOnElementClick
-                  element={Button}
-                  elementProps={buttonaddmoduleProps}
-                  dialog={SprintEditDialog}
-                  dialogProps={{ sprint: currentProjectSprint }}
-                />
-              </Grid>
-            </TableContainer>
-          )}
+          <>
+            {selectedTab === 3 && currentProjectSprint && (
+              <TableContainer component={Paper} sx={{ padding: 2, backgroundColor: 'transparent' }}>
+                <Typography variant='h5' color='primary' gutterBottom>
+                  Project Modules for {data?.projectname}
+                </Typography>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Sprint Name</TableCell>
+                      <TableCell>Start Date</TableCell>
+                      <TableCell>End Date</TableCell>
+                      <TableCell>Total Sprint Amount</TableCell>
+                      <TableCell>Received Amount</TableCell>
+                      <TableCell>Pending Amount</TableCell>
+                      <TableCell>Modules</TableCell>
+                      <TableCell>Action</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {currentProjectSprint.sprints.map((sprint, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{sprint.sprintname}</TableCell>
+                        <TableCell>{sprint.sprintStartDate}</TableCell>
+                        <TableCell>{sprint.sprintEndDate}</TableCell>
+                        <TableCell>
+                          {sprint.currency} {sprint.totalSprintAmount}
+                        </TableCell>
+                        <TableCell>
+                          {sprint.currency} {sprint.receivedAmount}
+                        </TableCell>
+                        <TableCell>
+                          {sprint.currency} {sprint.pendingAmount}
+                        </TableCell>
+                        <TableCell>{sprint.addmodule.join(', ')}</TableCell>
+                        <TableCell>
+                          {sprint && (
+                            <OpenDialogOnElementClick
+                              element={Button}
+                              elementProps={buttonaddmoduleProps}
+                              dialog={SprintEditDialog}
+                              dialogProps={{ sprint }}
+                            />
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </>
         </Box>
       </Box>
-
-      <Button>edit Sprint</Button>
     </div>
   )
 }

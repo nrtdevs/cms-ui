@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from 'react'
 
 import type { ButtonProps } from '@mui/material'
+
 import {
   Typography,
   Button,
@@ -28,6 +29,8 @@ import {
   type FilterFn
 } from '@tanstack/react-table'
 
+import type { getDictionary } from '@/utils/getDictionary'
+
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
 
 import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
@@ -45,7 +48,9 @@ type Project = {
   projectname: string
   projectdescription: string
   skills: string[]
+  currency: string
   Actualbidammount: number
+  bid_creater: string
   platform: string
   bid_date: string
   activation_date: string
@@ -74,6 +79,10 @@ const buttonProps: ButtonProps = {
   children: <i style={{ fontSize: '15px' }} className='tabler-edit text-white' />
 }
 
+type Props = {
+  dictionary: Awaited<ReturnType<typeof getDictionary>>
+}
+
 const buttonviewProps: ButtonProps = {
   variant: 'contained',
   color: 'primary',
@@ -92,7 +101,9 @@ const buttonaddmoduleProps: ButtonProps = {
   children: <i style={{ fontSize: '15px' }} className='tabler-plus text-white' />
 }
 
-const AdminProjectTracking: React.FC = () => {
+const AdminProjectTracking: React.FC<Props> = ({ dictionary }) => {
+  console.log('Dictionary:', dictionary)
+
   // const currentUser = ''
 
   const [selectedManager, setSelectedManager] = useState('')
@@ -346,7 +357,7 @@ const AdminProjectTracking: React.FC = () => {
 
   return (
     <Box>
-      {isViewTrackStatusOpen ? (
+      {isViewTrackStatusOpen && selectedProject ? (
         <ViewTrackStatus data={selectedProject} onClose={handleCloseViewTrackStatus} />
       ) : (
         <Card>
