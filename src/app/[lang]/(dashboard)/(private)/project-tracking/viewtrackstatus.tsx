@@ -19,6 +19,7 @@ import {
 
 import SprintEditDialog from './admin/editprojectsprint'
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
+import SprintViewDialog from './viewprojectsprint'
 
 interface ViewTrackStatusProps {
   data: {
@@ -129,6 +130,15 @@ const buttonaddmoduleProps: ButtonProps = {
   className: 'bg-[#5eba00] text-white p-0 rounded-sm',
   sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
   children: <i style={{ fontSize: '15px' }} className='tabler-plus text-white' />
+}
+
+const buttonviewmoduleProps: ButtonProps = {
+  variant: 'contained',
+  color: 'primary',
+  size: 'small',
+  className: 'bg-primary text-white p-0 rounded-sm',
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  children: <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
 }
 
 const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
@@ -385,6 +395,14 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
                               element={Button}
                               elementProps={buttonaddmoduleProps}
                               dialog={SprintEditDialog}
+                              dialogProps={{ sprint }}
+                            />
+                          )}
+                          {sprint && (
+                            <OpenDialogOnElementClick
+                              element={Button}
+                              elementProps={buttonviewmoduleProps}
+                              dialog={SprintViewDialog}
                               dialogProps={{ sprint }}
                             />
                           )}
