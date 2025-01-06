@@ -97,8 +97,10 @@ const AdminProjectTracking: React.FC = () => {
 
   const [selectedManager, setSelectedManager] = useState('')
   const [sorting, setSorting] = React.useState<SortingState>([])
+  const [isViewTrackStatusOpen, setIsViewTrackStatusOpen] = useState(false)
 
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
   const rowsPerPage = 10
 
@@ -164,6 +166,16 @@ const AdminProjectTracking: React.FC = () => {
 
   const handleSearch = (value: string) => {
     setSearchTerm(value.toLowerCase())
+  }
+
+  const handleViewTrackStatusClick = (project: Project) => {
+    setSelectedProject(project)
+    setIsViewTrackStatusOpen(true)
+  }
+
+  const handleCloseViewTrackStatus = () => {
+    setIsViewTrackStatusOpen(false)
+    setSelectedProject(null)
   }
 
   const filteredData = useMemo(() => {
@@ -309,12 +321,7 @@ const AdminProjectTracking: React.FC = () => {
                 dialog={AddProjectsprint}
                 dialogProps={{ data: project }}
               />
-              <OpenDialogOnElementClick
-                element={Button}
-                elementProps={buttonviewProps}
-                dialog={ViewTrackStatus}
-                dialogProps={{ data: project }}
-              />
+              <Button {...buttonviewProps} onClick={() => handleViewTrackStatusClick(project)} />
             </Box>
           )
         }
@@ -338,81 +345,92 @@ const AdminProjectTracking: React.FC = () => {
   })
 
   return (
-    <Card>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          m: 5
-        }}
-      >
-        <Grid container spacing={2} alignItems='center'>
-          <Grid item xs={12} sm={5} md={3}>
-            <SearchFilter label='Search' value={searchTerm} onChange={handleSearch} placeholder='Search all fields' />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3} className='mb-1'>
-            <FilterDropdown
-              options={bidCreators}
-              selectedOption={selectedManager}
-              onSelect={value => {
-                setSelectedManager(value)
-                console.log('Selected Bid Creator:', value)
-              }}
-            />
-          </Grid>
-        </Grid>
-      </Box>
+    <Box>
+      {isViewTrackStatusOpen ? (
+        <ViewTrackStatus data={selectedProject} onClose={handleCloseViewTrackStatus} />
+      ) : (
+        <Card>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              m: 5
+            }}
+          >
+            <Grid container spacing={2} alignItems='center'>
+              <Grid item xs={12} sm={5} md={3}>
+                <SearchFilter
+                  label='Search'
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  placeholder='Search all fields'
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} className='mb-1'>
+                <FilterDropdown
+                  options={bidCreators}
+                  selectedOption={selectedManager}
+                  onSelect={value => {
+                    setSelectedManager(value)
+                    console.log('Selected Bid Creator:', value)
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </Box>
 
-      <TableContainer component={Paper} className='shadow-none '>
-        <Table>
-          <TableHead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <TableCell
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
-                    className='text-primary font-bold cursor-pointer'
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : typeof header.column.columnDef.header === 'function'
-                        ? header.column.columnDef.header(header.getContext())
-                        : header.column.columnDef.header}
-                    {header.column.getIsSorted() === 'asc'
-                      ? ' 🔼'
-                      : header.column.getIsSorted() === 'desc'
-                        ? ' 🔽'
-                        : ''}
-                  </TableCell>
+          <TableContainer component={Paper} className='shadow-none '>
+            <Table>
+              <TableHead>
+                {table.getHeaderGroups().map(headerGroup => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <TableCell
+                        key={header.id}
+                        onClick={header.column.getToggleSortingHandler()}
+                        className='text-primary font-bold cursor-pointer'
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : typeof header.column.columnDef.header === 'function'
+                            ? header.column.columnDef.header(header.getContext())
+                            : header.column.columnDef.header}
+                        {header.column.getIsSorted() === 'asc'
+                          ? ' 🔼'
+                          : header.column.getIsSorted() === 'desc'
+                            ? ' 🔽'
+                            : ''}
+                      </TableCell>
+                    ))}
+                  </TableRow>
                 ))}
-              </TableRow>
-            ))}
-          </TableHead>
-          <TableBody>
-            {table.getRowModel().rows.map(row => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                  <TableCell key={cell.id}>
-                    {cell.column.columnDef.cell
-                      ? typeof cell.column.columnDef.cell === 'function'
-                        ? cell.column.columnDef.cell(cell.getContext())
-                        : cell.getValue()
-                      : cell.getValue()}
-                  </TableCell>
+              </TableHead>
+              <TableBody>
+                {table.getRowModel().rows.map(row => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell key={cell.id}>
+                        {cell.column.columnDef.cell
+                          ? typeof cell.column.columnDef.cell === 'function'
+                            ? cell.column.columnDef.cell(cell.getContext())
+                            : cell.getValue()
+                          : cell.getValue()}
+                      </TableCell>
+                    ))}
+                  </TableRow>
                 ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <div className='flex items-center justify-center mt-10 mb-2 my-4'>
-        <Stack spacing={2}>
-          <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-        </Stack>
-      </div>
-    </Card>
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <div className='flex items-center justify-center mt-10 mb-2 my-4'>
+            <Stack spacing={2}>
+              <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            </Stack>
+          </div>
+        </Card>
+      )}
+    </Box>
   )
 }
 
