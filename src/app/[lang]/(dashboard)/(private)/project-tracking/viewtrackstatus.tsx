@@ -21,6 +21,8 @@ import {
 import SprintEditDialog from './admin/editprojectsprint'
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
 import SprintViewDialog from './viewprojectsprint'
+import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
+import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
 
 interface ViewTrackStatusProps {
   data: {
@@ -145,28 +147,29 @@ const buttonviewmoduleProps: ButtonProps = {
 const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
   const [selectedTab, setSelectedTab] = useState(0)
 
-  // const [openDialog, setOpenDialog] = useState(false)
-  // const [selectedSprint, setSelectedSprint] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const rowsPerPage = 5
+  const currentProjectSprint = defaultSprint.find(project => project.projectname === data?.projectname)
 
-  // const handleOpenDialog = (sprint: any) => {
-  //   setSelectedSprint(sprint)
-  //   setOpenDialog(true)
-  // }
+  const filteredSprints = currentProjectSprint?.sprints!.filter(sprint =>
+    Object.values(sprint).some(value => String(value).toLowerCase().includes(searchTerm.toLowerCase()))
+  )
 
-  // const handleCloseDialog = () => {
-  //   setOpenDialog(false)
-  //   setSelectedSprint(null)
-  // }
+  const totalPages = Math.ceil((filteredSprints?.length ?? 0) / rowsPerPage)
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue)
   }
 
-  const currentProjectSprint = defaultSprint.find(project => project.projectname === data?.projectname)
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage)
+  }
+
+  const paginatedSprints = filteredSprints?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
 
   return (
     <Card>
-      {/* Tabs for Section Navigation */}
       <Box sx={{ width: '100%' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Tabs
@@ -195,12 +198,12 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
                 <TableHead>
                   <TableRow>
                     <TableCell>
-                      <Typography variant='h6' color='textSecondary'>
+                      <Typography variant='h6' className='text-primary font-bold'>
                         Field
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant='h6' color='textSecondary'>
+                      <Typography variant='h6' className='text-primary font-bold'>
                         Details
                       </Typography>
                     </TableCell>
@@ -318,31 +321,31 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
             <TableContainer component={Paper} sx={{ padding: 2, backgroundColor: 'transparent' }}>
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
+                  <Typography variant='h6' className='text-primary font-bold'>
                     Client Name
                   </Typography>
                   <Typography variant='body1'>{data?.clientname}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
+                  <Typography variant='h6' className='text-primary font-bold'>
                     Client Email
                   </Typography>
                   <Typography variant='body1'>{data?.clientemail}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
+                  <Typography variant='h6' className='text-primary font-bold'>
                     Client Contact
                   </Typography>
                   <Typography variant='body1'>{data?.clientcontact}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
+                  <Typography variant='h6' className='text-primary font-bold'>
                     Client Company
                   </Typography>
                   <Typography variant='body1'>{data?.clientcompany}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
+                  <Typography variant='h6' className='text-primary font-bold'>
                     Client Country
                   </Typography>
                   <Typography variant='body1'>{data?.clientcountry}</Typography>
@@ -355,31 +358,31 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
             <TableContainer component={Paper} sx={{ padding: 2, backgroundColor: 'transparent' }}>
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
+                  <Typography variant='h6' className='text-primary font-bold'>
                     Project Lead
                   </Typography>
                   <Typography variant='body1'>{data?.projectlead}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
+                  <Typography variant='h6' className='text-primary font-bold'>
                     Frontend Developers
                   </Typography>
                   <Typography variant='body1'>{data?.frontenddev.join(', ')}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
+                  <Typography variant='h6' className='text-primary font-bold'>
                     Backend Developers
                   </Typography>
                   <Typography variant='body1'>{data?.backenddev.join(', ')}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
+                  <Typography variant='h6' className='text-primary font-bold'>
                     Testing Team
                   </Typography>
                   <Typography variant='body1'>{data?.testingteam.join(', ')}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
+                  <Typography variant='h6' className='text-primary font-bold'>
                     Project Manager
                   </Typography>
                   <Typography variant='body1'>{data?.bid_creater}</Typography>
@@ -389,62 +392,82 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
           )}
 
           {selectedTab === 3 && currentProjectSprint && (
-            <TableContainer component={Paper} sx={{ padding: 2, backgroundColor: 'transparent' }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Sprint Name</TableCell>
-                    <TableCell>Start Date</TableCell>
-                    <TableCell>End Date</TableCell>
-                    <TableCell>Total Sprint Amount</TableCell>
-                    <TableCell>Received Amount</TableCell>
-                    <TableCell>Pending Amount</TableCell>
-                    <TableCell>Modules</TableCell>
-                    <TableCell>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {currentProjectSprint.sprints.map((sprint, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{sprint.sprintname}</TableCell>
-                      <TableCell>{sprint.sprintStartDate}</TableCell>
-                      <TableCell>{sprint.sprintEndDate}</TableCell>
-                      <TableCell>
-                        {sprint.currency} {sprint.totalSprintAmount}
-                      </TableCell>
-                      <TableCell>
-                        {sprint.currency} {sprint.receivedAmount}
-                      </TableCell>
-                      <TableCell>
-                        {sprint.currency} {sprint.pendingAmount}
-                      </TableCell>
-                      <TableCell>{sprint.addmodule.join(', ')}</TableCell>
-                      <TableCell>
-                        <Grid container spacing={2}>
-                          <Grid item>
-                            <OpenDialogOnElementClick
-                              element={Button}
-                              elementProps={buttonaddmoduleProps}
-                              dialog={SprintEditDialog}
-                              dialogProps={{ sprint }}
-                            />
-                          </Grid>
+            <Paper sx={{ padding: 2, backgroundColor: 'transparent' }}>
+              <Grid className='flex' container justifyContent='space-between' alignItems='center'>
+                <SearchFilter
+                  label='Search'
+                  value={searchTerm}
+                  onChange={value => {
+                    setSearchTerm(value)
+                    setCurrentPage(1) // Reset to the first page when filtering
+                  }}
+                  placeholder='Search sprints...'
+                  style={{ width: '400px' }}
+                />
+              </Grid>
 
-                          <Grid item>
-                            <OpenDialogOnElementClick
-                              element={Button}
-                              elementProps={buttonviewmoduleProps}
-                              dialog={SprintViewDialog}
-                              dialogProps={{ sprint }}
-                            />
-                          </Grid>
-                        </Grid>
-                      </TableCell>
+              {/* Table */}
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell className='text-primary font-bold'>Sprint Name</TableCell>
+                      <TableCell className='text-primary font-bold'>Start Date</TableCell>
+                      <TableCell className='text-primary font-bold'>End Date</TableCell>
+                      <TableCell className='text-primary font-bold'>Total Sprint Amount</TableCell>
+                      <TableCell className='text-primary font-bold'>Received Amount</TableCell>
+                      <TableCell className='text-primary font-bold'>Pending Amount</TableCell>
+                      <TableCell className='text-primary font-bold'>Modules</TableCell>
+                      <TableCell className='text-primary font-bold'>Action</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {paginatedSprints?.map((sprint, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{sprint.sprintname}</TableCell>
+                        <TableCell>{sprint.sprintStartDate}</TableCell>
+                        <TableCell>{sprint.sprintEndDate}</TableCell>
+                        <TableCell>
+                          {sprint.currency} {sprint.totalSprintAmount}
+                        </TableCell>
+                        <TableCell>
+                          {sprint.currency} {sprint.receivedAmount}
+                        </TableCell>
+                        <TableCell>
+                          {sprint.currency} {sprint.pendingAmount}
+                        </TableCell>
+                        <TableCell>{sprint.addmodule.join(', ')}</TableCell>
+                        <TableCell>
+                          <Grid container spacing={2}>
+                            <Grid item>
+                              <OpenDialogOnElementClick
+                                element={Button}
+                                elementProps={buttonaddmoduleProps}
+                                dialog={SprintEditDialog}
+                                dialogProps={{ sprint }}
+                              />
+                            </Grid>
+                            <Grid item>
+                              <OpenDialogOnElementClick
+                                element={Button}
+                                elementProps={buttonviewmoduleProps}
+                                dialog={SprintViewDialog}
+                                dialogProps={{ sprint }}
+                              />
+                            </Grid>
+                          </Grid>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              {/* Paginator */}
+              <Grid className='p-5' container justifyContent='center' alignItems='center'>
+                <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+              </Grid>
+            </Paper>
           )}
         </Box>
       </Box>

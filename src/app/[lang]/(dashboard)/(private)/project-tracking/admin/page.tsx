@@ -29,8 +29,6 @@ import {
   type FilterFn
 } from '@tanstack/react-table'
 
-import type { getDictionary } from '@/utils/getDictionary'
-
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
 
 import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
@@ -79,10 +77,6 @@ const buttonProps: ButtonProps = {
   children: <i style={{ fontSize: '15px' }} className='tabler-edit text-white' />
 }
 
-type Props = {
-  dictionary: Awaited<ReturnType<typeof getDictionary>>
-}
-
 const buttonviewProps: ButtonProps = {
   variant: 'contained',
   color: 'primary',
@@ -101,11 +95,7 @@ const buttonaddmoduleProps: ButtonProps = {
   children: <i style={{ fontSize: '15px' }} className='tabler-plus text-white' />
 }
 
-const AdminProjectTracking: React.FC<Props> = ({ dictionary }) => {
-  console.log('Dictionary:', dictionary)
-
-  // const currentUser = ''
-
+const AdminProjectTracking: React.FC = () => {
   const [selectedManager, setSelectedManager] = useState('')
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [isViewTrackStatusOpen, setIsViewTrackStatusOpen] = useState(false)

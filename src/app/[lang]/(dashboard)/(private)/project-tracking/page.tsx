@@ -11,7 +11,6 @@ import AdminProjectTracking from './admin/page'
 const ProjectsPage = () => {
   return (
     <Box>
-      {/* <UserProjectData /> */}
       <AdminProjectTracking />
     </Box>
   )

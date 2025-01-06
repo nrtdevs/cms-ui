@@ -12,6 +12,7 @@ interface InputProps {
   error?: boolean
   helperText?: string
   type?: 'text' | 'number' | 'email' | 'password' // Extended type options
+  style?: React.CSSProperties
 }
 
 const SearchFilter: React.FC<InputProps> = ({
@@ -21,7 +22,8 @@ const SearchFilter: React.FC<InputProps> = ({
   placeholder = '',
   error = false,
   helperText = '',
-  type = 'text'
+  type = 'text',
+  style
 }) => {
   const inputId = `search-filter-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
 
@@ -46,7 +48,8 @@ const SearchFilter: React.FC<InputProps> = ({
         }}
         sx={{
           '& .MuiInputBase-root': { height: '40px' },
-          '& .MuiInputBase-input': { padding: '8px 30px' }
+          '& .MuiInputBase-input': { padding: '8px 30px' },
+          ...style // Apply the passed `style` here
         }}
       />
     </Grid>
