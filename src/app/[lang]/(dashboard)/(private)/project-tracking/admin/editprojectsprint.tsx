@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid } from '@mui/material'
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid } from '@mui/material'
+
+import CustomTextInput from '@/app/Custom-Cpmponents/input/custominput'
+import DatePickerInput from '@/app/Custom-Cpmponents/input/Datepickerinput'
 
 interface Sprint {
   sprintname: string
@@ -24,19 +27,17 @@ const SprintEditDialog: React.FC<SprintEditDialogProps> = ({ sprint, open, onClo
     sprintname: sprint.sprintname || '',
     sprintStartDate: sprint.sprintStartDate || '',
     sprintEndDate: sprint.sprintEndDate || '',
-    totalSprintAmount: sprint.totalSprintAmount || '',
-    receivedAmount: sprint.receivedAmount || '',
-    pendingAmount: sprint.pendingAmount || '',
+    totalSprintAmount: sprint.totalSprintAmount.toString() || '',
+    receivedAmount: sprint.receivedAmount.toString() || '',
+    pendingAmount: sprint.pendingAmount.toString() || '',
     addmodule: sprint.addmodule ? sprint.addmodule.join(', ') : ''
   })
 
   // Handle input change
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-
+  const handleChange = (field: keyof typeof formValues, value: string) => {
     setFormValues(prev => ({
       ...prev,
-      [name]: value
+      [field]: value
     }))
   }
 
@@ -44,10 +45,10 @@ const SprintEditDialog: React.FC<SprintEditDialogProps> = ({ sprint, open, onClo
   const handleSave = () => {
     const updatedSprint = {
       ...formValues,
-      totalSprintAmount: parseFloat(formValues?.totalSprintAmount.toString()),
-      receivedAmount: parseFloat(formValues?.receivedAmount.toString()),
-      pendingAmount: parseFloat(formValues?.pendingAmount.toString()),
-      addmodule: formValues.addmodule.split(',').map((item: string) => item.trim())
+      totalSprintAmount: parseFloat(formValues.totalSprintAmount),
+      receivedAmount: parseFloat(formValues.receivedAmount),
+      pendingAmount: parseFloat(formValues.pendingAmount),
+      addmodule: formValues.addmodule.split(',').map(item => item.trim())
     }
 
     console.log('Updated Sprint Data:', updatedSprint)
@@ -60,80 +61,63 @@ const SprintEditDialog: React.FC<SprintEditDialogProps> = ({ sprint, open, onClo
       <DialogContent>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
+            <CustomTextInput
               label='Sprint Name'
-              name='sprintname'
               value={formValues.sprintname}
-              onChange={handleChange}
-              variant='outlined'
+              onChange={value => handleChange('sprintname', value)}
+              placeholder='Enter Sprint Name'
+              required
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
+            <DatePickerInput
               label='Start Date'
-              name='sprintStartDate'
-              type='date'
               value={formValues.sprintStartDate}
-              onChange={handleChange}
-              variant='outlined'
-              InputLabelProps={{ shrink: true }}
+              onChange={value => handleChange('sprintStartDate', value)}
+              placeholder='Select Start Date'
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
+            <DatePickerInput
               label='End Date'
-              name='sprintEndDate'
-              type='date'
               value={formValues.sprintEndDate}
-              onChange={handleChange}
-              variant='outlined'
-              InputLabelProps={{ shrink: true }}
+              onChange={value => handleChange('sprintEndDate', value)}
+              placeholder='Select End Date'
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
+            <CustomTextInput
               label='Total Sprint Amount'
-              name='totalSprintAmount'
-              type='number'
               value={formValues.totalSprintAmount}
-              onChange={handleChange}
-              variant='outlined'
+              onChange={value => handleChange('totalSprintAmount', value)}
+              placeholder='Enter Total Sprint Amount'
+              type='number'
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
+            <CustomTextInput
               label='Received Amount'
-              name='receivedAmount'
-              type='number'
               value={formValues.receivedAmount}
-              onChange={handleChange}
-              variant='outlined'
+              onChange={value => handleChange('receivedAmount', value)}
+              placeholder='Enter Received Amount'
+              type='number'
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
+            <CustomTextInput
               label='Pending Amount'
-              name='pendingAmount'
-              type='number'
               value={formValues.pendingAmount}
-              onChange={handleChange}
-              variant='outlined'
+              onChange={value => handleChange('pendingAmount', value)}
+              placeholder='Enter Pending Amount'
+              type='number'
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
+            <CustomTextInput
               label='Modules'
-              name='addmodule'
               value={formValues.addmodule}
-              onChange={handleChange}
-              variant='outlined'
+              onChange={value => handleChange('addmodule', value)}
+              placeholder='Separate module names with commas'
               helperText='Separate module names with commas.'
             />
           </Grid>

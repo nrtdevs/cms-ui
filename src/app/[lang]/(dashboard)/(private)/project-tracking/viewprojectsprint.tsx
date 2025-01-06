@@ -1,150 +1,97 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid } from '@mui/material'
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Typography, Divider } from '@mui/material'
 
 interface Sprint {
   sprintname: string
   sprintStartDate: string
   sprintEndDate: string
-  totalSprintAmount: number
-  receivedAmount: number
-  pendingAmount: number
+  totalSprintAmount: number | string
+  receivedAmount: number | string
+  pendingAmount: number | string
   addmodule: string[]
 }
 
-interface SprintEditDialogProps {
+interface SprintViewDialogProps {
   sprint: Sprint
   open: boolean
   onClose: () => void
 }
 
-const SprintViewDialog: React.FC<SprintEditDialogProps> = ({ sprint, open, onClose }) => {
-  // Local state to manage form inputs
-  const [formValues, setFormValues] = useState({
-    sprintname: sprint.sprintname || '',
-    sprintStartDate: sprint.sprintStartDate || '',
-    sprintEndDate: sprint.sprintEndDate || '',
-    totalSprintAmount: sprint.totalSprintAmount || '',
-    receivedAmount: sprint.receivedAmount || '',
-    pendingAmount: sprint.pendingAmount || '',
-    addmodule: sprint.addmodule ? sprint.addmodule.join(', ') : ''
-  })
-
-  // Handle input change
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-
-    setFormValues(prev => ({
-      ...prev,
-      [name]: value
-    }))
-  }
-
-  // Handle Save
-  const handleSave = () => {
-    const updatedSprint = {
-      ...formValues,
-      totalSprintAmount: parseFloat(formValues?.totalSprintAmount.toString()),
-      receivedAmount: parseFloat(formValues?.receivedAmount.toString()),
-      pendingAmount: parseFloat(formValues?.pendingAmount.toString()),
-      addmodule: formValues.addmodule.split(',').map((item: string) => item.trim())
-    }
-
-    console.log('Updated Sprint Data:', updatedSprint)
-    if (onClose) onClose()
-  }
-
+const SprintViewDialog: React.FC<SprintViewDialogProps> = ({ sprint, open, onClose }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>
-      <DialogTitle>Edit Sprint</DialogTitle>
+      <DialogTitle className='font-bold text-primary  align-center'>Sprint Details</DialogTitle>
+
       <DialogContent>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} sx={{ padding: 2 }}>
+          {/* Sprint Name */}
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label='Sprint Name'
-              name='sprintname'
-              value={formValues.sprintname}
-              onChange={handleChange}
-              variant='outlined'
-            />
+            <Typography variant='h6' color='primary'>
+              Sprint Name
+            </Typography>
+            <Typography variant='body1'>{sprint.sprintname}</Typography>
+          </Grid>
+
+          <Divider sx={{ width: '100%', marginY: 2 }} />
+
+          {/* Start Date and End Date */}
+          <Grid item xs={12} sm={6}>
+            <Typography variant='h6' color='primary'>
+              Start Date
+            </Typography>
+            <Typography variant='body1'>{sprint.sprintStartDate}</Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Start Date'
-              name='sprintStartDate'
-              type='date'
-              value={formValues.sprintStartDate}
-              onChange={handleChange}
-              variant='outlined'
-              InputLabelProps={{ shrink: true }}
-            />
+            <Typography variant='h6' color='primary'>
+              End Date
+            </Typography>
+            <Typography variant='body1'>{sprint.sprintEndDate}</Typography>
           </Grid>
+
+          <Divider sx={{ width: '100%', marginY: 2 }} />
+
+          {/* Total Sprint Amount */}
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='End Date'
-              name='sprintEndDate'
-              type='date'
-              value={formValues.sprintEndDate}
-              onChange={handleChange}
-              variant='outlined'
-              InputLabelProps={{ shrink: true }}
-            />
+            <Typography variant='h6' color='primary'>
+              Total Sprint Amount
+            </Typography>
+            <Typography variant='body1'>${Number(sprint.totalSprintAmount || 0).toFixed(2)}</Typography>
           </Grid>
+
+          {/* Received Amount */}
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Total Sprint Amount'
-              name='totalSprintAmount'
-              type='number'
-              value={formValues.totalSprintAmount}
-              onChange={handleChange}
-              variant='outlined'
-            />
+            <Typography variant='h6' color='primary'>
+              Received Amount
+            </Typography>
+            <Typography variant='body1'>${Number(sprint.receivedAmount || 0).toFixed(2)}</Typography>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Received Amount'
-              name='receivedAmount'
-              type='number'
-              value={formValues.receivedAmount}
-              onChange={handleChange}
-              variant='outlined'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Pending Amount'
-              name='pendingAmount'
-              type='number'
-              value={formValues.pendingAmount}
-              onChange={handleChange}
-              variant='outlined'
-            />
-          </Grid>
+
+          {/* Pending Amount */}
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label='Modules'
-              name='addmodule'
-              value={formValues.addmodule}
-              onChange={handleChange}
-              variant='outlined'
-              helperText='Separate module names with commas.'
-            />
+            <Typography variant='h6' color='primary'>
+              Pending Amount
+            </Typography>
+            <Typography variant='body1'>${Number(sprint.pendingAmount || 0).toFixed(2)}</Typography>
+          </Grid>
+
+          <Divider sx={{ width: '100%', marginY: 2 }} />
+
+          {/* Modules */}
+          <Grid item xs={12}>
+            <Typography variant='h6' color='primary'>
+              Modules
+            </Typography>
+            <Typography variant='body1'>
+              {sprint.addmodule.length > 0 ? sprint.addmodule.join(', ') : 'No modules added'}
+            </Typography>
           </Grid>
         </Grid>
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose} color='secondary'>
-          Cancel
-        </Button>
-        <Button onClick={handleSave} color='primary' variant='contained'>
-          Save
+          Close
         </Button>
       </DialogActions>
     </Dialog>

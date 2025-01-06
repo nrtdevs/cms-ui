@@ -14,7 +14,8 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TableBody
+  TableBody,
+  Card
 } from '@mui/material'
 
 import SprintEditDialog from './admin/editprojectsprint'
@@ -129,7 +130,7 @@ const buttonaddmoduleProps: ButtonProps = {
   size: 'small',
   className: 'bg-[#5eba00] text-white p-0 rounded-sm',
   sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
-  children: <i style={{ fontSize: '15px' }} className='tabler-plus text-white' />
+  children: <i style={{ fontSize: '15px' }} className='tabler-edit text-white' />
 }
 
 const buttonviewmoduleProps: ButtonProps = {
@@ -137,7 +138,7 @@ const buttonviewmoduleProps: ButtonProps = {
   color: 'primary',
   size: 'small',
   className: 'bg-primary text-white p-0 rounded-sm',
-  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px', marginLeft: '5px' },
   children: <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
 }
 
@@ -164,122 +165,158 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
   const currentProjectSprint = defaultSprint.find(project => project.projectname === data?.projectname)
 
   return (
-    <div>
-      <Button variant='contained' color='secondary' onClick={onClose} sx={{ marginBottom: 2, fontWeight: 'bold' }}>
-        Back to Main Page
-      </Button>
-
+    <Card>
       {/* Tabs for Section Navigation */}
       <Box sx={{ width: '100%' }}>
-        <Tabs
-          value={selectedTab}
-          onChange={handleTabChange}
-          aria-label='Project Details Tabs'
-          variant='scrollable'
-          scrollButtons='auto'
-        >
-          <Tab label='Project & Bid Details' />
-          <Tab label='Client Information' />
-          <Tab label='Project Team' />
-          <Tab label='Project Modules' />
-        </Tabs>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Tabs
+            value={selectedTab}
+            onChange={handleTabChange}
+            aria-label='Project Details Tabs'
+            variant='scrollable'
+            scrollButtons='auto'
+            sx={{ flexGrow: 1 }} // Ensures the Tabs take the remaining space
+          >
+            <Tab label={`${data?.projectname} Project & Bid Details`} />
+            <Tab label='Client Information' />
+            <Tab label={`${data?.projectname} Team`} />
+            <Tab label={`${data?.projectname} Modules`} />
+          </Tabs>
+          <Button color='secondary' onClick={onClose} sx={{ marginBottom: 2, fontWeight: 'bold' }}>
+            <i className='tabler-arrow-back' />
+          </Button>
+        </Box>
 
         {/* Tab Panels */}
-        <Box sx={{ padding: 2 }}>
+        <Box>
           {selectedTab === 0 && (
             <TableContainer component={Paper} sx={{ padding: 2, backgroundColor: 'transparent' }}>
-              <Typography variant='h5' color='primary' gutterBottom>
-                Project and Bid Details for {data?.projectname}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    Project Name
-                  </Typography>
-                  <Typography variant='body1'>{data?.projectname}</Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    Project Description
-                  </Typography>
-                  <Typography variant='body1'>{data?.projectdescription}</Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    Skills
-                  </Typography>
-                  <Typography variant='body1'>{data?.skills.join(', ')}</Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    Platform
-                  </Typography>
-                  <Typography variant='body1'>{data?.platform}</Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    Status
-                  </Typography>
-                  <Typography variant='body1'>{data?.status}</Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    Actual Bid Amount
-                  </Typography>
-                  <Typography variant='body1'>
-                    {data?.currency} {data?.Actualbidammount}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    Bid Date
-                  </Typography>
-                  <Typography variant='body1'>{data?.bid_date}</Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    Activation Date
-                  </Typography>
-                  <Typography variant='body1'>{data?.activation_date}</Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    End Date
-                  </Typography>
-                  <Typography variant='body1'>{data?.end_date}</Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    Received Amount
-                  </Typography>
-                  <Typography variant='body1'>
-                    {data?.currency} {data?.recivedammount}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    Pending Amount
-                  </Typography>
-                  <Typography variant='body1'>
-                    {data?.currency} {data?.pendingammount}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant='h6' color='textSecondary'>
-                    Project Start Date
-                  </Typography>
-                  <Typography variant='body1'>{data?.Projectstartdate}</Typography>
-                </Grid>
-              </Grid>
+              <Table sx={{ minWidth: 650 }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='h6' color='textSecondary'>
+                        Field
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='h6' color='textSecondary'>
+                        Details
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>Project Name</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>{data?.projectname}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>Project Description</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>{data?.projectdescription}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>Skills</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>{data?.skills.join(', ')}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>Platform</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>{data?.platform}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>Status</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>{data?.status}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>Actual Bid Amount</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>
+                        {data?.currency} {data?.Actualbidammount}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>Bid Date</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>{data?.bid_date}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>Activation Date</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>{data?.activation_date}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>End Date</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>{data?.end_date}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>Received Amount</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>
+                        {data?.currency} {data?.recivedammount}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>Pending Amount</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>
+                        {data?.currency} {data?.pendingammount}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant='body1'>Project Start Date</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant='body1'>{data?.Projectstartdate}</Typography>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </TableContainer>
           )}
 
           {selectedTab === 1 && (
             <TableContainer component={Paper} sx={{ padding: 2, backgroundColor: 'transparent' }}>
-              <Typography variant='h5' color='primary' gutterBottom>
-                Client Information
-              </Typography>
-              <Grid container spacing={2}>
+              <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                   <Typography variant='h6' color='textSecondary'>
                     Client Name
@@ -316,10 +353,7 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
 
           {selectedTab === 2 && (
             <TableContainer component={Paper} sx={{ padding: 2, backgroundColor: 'transparent' }}>
-              <Typography variant='h5' color='primary' gutterBottom>
-                Project Team
-              </Typography>
-              <Grid container spacing={2}>
+              <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                   <Typography variant='h6' color='textSecondary'>
                     Project Lead
@@ -346,7 +380,7 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Typography variant='h6' color='textSecondary'>
-                    Project Manager (Bid Creator)
+                    Project Manager
                   </Typography>
                   <Typography variant='body1'>{data?.bid_creater}</Typography>
                 </Grid>
@@ -354,69 +388,67 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
             </TableContainer>
           )}
 
-          <>
-            {selectedTab === 3 && currentProjectSprint && (
-              <TableContainer component={Paper} sx={{ padding: 2, backgroundColor: 'transparent' }}>
-                <Typography variant='h5' color='primary' gutterBottom>
-                  Project Modules for {data?.projectname}
-                </Typography>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Sprint Name</TableCell>
-                      <TableCell>Start Date</TableCell>
-                      <TableCell>End Date</TableCell>
-                      <TableCell>Total Sprint Amount</TableCell>
-                      <TableCell>Received Amount</TableCell>
-                      <TableCell>Pending Amount</TableCell>
-                      <TableCell>Modules</TableCell>
-                      <TableCell>Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {currentProjectSprint.sprints.map((sprint, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{sprint.sprintname}</TableCell>
-                        <TableCell>{sprint.sprintStartDate}</TableCell>
-                        <TableCell>{sprint.sprintEndDate}</TableCell>
-                        <TableCell>
-                          {sprint.currency} {sprint.totalSprintAmount}
-                        </TableCell>
-                        <TableCell>
-                          {sprint.currency} {sprint.receivedAmount}
-                        </TableCell>
-                        <TableCell>
-                          {sprint.currency} {sprint.pendingAmount}
-                        </TableCell>
-                        <TableCell>{sprint.addmodule.join(', ')}</TableCell>
-                        <TableCell>
-                          {sprint && (
+          {selectedTab === 3 && currentProjectSprint && (
+            <TableContainer component={Paper} sx={{ padding: 2, backgroundColor: 'transparent' }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Sprint Name</TableCell>
+                    <TableCell>Start Date</TableCell>
+                    <TableCell>End Date</TableCell>
+                    <TableCell>Total Sprint Amount</TableCell>
+                    <TableCell>Received Amount</TableCell>
+                    <TableCell>Pending Amount</TableCell>
+                    <TableCell>Modules</TableCell>
+                    <TableCell>Action</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {currentProjectSprint.sprints.map((sprint, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{sprint.sprintname}</TableCell>
+                      <TableCell>{sprint.sprintStartDate}</TableCell>
+                      <TableCell>{sprint.sprintEndDate}</TableCell>
+                      <TableCell>
+                        {sprint.currency} {sprint.totalSprintAmount}
+                      </TableCell>
+                      <TableCell>
+                        {sprint.currency} {sprint.receivedAmount}
+                      </TableCell>
+                      <TableCell>
+                        {sprint.currency} {sprint.pendingAmount}
+                      </TableCell>
+                      <TableCell>{sprint.addmodule.join(', ')}</TableCell>
+                      <TableCell>
+                        <Grid container spacing={2}>
+                          <Grid item>
                             <OpenDialogOnElementClick
                               element={Button}
                               elementProps={buttonaddmoduleProps}
                               dialog={SprintEditDialog}
                               dialogProps={{ sprint }}
                             />
-                          )}
-                          {sprint && (
+                          </Grid>
+
+                          <Grid item>
                             <OpenDialogOnElementClick
                               element={Button}
                               elementProps={buttonviewmoduleProps}
                               dialog={SprintViewDialog}
                               dialogProps={{ sprint }}
                             />
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </>
+                          </Grid>
+                        </Grid>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </Box>
       </Box>
-    </div>
+    </Card>
   )
 }
 
