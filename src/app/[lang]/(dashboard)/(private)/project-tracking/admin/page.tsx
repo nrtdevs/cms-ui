@@ -321,12 +321,7 @@ const AdminProjectTracking: React.FC = () => {
                 dialog={AddProjectsprint}
                 dialogProps={{ data: project }}
               />
-              <OpenDialogOnElementClick
-                element={Button}
-                elementProps={buttonviewProps}
-                dialog={ViewTrackStatus}
-                dialogProps={{ data: project }}
-              />
+              <Button {...buttonviewProps} onClick={() => handleViewTrackStatusClick(project)} />
             </Box>
           )
         }
@@ -350,30 +345,40 @@ const AdminProjectTracking: React.FC = () => {
   })
 
   return (
-    <Card>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          m: 5
-        }}
-      >
-        <Grid container spacing={2} alignItems='center'>
-          <Grid item xs={12} sm={5} md={3}>
-            <SearchFilter label='Search' value={searchTerm} onChange={handleSearch} placeholder='Search all fields' />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3} className='mb-1'>
-            <FilterDropdown
-              options={bidCreators}
-              selectedOption={selectedManager}
-              onSelect={value => {
-                setSelectedManager(value)
-              }}
-            />
-          </Grid>
-        </Grid>
-      </Box>
+    <Box>
+      {isViewTrackStatusOpen ? (
+        <ViewTrackStatus data={selectedProject} onClose={handleCloseViewTrackStatus} />
+      ) : (
+        <Card>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              m: 5
+            }}
+          >
+            <Grid container spacing={2} alignItems='center'>
+              <Grid item xs={12} sm={5} md={3}>
+                <SearchFilter
+                  label='Search'
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  placeholder='Search all fields'
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} className='mb-1'>
+                <FilterDropdown
+                  options={bidCreators}
+                  selectedOption={selectedManager}
+                  onSelect={value => {
+                    setSelectedManager(value)
+                    console.log('Selected Bid Creator:', value)
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </Box>
 
           <TableContainer component={Paper} className='shadow-none '>
             <Table>
