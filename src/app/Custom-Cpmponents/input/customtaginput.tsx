@@ -4,9 +4,9 @@ import { Grid, Typography, Autocomplete, TextField, Chip } from '@mui/material'
 
 interface TagInputProps {
   label: string
-  tags: string[]
+  tags: string[] // `tags` should be an array of strings
   onChange: (tags: string[]) => void
-  options: string[]
+  options: string[] // Array of options for autocomplete
   placeholder?: string
   required?: boolean
   error?: boolean
@@ -69,7 +69,7 @@ const CustomTagInput: React.FC<TagInputProps> = ({
         freeSolo
         multiple
         options={options}
-        value={tags}
+        value={tags} // Pass the `tags` array directly here
         onChange={(event, newValue) => {
           if (typeof newValue[newValue.length - 1] === 'string') {
             handleAddTag(newValue[newValue.length - 1] as string)
@@ -108,7 +108,7 @@ const CustomTagInput: React.FC<TagInputProps> = ({
           />
         )}
         renderTags={value =>
-          value.map((option) => (
+          value.map(option => (
             <Chip
               key={option} // Directly using the option as the key
               label={option}
