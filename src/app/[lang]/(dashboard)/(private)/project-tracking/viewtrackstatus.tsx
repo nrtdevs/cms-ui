@@ -180,7 +180,7 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
             scrollButtons='auto'
             sx={{ flexGrow: 1 }} // Ensures the Tabs take the remaining space
           >
-            <Tab label={`${data?.projectname} Project & Bid Details`} />
+            <Tab label={`${data?.projectname}  Details`} />
             <Tab label='Client Information' />
             <Tab label={`${data?.projectname} Team`} />
             <Tab label={`${data?.projectname} Modules`} />
@@ -193,128 +193,88 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
         {/* Tab Panels */}
         <Box>
           {selectedTab === 0 && (
-            <TableContainer component={Paper} sx={{ padding: 2, backgroundColor: 'transparent' }}>
-              <Table sx={{ minWidth: 650 }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='h6' className='text-primary font-bold'>
-                        Field
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='h6' className='text-primary font-bold'>
-                        Details
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>Project Name</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>{data?.projectname}</Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>Project Description</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>{data?.projectdescription}</Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>Skills</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>{data?.skills.join(', ')}</Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>Platform</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>{data?.platform}</Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>Status</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>{data?.status}</Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>Actual Bid Amount</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>
-                        {data?.currency} {data?.Actualbidammount}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>Bid Date</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>{data?.bid_date}</Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>Activation Date</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>{data?.activation_date}</Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>End Date</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>{data?.end_date}</Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>Received Amount</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>
-                        {data?.currency} {data?.recivedammount}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>Pending Amount</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>
-                        {data?.currency} {data?.pendingammount}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant='body1'>Project Start Date</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant='body1'>{data?.Projectstartdate}</Typography>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <Paper elevation={3} sx={{ padding: 4, backgroundColor: 'transparent' }}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    Project Name:
+                  </Typography>
+                  <Typography variant='body1'>{data?.projectname}</Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    Project Description:
+                  </Typography>
+                  <Typography variant='body1'>{data?.projectdescription}</Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    Skills:
+                  </Typography>
+                  <Typography variant='body1'>{data?.skills.join(', ')}</Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    Platform:
+                  </Typography>
+                  <Typography variant='body1'>{data?.platform}</Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    Status:
+                  </Typography>
+                  <Typography variant='body1'>{data?.status}</Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    Actual Bid Amount:
+                  </Typography>
+                  <Typography variant='body1'>
+                    {data?.currency} {data?.Actualbidammount}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    Bid Date:
+                  </Typography>
+                  <Typography variant='body1'>{data?.bid_date}</Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    Activation Date:
+                  </Typography>
+                  <Typography variant='body1'>{data?.activation_date}</Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    End Date:
+                  </Typography>
+                  <Typography variant='body1'>{data?.end_date}</Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    Received Amount:
+                  </Typography>
+                  <Typography variant='body1'>
+                    {data?.currency} {data?.recivedammount}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    Pending Amount:
+                  </Typography>
+                  <Typography variant='body1'>
+                    {data?.currency} {data?.pendingammount}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant='subtitle1' className='font-bold'>
+                    Project Start Date:
+                  </Typography>
+                  <Typography variant='body1'>{data?.Projectstartdate}</Typography>
+                </Grid>
+              </Grid>
+            </Paper>
           )}
 
           {selectedTab === 1 && (

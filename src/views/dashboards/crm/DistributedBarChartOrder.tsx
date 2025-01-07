@@ -116,7 +116,7 @@ const DistributedBarChartOrder = () => {
             124k
           </Typography>
           <Typography variant='body2' color='success.main'>
-            +12.6%
+            +15.6%
           </Typography>
         </div>
       </CardContent>

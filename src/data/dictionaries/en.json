@@ -105,6 +105,7 @@
     "projectmanagement": "Bid Management",
     "projecttracking": "Project Tracking",
     "adduser": "Add User",
-    "financialmanagement": "Financial Management"
+    "financialmanagement": "Financial Management",
+    "teamsmanagement": "Teams Management"
   }
 }
