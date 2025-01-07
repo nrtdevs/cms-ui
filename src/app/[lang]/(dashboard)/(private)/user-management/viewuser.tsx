@@ -65,10 +65,10 @@ const ViewUserInfo: React.FC<ViewProjectInfoProps> = ({ open, setOpen, data }) =
   const [mode, setMode] = useState<'light' | 'dark'>('light') // Light mode by default
 
   return (
-    <ThemeProvider theme={getTheme(mode)}>
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth='md'>
+    // <ThemeProvider theme={getTheme(mode)}>
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth='sm'>
         {/* Dialog Title */}
-        <DialogTitle sx={{ backgroundColor: 'primary.main', color: 'white', fontWeight: 'bold' }}>
+        <DialogTitle className='font-bold text-primary align-left text-left '>
           User Details
         </DialogTitle>
 
@@ -76,13 +76,12 @@ const ViewUserInfo: React.FC<ViewProjectInfoProps> = ({ open, setOpen, data }) =
         <DialogContent sx={{ backgroundColor: 'background.paper', padding: '32px' }}>
           {/* Section 1: User Information */}
           <Box mb={3}>
-            <Typography variant='h6' className='text-primary font-bold' gutterBottom>
-              User Information
-            </Typography>
 
-            <Grid container spacing={3}>
+
+            <Grid container spacing={2}  >
               <Grid item xs={12} sm={4}>
-                <Typography variant='subtitle2' color='text.secondary'>
+                <Typography variant='h6' className='text-primary' >
+                <br/>
                   Full Name
                 </Typography>
                 <Typography variant='body1'>{data.fullname}</Typography>
@@ -90,16 +89,18 @@ const ViewUserInfo: React.FC<ViewProjectInfoProps> = ({ open, setOpen, data }) =
             </Grid>
           </Box>
 
+          <Divider sx={{ width: '100%', marginY: 2 }} />
+
           {/* Section 2: Additional Information */}
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-              <Typography variant='subtitle2' color='text.secondary'>
+              <Typography variant='h6' className=' text-primary'>
                 Position
               </Typography>
               <Typography variant='body1'>{data.position}</Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography variant='subtitle2' color='text.secondary'>
+              <Typography variant='h6' className=' text-primary'>
                 User ID
               </Typography>
               <Typography variant='body1'>{data.employeeId.toLocaleString()}</Typography>
@@ -108,45 +109,55 @@ const ViewUserInfo: React.FC<ViewProjectInfoProps> = ({ open, setOpen, data }) =
 
           <Grid container spacing={3} mt={2}>
             <Grid item xs={12} sm={6}>
-              <Typography variant='subtitle2' color='text.secondary'>
+              <Typography variant='h6' className=' text-primary'>
                 Company
               </Typography>
               <Typography variant='body1'>{data.company}</Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography variant='subtitle2' color='text.secondary'>
+              <Typography variant='h6' className=' text-primary'>
                 Employee Type
               </Typography>
               <Typography variant='body1'>{data.employeeType}</Typography>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant='subtitle2' color='text.secondary'>
+            {/* <Grid item xs={12} sm={6}>
+              <Typography variant='h6' className=' text-primary'>
                 Contact
               </Typography>
               <Typography variant='body1'>{data.contact}</Typography>
-            </Grid>
+            </Grid> */}
           </Grid>
 
+          <Divider sx={{ width: '100%', marginY: 2 }} />
+
           {/* Section 3: Email */}
-          <Box mt={3}>
-            <Typography variant='subtitle2' color='text.secondary'>
+          {/* <Box mt={2}> */}
+          <Grid container spacing={3} mt={2}>
+          <Grid item xs={12} sm={6}>
+              <Typography variant='h6' className=' text-primary'>
+                Contact
+              </Typography>
+              <Typography variant='body1'>{data.contact}</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+              <Typography variant='h6' className=' text-primary'>
               Email
             </Typography>
             <Typography variant='body1'>{data.email}</Typography>
-          </Box>
-
+            </Grid>
+           </Grid>
+          {/* </Box> */}
           {/* Divider for clean separation */}
-          <Divider sx={{ marginTop: 3, marginBottom: 3 }} />
         </DialogContent>
 
         {/* Dialog Actions */}
-        <DialogActions sx={{ padding: '16px 32px', backgroundColor: 'background.default' }}>
-          <Button onClick={() => setOpen(false)} color='primary' variant='contained'>
+        <DialogActions >
+          <Button onClick={() => setOpen(false)} color='secondary' >
             Close
           </Button>
         </DialogActions>
       </Dialog>
-    </ThemeProvider>
+  // </ThemeProvider>
   )
 }
 
