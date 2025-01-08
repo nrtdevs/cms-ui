@@ -155,6 +155,7 @@ const AdminProjectData: React.FC = () => {
 
   const bidCreators = Array.from(new Set(data.map(item => item.bid_creater)))
 
+
   const handleSearch = (value: string) => {
     setSearchTerm(value.toLowerCase())
   }
@@ -201,7 +202,7 @@ const AdminProjectData: React.FC = () => {
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
             {info.getValue<string>()}
           </Typography>
-        )
+          )
       },
 
       {
@@ -220,6 +221,7 @@ const AdminProjectData: React.FC = () => {
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
             {info.getValue<string>()}
           </Typography>
+         
         )
       },
       {
@@ -241,33 +243,33 @@ const AdminProjectData: React.FC = () => {
         )
       },
 
-      {
-        accessorKey: 'clientemail',
-        header: 'Client Email',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
-        )
-      },
-      {
-        accessorKey: 'clientcontact',
-        header: 'Client Contact',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
-        )
-      },
-      {
-        accessorKey: 'clientcompany',
-        header: 'Client Company',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
-        )
-      },
+      // {
+      //   accessorKey: 'clientemail',
+      //   header: 'Client Email',
+      //   cell: info => (
+      //     <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+      //       {info.getValue<string>()}
+      //     </Typography>
+      //   )
+      // },
+      // {
+      //   accessorKey: 'clientcontact',
+      //   header: 'Client Contact',
+      //   cell: info => (
+      //     <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+      //       {info.getValue<string>()}
+      //     </Typography>
+      //   )
+      // },
+      // {
+      //   accessorKey: 'clientcompany',
+      //   header: 'Client Company',
+      //   cell: info => (
+      //     <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+      //       {info.getValue<string>()}
+      //     </Typography>
+      //   )
+      // },
       {
         accessorKey: 'bidammount',
         header: 'Bid Amount',

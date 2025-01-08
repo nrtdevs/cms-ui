@@ -1,3 +1,4 @@
+
 'use client'
 import React, { useState } from 'react'
 
@@ -67,112 +68,132 @@ const ViewProjectInfo: React.FC<ViewProjectInfoProps> = ({ open, setOpen, data }
   const [mode, setMode] = useState<'light' | 'dark'>('light') // Light mode by default
 
   return (
-    <ThemeProvider theme={getTheme(mode)}>
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth='md'>
-        <DialogTitle sx={{ backgroundColor: 'primary.main', color: 'white' }}>Project Details</DialogTitle>
-        <DialogContent sx={{ backgroundColor: 'background.paper', padding: '24px' }}>
-          <Box mb={2}>
-            <Grid className='mt-5'>
-              <Typography variant='h6' className='text-primary font-bold' gutterBottom>
-                Project Information
+    //  <ThemeProvider theme={getTheme(mode)}>
+    <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth='sm'>
+      <DialogTitle className='text-primary font-bold align-left text-left ' gutterBottom>
+        Project Information
+      </DialogTitle>
+
+      <DialogContent sx={{ backgroundColor: 'background.paper', padding: '32px' }}>
+        <Box mb={3}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={4}>
+              <Typography variant='h6' className='text-primary'>
+                Project Name
               </Typography>
+              <Typography variant='body1'>{data.projectname}</Typography>
             </Grid>
-            <Typography variant='h6' gutterBottom>
-              Project Name
+          </Grid>
+        </Box>
+
+        <Grid container spacing={3} mt={2}>
+          <Grid item xs={12} sm={6}>
+            <Typography variant='h6' className='text-primary '>
+              Skills
             </Typography>
             <Typography variant='body1' color='text.secondary'>
-              {data.projectname}
+              {data.skills.join(', ')}
             </Typography>
-          </Box>
-
-          <Grid container spacing={2} mt={2}>
-            <Grid item xs={12} sm={6}>
-              <Typography variant='h6'>Skills</Typography>
-              <Typography variant='body1' color='text.secondary'>
-                {data.skills.join(', ')}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant='h6'>Bid Amount</Typography>
-              <Typography variant='body1' color='text.secondary'>
-                ${data.bidammount.toLocaleString()}
-              </Typography>
-            </Grid>
           </Grid>
-
-          <Grid container spacing={2} mt={2}>
-            <Grid item xs={12} sm={6}>
-              <Typography variant='h6'>Platform</Typography>
-              <Typography variant='body1' color='text.secondary'>
-                {data.platform}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant='h6'>Bidding Date</Typography>
-              <Typography variant='body1' color='text.secondary'>
-                {data.bid_date}
-              </Typography>
-            </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant='h6' className='text-primary '>
+              Bid Amount
+            </Typography>
+            <Typography variant='body1' color='text.secondary'>
+              ${data.bidammount.toLocaleString()}
+            </Typography>
           </Grid>
+        </Grid>
 
-          <Box mt={2} mb={2}>
-            <Typography variant='h6' gutterBottom>
+        <Grid container spacing={2} mt={2}>
+          <Grid item xs={12} sm={6}>
+            <Typography variant='h6' className='text-primary '>
+              Platform
+            </Typography>
+            <Typography variant='body1' color='text.secondary'>
+              {data.platform}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant='h6' className='text-primary '>
+              Bidding Date
+            </Typography>
+            <Typography variant='body1' color='text.secondary'>
+              {data.bid_date}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Box mb={2}>
+          {/* <Grid container spacing={2}> */}
+          <Grid item xs={12} sm={4}>
+            <Typography variant='h6' className='text-primary'>
+              <br />
               Description
             </Typography>
-            <Typography variant='body1' color='text.secondary'>
-              {data.projectdescription}
+            <Typography variant='body1'>{data.projectdescription}</Typography>
+          </Grid>
+          {/* </Grid> */}
+        </Box>
+
+        <Divider sx={{ width: '100%', marginY: 2 }} />
+
+        {/* Client Information Section */}
+        <Box mt={2}>
+          <Grid mt={5}>
+            <Typography variant='h5' className='text-primary font-bold align-left text-left ' sx={{m:-2}} gutterBottom>
+              Client Information
+              
             </Typography>
-          </Box>
-
-          <Divider />
-
-          {/* Client Information Section */}
-          <Box mt={2}>
-            <Grid className='mt-5'>
-              <Typography variant='h6' className='text-primary font-bold' gutterBottom>
-                Client Information
+          </Grid>
+        <br/>
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={12} sm={6}>
+              <Typography variant='h6' className='text-primary '>
+                Client Name
+              </Typography>
+              <Typography variant='body1' color='text.secondary'>
+                {data.clientname}
               </Typography>
             </Grid>
-
-            <Grid container spacing={2} mt={2}>
-              <Grid item xs={12} sm={6}>
-                <Typography variant='h6'>Client Name</Typography>
-                <Typography variant='body1' color='text.secondary'>
-                  {data.clientname}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant='h6'>Client Email</Typography>
-                <Typography variant='body1' color='text.secondary'>
-                  {data.clientemail}
-                </Typography>
-              </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant='h6' className='text-primary '>
+                Client Email
+              </Typography>
+              <Typography variant='body1' color='text.secondary'>
+                {data.clientemail}
+              </Typography>
             </Grid>
+          </Grid>
 
-            <Grid container spacing={2} mt={2}>
-              <Grid item xs={12} sm={6}>
-                <Typography variant='h6'>Client Contact</Typography>
-                <Typography variant='body1' color='text.secondary'>
-                  {data.clientcontact}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant='h6'>Client Company</Typography>
-                <Typography variant='body1' color='text.secondary'>
-                  {data.clientcompany}
-                </Typography>
-              </Grid>
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={12} sm={6}>
+              <Typography variant='h6' className='text-primary font-semibold'>
+                Client Contact
+              </Typography>
+              <Typography variant='body1' color='text.secondary'>
+                {data.clientcontact}
+              </Typography>
             </Grid>
-          </Box>
-        </DialogContent>
+            <Grid item xs={12} sm={6}>
+              <Typography variant='h6' className='text-primary font-semibold'>
+                Client Company
+              </Typography>
+              <Typography variant='body1' color='text.secondary'>
+                {data.clientcompany}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
+      </DialogContent>
 
-        <DialogActions className='bg-[transparent]'>
-          <Button onClick={() => setOpen(false)} color='primary' variant='contained'>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </ThemeProvider>
+      <DialogActions>
+        <Button onClick={() => setOpen(false)} color='secondary'>
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+    //  </ThemeProvider>
   )
 }
 
