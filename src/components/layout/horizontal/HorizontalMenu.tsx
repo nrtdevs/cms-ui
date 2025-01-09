@@ -90,6 +90,26 @@ const HorizontalMenu = ({ dictionary }: { dictionary: Awaited<ReturnType<typeof 
           menuSectionStyles: verticalMenuSectionStyles(verticalNavOptions, theme)
         }}
       >
+        <MenuItem href={`/${locale}/users/dashboard`} icon={<i className='tabler-layout-dashboard' />}>
+          {dictionary['navigation'].dashboards}
+        </MenuItem>
+        <MenuItem href={`/${locale}/user-management`} icon={<i className='tabler-user-cog' />}>
+          {dictionary['navigation'].usermanagement}
+        </MenuItem>
+
+        <MenuItem href={`/${locale}/project-management`} icon={<i className='tabler-brand-vite' />}>
+          {dictionary['navigation'].projectmanagement}
+        </MenuItem>
+
+        <MenuItem href={`/${locale}/project-tracking`} icon={<i className='tabler-track' />}>
+          {dictionary['navigation'].projecttracking}
+        </MenuItem>
+        <MenuItem href={`/${locale}/team-management`} icon={<i className='tabler-brand-teams' />}>
+          {dictionary['navigation'].teamsmanagement}
+        </MenuItem>
+        <MenuItem href={`/${locale}/financial-management`} icon={<i className='tabler-pig-money' />}>
+          {dictionary['navigation'].financialmanagement}
+        </MenuItem>
         <SubMenu label={dictionary['navigation'].dashboards} icon={<i className='tabler-smart-home' />}>
           <MenuItem href={`/${locale}demo/dashboards/crm`} icon={<i className='tabler-chart-pie-2' />}>
             {dictionary['navigation'].crm}

@@ -102,6 +102,10 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
           {dictionary['navigation'].financialmanagement}
         </MenuItem>
 
+        <MenuItem href={`/${locale}/roles&permission`} icon={<i className='tabler-users' />}>
+          Roles & Permissions
+        </MenuItem>
+
         <SubMenu
           label={dictionary['navigation'].dashboards}
           icon={<i className='tabler-smart-home' />}
