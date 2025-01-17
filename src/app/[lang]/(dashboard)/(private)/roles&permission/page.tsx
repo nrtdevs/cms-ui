@@ -1,225 +1,493 @@
+
+
 'use client'
 
-import React, { useState, useEffect } from 'react'
-
+import React, { useMemo, useState } from 'react'
+import { ButtonProps } from '@mui/material'
 import {
+  Button,
+  Stack,
+  Typography,
+  TableCell,
+  Card,
   TableContainer,
   Table,
   TableHead,
   TableRow,
-  TableCell,
   TableBody,
-  Button,
-  Modal,
-  TextField,
-  Checkbox,
-  CircularProgress,
-  Snackbar
+  Paper,
+  Box
 } from '@mui/material'
-import { useForm, Controller } from 'react-hook-form'
+import {
+  SortingState,
+  FilterFn,
+  createColumnHelper,
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel
+} from '@tanstack/react-table'
+import Paginator from '../../../../Custom-Cpmponents/paginator/Paginator'
+import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
+import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
+import EditRollInfo from './EditRollInfo'
+import ViewRollInfo from './ViewRoleInfo'
+import AddRole from './AddRole'
 
-const RolesPermissionsPage: React.FC = () => {
-  const [roles, setRoles] = useState<any[]>([])
-  const [permissions, setPermissions] = useState<any[]>([])
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [selectedRole, setSelectedRole] = useState<any>(null)
-  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null)
+// Define missing types for better typing
+interface PermissionDetails {
+  id: number
+  name: string
+}
 
-  const { control, handleSubmit, reset, setValue } = useForm()
+interface PermissionGroup {
+  permission_group: string
+  permissions: PermissionDetails[]
+}
 
-  // Fetch roles and permissions on component mount
-  useEffect(() => {
-    fetchData()
-  }, [])
+interface Permission {
+  id: number
+  name: string
+  usertype: string
+  userType: string
+  permissionname: string
+  description: string
+  permissions: PermissionGroup[]
+  createdat: string
+}
 
-  const fetchData = async () => {
-    setIsLoading(true)
+// Define Button props for better typing
+const buttonProps: ButtonProps = {
+  variant: 'contained',
+  color: 'primary',
+  size: 'small',
+  className: 'bg-[#7b91b1] text-white p-0 rounded-sm',
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  children: <i style={{ fontSize: '15px' }} className='tabler-edit text-white' />
+}
 
-    try {
-      const [rolesResponse, permissionsResponse] = await Promise.all([fetch('/api/roles'), fetch('/api/permissions')])
+const buttonviewProps: ButtonProps = {
+  variant: 'contained',
+  color: 'primary',
+  size: 'small',
+  className: 'bg-primary text-white p-0 rounded-sm',
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  children: <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
+}
 
-      const rolesData = await rolesResponse.json()
-      const permissionsData = await permissionsResponse.json()
+const buttonaddrops: ButtonProps = {
+  variant: 'contained',
+  className: 'bg-primary text-white  rounded-sm',
+  children: 'Add Role'
+}
 
-      setRoles(rolesData)
-      setPermissions(permissionsData)
-    } catch (error) {
-      console.error('Failed to fetch data:', error)
-      setSnackbarMessage('Failed to load roles or permissions.')
-    } finally {
-      setIsLoading(false)
+const Page: React.FC = () => {
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const columnHelper = createColumnHelper<Permission>()
+  const [searchTerm, setSearchTerm] = useState<string>('')
+
+  const rowsPerPage = 10
+
+  // Sample permissions data with more entries
+  const permissions: Permission[] = [
+    {
+      id: 1,
+      usertype: 'user',
+      name: 'Mid-Level Bidding Specialist',
+      permissionname: 'View Permissions',
+      userType: 'user',
+      description: 'Responsible for viewing permissions within the bidding group.',
+      permissions: [
+        {
+          permission_group: 'Bidding Group',
+          permissions: [{ id: 1, name: 'View Permissions' }]
+        }
+      ],
+      createdat: '2022-01-01',
+    },
+    {
+      id: 2,
+      usertype: 'user',
+      name: 'Senior Bidding Specialist',
+      permissionname: 'Edit Permissions',
+      userType: 'user',
+      description: 'Responsible for editing permissions within the bidding group.',
+      permissions: [
+        {
+          permission_group: 'Bidding Group',
+          permissions: [{ id: 2, name: 'Edit Permissions' }]
+        }
+      ],
+      createdat: '2022-02-01',
+    },
+    {
+      id: 3,
+      usertype: 'superadmin',
+      name: 'Bidding Manager',
+      permissionname: 'Delete Permissions',
+      userType: 'superadmin',
+      description: 'Has the authority to delete permissions in the bidding group.',
+      permissions: [
+        {
+          permission_group: 'Bidding Group',
+          permissions: [{ id: 3, name: 'Delete Permissions' }]
+        }
+      ],
+      createdat: '2022-03-01',
+    },
+    {
+      id: 4,
+      usertype: 'user',
+      name: 'Reporting Analyst',
+      permissionname: 'View Reports',
+      userType: 'user',
+      description: 'Responsible for viewing reports in the reporting group.',
+      permissions: [
+        {
+          permission_group: 'Reporting Group',
+          permissions: [{ id: 4, name: 'View Reports' }]
+        }
+      ],
+      createdat: '2022-04-01',
+    },
+    {
+      id: 5,
+      usertype: 'user',
+      name: 'Reporting Specialist',
+      permissionname: 'Edit Reports',
+      userType: 'user',
+      description: 'Responsible for editing reports in the reporting group.',
+      permissions: [
+        {
+          permission_group: 'Reporting Group',
+          permissions: [{ id: 5, name: 'Edit Reports' }]
+        }
+      ],
+      createdat: '2022-05-01',
+    },
+    {
+      id: 6,
+      usertype: 'superadmin',
+      name: 'Data Reporting Analyst',
+      permissionname: 'Delete Reports',
+      userType: 'superadmin',
+      description: 'Has the authority to delete reports in the reporting group.',
+      permissions: [
+        {
+          permission_group: 'Reporting Group',
+          permissions: [{ id: 6, name: 'Delete Reports' }]
+        }
+      ],
+      createdat: '2022-06-01',
+    },
+    {
+      id: 7,
+      usertype: 'user',
+      name: 'Content Developer',
+      permissionname: 'View Content',
+      userType: 'user',
+      description: 'Responsible for viewing content in the content group.',
+      permissions: [
+        {
+          permission_group: 'Content Group',
+          permissions: [{ id: 7, name: 'View Content' }]
+        }
+      ],
+      createdat: '2022-07-01',
+    },
+    {
+      id: 8,
+      usertype: 'user',
+      name: 'Content Editor',
+      permissionname: 'Edit Content',
+      userType: 'user',
+      description: 'Responsible for editing content in the content group.',
+      permissions: [
+        {
+          permission_group: 'Content Group',
+          permissions: [{ id: 8, name: 'Edit Content' }]
+        }
+      ],
+      createdat: '2022-08-01',
+    },
+    {
+      id: 9,
+      usertype: 'superadmin',
+      name: 'Content Manager',
+      permissionname: 'Manage Content',
+      userType: 'superadmin',
+      description: 'Responsible for managing all aspects of content within the content group.',
+      permissions: [
+        {
+          permission_group: 'Content Group',
+          permissions: [{ id: 9, name: 'Manage Content' }]
+        }
+      ],
+      createdat: '2022-09-01',
+    },
+    {
+      id: 10,
+      usertype: 'user',
+      name: 'Senior Content Developer',
+      permissionname: 'Create Content',
+      userType: 'user',
+      description: 'Responsible for creating content in the content group.',
+      permissions: [
+        {
+          permission_group: 'Content Group',
+          permissions: [{ id: 10, name: 'Create Content' }]
+        }
+      ],
+      createdat: '2022-10-01',
+    },
+    {
+      id: 11,
+      usertype: 'superadmin',
+      name: 'Settings Administrator',
+      permissionname: 'Manage Settings',
+      userType: 'superadmin',
+      description: 'Has full authority to manage all settings within the settings group.',
+      permissions: [
+        {
+          permission_group: 'Settings Group',
+          permissions: [{ id: 11, name: 'Manage Settings' }]
+        }
+      ],
+      createdat: '2022-11-01',
+    },
+    {
+      id: 12,
+      usertype: 'user',
+      name: 'Settings Specialist',
+      permissionname: 'Edit Settings',
+      userType: 'user',
+      description: 'Responsible for editing settings within the settings group.',
+      permissions: [
+        {
+          permission_group: 'Settings Group',
+          permissions: [{ id: 12, name: 'Edit Settings' }]
+        }
+      ],
+      createdat: '2022-12-01',
+    },
+    {
+      id: 13,
+      usertype: 'user',
+      name: 'Settings Viewer',
+      permissionname: 'View Settings',
+      userType: 'user',
+      description: 'Responsible for viewing settings in the settings group.',
+      permissions: [
+        {
+          permission_group: 'Settings Group',
+          permissions: [{ id: 13, name: 'View Settings' }]
+        }
+      ],
+      createdat: '2023-01-01',
+    },
+    {
+      id: 14,
+      usertype: 'user',
+      name: 'Notifications Developer',
+      permissionname: 'Create Notifications',
+      userType: 'user',
+      description: 'Responsible for creating notifications within the notifications group.',
+      permissions: [
+        {
+          permission_group: 'Notifications Group',
+          permissions: [{ id: 14, name: 'Create Notifications' }]
+        }
+      ],
+      createdat: '2023-02-01',
+    },
+    {
+      id: 15,
+      usertype: 'user',
+      name: 'Notifications Editor',
+      permissionname: 'Edit Notifications',
+      userType: 'user',
+      description: 'Responsible for editing notifications within the notifications group.',
+      permissions: [
+        {
+          permission_group: 'Notifications Group',
+          permissions: [{ id: 15, name: 'Edit Notifications' }]
+        }
+      ],
+      createdat: '2023-03-01',
+    },
+    {
+      id: 16,
+      usertype: 'superadmin',
+      name: 'Notifications Manager',
+      permissionname: 'Manage Notifications',
+      userType: 'superadmin',
+      description: 'Has full authority to manage notifications within the notifications group.',
+      permissions: [
+        {
+          permission_group: 'Notifications Group',
+          permissions: [{ id: 16, name: 'Manage Notifications' }]
+        }
+      ],
+      createdat: '2023-04-01',
     }
-  }
+  ]
 
-  const handleEditRole = (role: any) => {
-    setSelectedRole(role)
-    setValue('name', role.name)
-    setValue(
-      'permissions',
-      role.permissions.map((p: any) => p.id)
+  const totalPages = Math.ceil(permissions.length / rowsPerPage)
+
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const filteredData = useMemo(() => {
+    if (!searchTerm) return permissions
+    return permissions.filter(permission =>
+      Object.values(permission).some(value => value.toString().toLowerCase().includes(searchTerm.toLowerCase()))
     )
-    setIsModalVisible(true)
+  }, [searchTerm, permissions])
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * rowsPerPage
+    return filteredData.slice(startIndex, startIndex + rowsPerPage)
+  }, [filteredData, currentPage, rowsPerPage])
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
   }
 
-  const handleDeleteRole = async (roleId: string) => {
-    try {
-      await fetch(`/api/roles/${roleId}`, { method: 'DELETE' })
-      setSnackbarMessage('Role deleted successfully.')
-      fetchData()
-    } catch (error) {
-      console.error('Failed to delete role:', error)
-      setSnackbarMessage('Failed to delete role.')
-    }
-  }
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('id', {
+        id: 'id',
+        header: '#',
+        cell: info => <Typography sx={{ whiteSpace: 'nowrap' }}>{info.getValue()}</Typography>
+      }),
+      columnHelper.accessor('name', {
+        header: 'Role Name',
+        cell: info => (
+          <Typography color="text.primary" sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue()}
+          </Typography>
+        )
+      }),
+      columnHelper.accessor('usertype', {
+        header: 'User Type',
+        cell: info => (
+          <Typography color="text.primary" sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue()}
+          </Typography>
+        )
+      }),
+      columnHelper.accessor('createdat', {
+        id: 'createdat',
+        header: 'Created At',
+        cell: info => <Typography color="text.primary">{info.getValue()}</Typography>
+      }),
 
-  const onSubmit = async (values: any) => {
-    try {
-      const method = selectedRole ? 'PUT' : 'POST'
-      const url = selectedRole ? `/api/roles/${selectedRole.id}` : '/api/roles'
+      columnHelper.display({
+        id: 'actions',
+        header: 'Actions',
+        cell: info => {
+          const roleData = info.row.original
 
-      await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: values.name,
-          permissions: values.permissions
-        })
+          return (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonProps}
+                dialog={EditRollInfo}
+                dialogProps={{ roleData }}
+              />
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonviewProps}
+                dialog={ViewRollInfo}
+                dialogProps={{ roleData }}
+              />
+              <Button
+                variant="contained"
+                color="secondary"
+                size="small"
+                className="bg-[#fc7182] text-white p-0 rounded-sm ml-1"
+                sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
+              >
+                <i style={{ fontSize: '15px' }} className="tabler-square-off" />
+              </Button>
+            </Box>
+          )
+        }
       })
+    ],
+    [columnHelper]
+  )
 
-      setSnackbarMessage(selectedRole ? 'Role updated successfully.' : 'Role created successfully.')
-      setIsModalVisible(false)
-      reset()
-      setSelectedRole(null)
-      fetchData()
-    } catch (error) {
-      console.error('Failed to save role:', error)
-      setSnackbarMessage('Failed to save role.')
-    }
+  const fuzzyFilter: FilterFn<Permission> = (row, columnId, filterValue) => {
+    const cellValue = row.getValue(columnId)
+    return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
   }
+
+  const table = useReactTable({
+    data: paginatedData,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    filterFns: { fuzzy: fuzzyFilter }
+  })
 
   return (
-    <div className='p-6 bg-gray-100 min-h-screen'>
-      <h1 className='text-2xl font-bold mb-4'>Roles and Permissions</h1>
-
-      <Button variant='contained' color='primary' onClick={() => setIsModalVisible(true)} className='mb-4'>
-        Add Role
-      </Button>
-
-      {isLoading ? (
-        <div className='flex justify-center items-center h-64'>
-          <CircularProgress />
-        </div>
-      ) : (
-        <TableContainer className='bg-white shadow-md rounded'>
+    <Card>
+      <Box className="mt-10">
+        <Box className="flex items-center justify-between m-5">
+          <SearchFilter label="Search" value={searchTerm} onChange={setSearchTerm} placeholder="Search all fields" />
+          <OpenDialogOnElementClick element={Button} elementProps={buttonaddrops} dialog={AddRole} />
+        </Box>
+        <TableContainer component={Paper} className="shadow-none">
           <Table>
             <TableHead>
-              <TableRow>
-                <TableCell className='font-bold'>Role Name</TableCell>
-                <TableCell className='font-bold'>Actions</TableCell>
-              </TableRow>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <TableCell
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      className="text-primary font-bold cursor-pointer"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : typeof header.column.columnDef.header === 'function'
+                        ? header.column.columnDef.header(header.getContext())
+                        : header.column.columnDef.header}
+                      {header.column.getIsSorted() === 'asc'
+                        ? ' 🔼'
+                        : header.column.getIsSorted() === 'desc'
+                        ? ' 🔽'
+                        : ''}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
             </TableHead>
             <TableBody>
-              {roles.map(role => (
-                <TableRow key={role.id}>
-                  <TableCell>{role.name}</TableCell>
-                  <TableCell>
-                    <Button variant='text' color='primary' onClick={() => handleEditRole(role)}>
-                      Edit
-                    </Button>
-                    <Button variant='text' color='error' onClick={() => handleDeleteRole(role.id)}>
-                      Delete
-                    </Button>
-                  </TableCell>
+              {table.getRowModel().rows.map(row => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell key={cell.id}>
+                      {typeof cell.column.columnDef.cell === 'function'
+                        ? cell.column.columnDef.cell(cell.getContext())
+                        : cell.getValue()}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
-      )}
-
-      <Modal
-        open={isModalVisible}
-        onClose={() => {
-          setIsModalVisible(false)
-          reset()
-          setSelectedRole(null)
-        }}
-        className='flex items-center justify-center'
-      >
-        <div className='bg-white p-6 rounded shadow-md w-96'>
-          <h2 className='text-xl font-semibold mb-4'>{selectedRole ? 'Edit Role' : 'Add Role'}</h2>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Controller
-              name='name'
-              control={control}
-              defaultValue=''
-              rules={{ required: 'Role name is required' }}
-              render={({ field, fieldState }) => (
-                <TextField
-                  {...field}
-                  label='Role Name'
-                  variant='outlined'
-                  fullWidth
-                  error={!!fieldState.error}
-                  helperText={fieldState.error?.message}
-                  className='mb-4'
-                />
-              )}
-            />
-            <div className='mb-4'>
-              <label className='font-semibold mb-2 block'>Permissions</label>
-              {permissions.map(permission => (
-                <div key={permission.id} className='flex items-center mb-2'>
-                  <Controller
-                    name='permissions'
-                    control={control}
-                    defaultValue={[]}
-                    render={({ field }) => (
-                      <Checkbox
-                        value={permission.id}
-                        checked={field.value.includes(permission.id)}
-                        onChange={e => {
-                          const newValue = e.target.checked
-                            ? [...field.value, permission.id]
-                            : field.value.filter((id: string) => id !== permission.id)
-
-                          field.onChange(newValue)
-                        }}
-                      />
-                    )}
-                  />
-                  <span>{permission.name}</span>
-                </div>
-              ))}
-            </div>
-            <div className='flex justify-end'>
-              <Button
-                onClick={() => {
-                  setIsModalVisible(false)
-                  reset()
-                  setSelectedRole(null)
-                }}
-                className='mr-2'
-              >
-                Cancel
-              </Button>
-              <Button type='submit' variant='contained' color='primary'>
-                {selectedRole ? 'Update' : 'Create'}
-              </Button>
-            </div>
-          </form>
+        <div className="flex items-center justify-center mt-10 mb-2 my-4">
+          <Stack spacing={2}>
+            <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+          </Stack>
         </div>
-      </Modal>
-
-      <Snackbar
-        open={!!snackbarMessage}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarMessage(null)}
-        message={snackbarMessage}
-      />
-    </div>
+      </Box>
+    </Card>
   )
 }
 
-export default RolesPermissionsPage
+export default Page
