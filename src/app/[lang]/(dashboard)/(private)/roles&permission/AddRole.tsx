@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+
 import {
   Container,
   TextField,
@@ -35,7 +36,7 @@ interface AddRoleProps {
     name: string
     userType: string
     description: string
-    permissions: { permission_group: string, permissions: { id: number, permissionname: string }[] }[]
+    permissions: { permission_group: string; permissions: { id: number; permissionname: string }[] }[]
   }
 }
 
@@ -50,8 +51,6 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
   const [selectedPermissions, setSelectedPermissions] = useState<SelectedPermissions>({})
   const [selectAllPermissions, setSelectAllPermissions] = useState(false)
 
-
-
   useEffect(() => {
     // If roleData is provided (edit case), prefill the form
     if (roleData) {
@@ -62,6 +61,7 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
 
       // Prefill selected permissions
       const newSelectedPermissions: SelectedPermissions = {}
+
       roleData.permissions.forEach(group => {
         newSelectedPermissions[group.permission_group] = group.permissions.map(p => p.id)
       })
@@ -84,7 +84,7 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
     { id: 23, permissionname: 'create', permission_group: 'Bidding' },
     { id: 47, permissionname: 'read', permission_group: 'Bidding' },
     { id: 12, permissionname: 'update', permission_group: 'Bidding' },
-    { id: 8,  permissionname: 'approve', permission_group: 'Bidding' },
+    { id: 8, permissionname: 'approve', permission_group: 'Bidding' },
     { id: 74, permissionname: 'block', permission_group: 'Bidding' },
     { id: 63, permissionname: 'view', permission_group: 'Reporting' },
     { id: 21, permissionname: 'generate', permission_group: 'Reporting' },
@@ -101,20 +101,26 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
     { id: 24, permissionname: 'delete', permission_group: 'Notifications' }
   ]
 
-
   // Group permissions by permission_group
-  const groupedPermissions = permissions.reduce((acc: { [key: string]: Permission[] }, { permissionname, permission_group, id }) => {
-    if (!acc[permission_group]) {
-      acc[permission_group] = []
-    }
-    acc[permission_group].push({ permissionname, permission_group, id })
-    return acc
-  }, {})
+  const groupedPermissions = permissions.reduce(
+    (acc: { [key: string]: Permission[] }, { permissionname, permission_group, id }) => {
+      if (!acc[permission_group]) {
+        acc[permission_group] = []
+      }
+
+      acc[permission_group].push({ permissionname, permission_group, id })
+
+      return acc
+    },
+    {}
+  )
 
   const handleSelectAllGroup = (group: string) => {
     const allSelected = groupedPermissions[group].length === (selectedPermissions[group] || []).length
+
     setSelectedPermissions(prev => {
       const updatedPermissions = allSelected ? [] : groupedPermissions[group].map(permission => permission.id)
+
       return {
         ...prev,
         [group]: updatedPermissions
@@ -125,6 +131,7 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
   const handlePermissionChange = (group: string, permissionId: number) => {
     setSelectedPermissions(prev => {
       const groupPermissions = prev[group] || []
+
       if (groupPermissions.includes(permissionId)) {
         return {
           ...prev,
@@ -141,16 +148,20 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
 
   const handleSelectAllPermissions = () => {
     const allSelected = permissions.length === Object.values(selectedPermissions).flat().length
+
     setSelectAllPermissions(!allSelected)
     const newSelectedPermissions: SelectedPermissions = {}
+
     if (!allSelected) {
       permissions.forEach(({ permission_group, id }) => {
         if (!newSelectedPermissions[permission_group]) {
           newSelectedPermissions[permission_group] = []
         }
+
         newSelectedPermissions[permission_group].push(id)
       })
     }
+
     setSelectedPermissions(newSelectedPermissions)
   }
 
@@ -161,15 +172,19 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
   const handleSubmit = () => {
     if (!name || !userType) {
       alert('Name and UserType are required fields.')
+
       return
     }
 
     const permissionsToSubmit = Object.entries(selectedPermissions).map(([group, permissionNames]) => ({
       permission_group: group,
-      permissions: permissionNames.map(permissionName => {
-        const permission = permissions.find(p => p.id === permissionName && p.permission_group === group)
-        return permission ? { permissionname: permission.permissionname, id: permission.id } : null
-      }).filter(p => p !== null)
+      permissions: permissionNames
+        .map(permissionName => {
+          const permission = permissions.find(p => p.id === permissionName && p.permission_group === group)
+
+          return permission ? { permissionname: permission.permissionname, id: permission.id } : null
+        })
+        .filter(p => p !== null)
     }))
 
     const formData = {
@@ -191,7 +206,7 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth='md' fullWidth>
       <Container className='p-8 min-h-screen'>
         <h1 className='text-2xl mb-6 text-primary'>{roleData ? 'Edit Role' : 'Add Role'}</h1>
         <Box className='space-y-4'>
