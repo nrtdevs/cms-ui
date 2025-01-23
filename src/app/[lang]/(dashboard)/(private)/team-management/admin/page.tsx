@@ -1,66 +1,47 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
+import { flexRender } from '@tanstack/react-table'
 
 import type { ButtonProps } from '@mui/material'
 import {
   Typography,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   Box,
   Card,
+  Grid,
   Stack,
-  Grid
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper
 } from '@mui/material'
 
 import {
   useReactTable,
-  type ColumnDef,
+  ColumnDef,
   getCoreRowModel,
   getSortedRowModel,
-  type SortingState,
-  type FilterFn
+  SortingState,
+  FilterFn
 } from '@tanstack/react-table'
 
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
-
 import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
-
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
-
 import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdown'
-import EditTrackStatus from '../../project-tracking/edittrackstatus'
+import EditTeamManagement from './EditTeamManagement'
+import ViewTeamManagement from './ViewTeamManagement'
+import AddTeamManagement from './AddTeamManagement'
 
 type Project = {
-  id: number
-  projectname: string
-  projectdescription: string
-  skills: string[]
-  Actualbidammount: number
-  platform: string
-  bid_date: string
-  activation_date: string
-  end_date: string
-  clientname: string
+  id: string
+  teamname: string
+  description: string
   status: string
-  clientemail: string
-  clientcontact: string
-  clientcompany: string
-  projectlead: string
-  frontenddev: string[]
-  backenddev: string[]
-  testingteam: string[]
-  Projectstartdate: string
-  recivedammount: number
-  pendingammount: number
-  expenses: number
-  profitOrLoss: string
 }
 
 const buttonProps: ButtonProps = {
@@ -81,75 +62,205 @@ const buttonviewProps: ButtonProps = {
   children: <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
 }
 
+const buttonAddProps: ButtonProps = {
+  variant: 'contained',
+  className: 'bg-primary text-white rounded-sm py-1 px-4',
+  children: 'Add Team',
+  size: 'large'
+}
+
 const AdminTeamManagement: React.FC = () => {
-  // const currentUser = ''
-
-  const [selectedManager, setSelectedManager] = useState('')
-  const [sorting, setSorting] = React.useState<SortingState>([])
-
-  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedManager, setSelectedManager] = useState<string>('')
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [searchTerm, setSearchTerm] = useState<string>('')
 
   const rowsPerPage = 10
 
-  const data = useMemo(
+  const data: Project[] = useMemo(
     () => [
       {
-        id: 1,
-        projectname: 'Project Alpha',
-        projectdescription: 'A groundbreaking project.',
-        skills: ['React', 'Node.js'],
-        Actualbidammount: 1500,
-        platform: 'Web',
-        bid_date: '2024-02-01',
-        activation_date: '2024-01-01',
-        end_date: '2024-06-01',
-        clientname: 'John Doe',
+        id: '1',
+        teamname: 'Project Alpha',
+        description: 'A groundbreaking project.',
         status: 'Active',
-        bid_creater: 'Rihana',
-        clientemail: 'john.doe@example.com',
-        clientcontact: '1234567890',
-        clientcompany: 'Doe Enterprises',
-        projectlead: 'Anil',
-        frontenddev: ['shivam'],
-        backenddev: ['gaurav'],
-        testingteam: ['akash'],
-        Projectstartdate: '2025-01-02',
-        recivedammount: 1500,
-        pendingammount: 500,
-        expenses: 10000,
-        profitOrLoss: '-10,000 (Loss)'
+        teamLead: 'John Doe', // Team lead name
+        members: [
+          { id: 'm1', name: 'Alice Smith' },
+          { id: 'm2', name: 'Bob Johnson' }
+        ], // List of team members
+        techStack: ['React.js', 'Node.js', 'MongoDB'] // Tech stack used
       },
       {
-        id: 2,
-        projectname: 'Project Beta',
-        projectdescription: 'An innovative app.',
-        skills: ['Angular', 'TypeScript'],
-        Actualbidammount: 2000,
-        platform: 'Mobile',
-        bid_date: '2024-02-01',
-        bid_creater: 'Shashank',
-        activation_date: '2024-02-01',
-        end_date: '2024-08-01',
-        clientname: 'Jane Smith',
+        id: '2',
+        teamname: 'Project Beta',
+        description: 'An innovative app.',
         status: 'InProgress',
-        clientemail: 'jane.smith@example.com',
-        clientcontact: '9876543210',
-        clientcompany: 'Smith Corp',
-        projectlead: 'Anil',
-        frontenddev: ['shivam'],
-        backenddev: ['gaurav'],
-        testingteam: ['akash'],
-        Projectstartdate: '2025-01-02',
-        recivedammount: 1200,
-        pendingammount: 300,
-        expenses: 10000,
-        profitOrLoss: '10,000 (Profit)'
+        teamLead: 'Sarah Lee',
+        members: [
+          { id: 'm3', name: 'Charlie Brown' },
+          { id: 'm4', name: 'David Clark' }
+        ],
+        techStack: ['Vue.js', 'Firebase', 'Express.js']
+      },
+      {
+        id: '3',
+        teamname: 'Project Gamma',
+        description: 'A new social platform.',
+        status: 'Completed',
+        teamLead: 'Emily Davis',
+        members: [
+          { id: 'm5', name: 'George Harris' },
+          { id: 'm6', name: 'Grace Martin' }
+        ],
+        techStack: ['Angular.js', 'Node.js', 'MySQL']
+      },
+      {
+        id: '4',
+        teamname: 'Project Delta',
+        description: 'Revolutionary AI software.',
+        status: 'Active',
+        teamLead: 'Michael Wright',
+        members: [
+          { id: 'm7', name: 'Hannah King' },
+          { id: 'm8', name: 'Isabella Scott' }
+        ],
+        techStack: ['Python', 'TensorFlow', 'Keras']
+      },
+      {
+        id: '5',
+        teamname: 'Project Epsilon',
+        description: 'Next-gen e-commerce solution.',
+        status: 'InProgress',
+        teamLead: 'James Taylor',
+        members: [
+          { id: 'm9', name: 'Liam Rodriguez' },
+          { id: 'm10', name: 'Mia Gonzalez' }
+        ],
+        techStack: ['React.js', 'Redux', 'Node.js']
+      },
+      {
+        id: '6',
+        teamname: 'Project Zeta',
+        description: 'Advanced data analytics tool.',
+        status: 'Pending',
+        teamLead: 'Olivia Martinez',
+        members: [
+          { id: 'm11', name: 'Sophia Lee' },
+          { id: 'm12', name: 'Lucas Anderson' }
+        ],
+        techStack: ['R', 'Python', 'D3.js']
+      },
+      {
+        id: '7',
+        teamname: 'Project Eta',
+        description: 'Cutting-edge VR experience.',
+        status: 'Completed',
+        teamLead: 'Benjamin Wilson',
+        members: [
+          { id: 'm13', name: 'William Moore' },
+          { id: 'm14', name: 'Amelia Taylor' }
+        ],
+        techStack: ['Unity', 'C#', 'VR']
+      },
+      {
+        id: '8',
+        teamname: 'Project Theta',
+        description: 'Cloud-based storage system.',
+        status: 'Active',
+        teamLead: 'Lucas Allen',
+        members: [
+          { id: 'm15', name: 'Ella Martinez' },
+          { id: 'm16', name: 'Ava Clark' }
+        ],
+        techStack: ['AWS', 'Docker', 'React.js']
+      },
+      {
+        id: '9',
+        teamname: 'Project Iota',
+        description: 'Sustainable energy technology.',
+        status: 'InProgress',
+        teamLead: 'Daniel Thompson',
+        members: [
+          { id: 'm17', name: 'Chloe Harris' },
+          { id: 'm18', name: 'Jacob Lee' }
+        ],
+        techStack: ['Java', 'Spring', 'Angular.js']
+      },
+      {
+        id: '10',
+        teamname: 'Project Kappa',
+        description: 'Smart home automation platform.',
+        status: 'Pending',
+        teamLead: 'Mason Carter',
+        members: [
+          { id: 'm19', name: 'Charlotte Perez' },
+          { id: 'm20', name: 'Ethan Mitchell' }
+        ],
+        techStack: ['IoT', 'Python', 'React Native']
+      },
+      {
+        id: '11',
+        teamname: 'Project Lambda',
+        description: 'Blockchain-based solution.',
+        status: 'Active',
+        teamLead: 'Isabella Williams',
+        members: [
+          { id: 'm21', name: 'Zoe Taylor' },
+          { id: 'm22', name: 'Evan Young' }
+        ],
+        techStack: ['Solidity', 'Ethereum', 'Truffle']
+      },
+      {
+        id: '12',
+        teamname: 'Project Mu',
+        description: 'AI-driven healthcare platform.',
+        status: 'InProgress',
+        teamLead: 'Alexander Martinez',
+        members: [
+          { id: 'm23', name: 'Oliver Johnson' },
+          { id: 'm24', name: 'Mason Anderson' }
+        ],
+        techStack: ['Python', 'TensorFlow', 'Pandas']
+      },
+      {
+        id: '13',
+        teamname: 'Project Nu',
+        description: 'Autonomous vehicle technology.',
+        status: 'Completed',
+        teamLead: 'Victoria Moore',
+        members: [
+          { id: 'm25', name: 'Sophia Brown' },
+          { id: 'm26', name: 'Aiden Harris' }
+        ],
+        techStack: ['C++', 'ROS', 'Python']
+      },
+      {
+        id: '14',
+        teamname: 'Project Xi',
+        description: 'Online learning platform.',
+        status: 'Active',
+        teamLead: 'Evelyn White',
+        members: [
+          { id: 'm27', name: 'Jack Robinson' },
+          { id: 'm28', name: 'Avery Adams' }
+        ],
+        techStack: ['JavaScript', 'React.js', 'Node.js']
+      },
+      {
+        id: '15',
+        teamname: 'Project Omicron',
+        description: 'Digital payment solution.',
+        status: 'Pending',
+        teamLead: 'Liam Martinez',
+        members: [
+          { id: 'm29', name: 'Grace Walker' },
+          { id: 'm30', name: 'Leo Hall' }
+        ],
+        techStack: ['Java', 'Spring Boot', 'Angular.js']
       }
     ],
     []
   )
-
-  const bidCreators = Array.from(new Set(data.map(item => item.bid_creater)))
 
   const handleSearch = (value: string) => {
     setSearchTerm(value.toLowerCase())
@@ -157,7 +268,7 @@ const AdminTeamManagement: React.FC = () => {
 
   const filteredData = useMemo(() => {
     return data
-      .filter(project => (selectedManager ? project.bid_creater === selectedManager : true))
+      .filter(project => (selectedManager ? project.teamname === selectedManager : true))
       .filter(project => Object.values(project).some(value => value.toString().toLowerCase().includes(searchTerm)))
   }, [data, selectedManager, searchTerm])
 
@@ -173,101 +284,79 @@ const AdminTeamManagement: React.FC = () => {
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * rowsPerPage
-
     return filteredData.slice(startIndex, startIndex + rowsPerPage)
   }, [filteredData, currentPage])
 
   const fuzzyFilter: FilterFn<Project> = (row, columnId, filterValue) => {
     const cellValue = row.getValue(columnId)
-
     return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
   }
 
-  const columns = useMemo<ColumnDef<Project>[]>(
+  const columns: ColumnDef<Project, any>[] = useMemo(
     () => [
       {
-        accessorKey: 'projectname',
-        header: 'Project Name',
+        accessorKey: 'id',
+        header: () => (
+          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+            #
+          </span>
+        ),
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }} className='text-primary'>
+            {info.getValue<string>()}
+          </Typography>
+        ),
+        enableSorting: true
+      },
+      {
+        accessorKey: 'teamname',
+        header: () => (
+          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+            Team Name
+          </span>
+        ),
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
             {info.getValue<string>()}
           </Typography>
-        )
+        ),
+        enableSorting: true
+      },
+      {
+        accessorKey: 'description',
+        header: () => (
+          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+            Description
+          </span>
+        ),
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        ),
+        enableSorting: true
       },
       {
         accessorKey: 'status',
-        header: 'Status',
+        header: () => (
+          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+            Status
+          </span>
+        ),
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
             {info.getValue<string>()}
           </Typography>
-        )
-      },
-      {
-        accessorKey: 'Projectstartdate',
-        header: 'Start Date',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
-        )
-      },
-      {
-        accessorKey: 'end_date',
-        header: 'Project Deadline',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
-        )
-      },
-
-      {
-        accessorKey: 'Actualbidammount',
-        header: 'Project Amount',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            ${info.getValue<number>().toLocaleString()}
-          </Typography>
-        )
-      },
-      {
-        accessorKey: 'recivedammount',
-        header: 'Recived Amount',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            ${info.getValue<number>().toLocaleString()}
-          </Typography>
-        )
-      },
-      {
-        accessorKey: 'pendingammount',
-        header: 'Pending Amount',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            ${info.getValue<number>().toLocaleString()}
-          </Typography>
-        )
-      },
-
-      {
-        accessorKey: 'profitOrLoss',
-        header: 'Profit-Loss',
-        cell: info => {
-          const value = info.getValue<string>()
-          const isProfit = value.includes('Profit')
-          const numericValue = parseFloat(value.replace(/[^0-9.-]/g, ''))
-
-          return (
-            <Typography color={isProfit ? 'green' : 'red'} sx={{ whiteSpace: 'nowrap' }}>
-              ${numericValue.toLocaleString()} ({isProfit ? 'Profit' : 'Loss'})
-            </Typography>
-          )
-        }
+        ),
+        enableSorting: true
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: () => (
+          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+            Actions
+          </span>
+        ),
         cell: info => {
           const project = info.row.original
 
@@ -276,13 +365,13 @@ const AdminTeamManagement: React.FC = () => {
               <OpenDialogOnElementClick
                 element={Button}
                 elementProps={buttonProps}
-                dialog={EditTrackStatus}
+                dialog={EditTeamManagement}
                 dialogProps={{ data: project }}
               />
               <OpenDialogOnElementClick
                 element={Button}
                 elementProps={buttonviewProps}
-                dialog={EditTrackStatus}
+                dialog={ViewTeamManagement}
                 dialogProps={{ data: project }}
               />
               <Button
@@ -313,7 +402,7 @@ const AdminTeamManagement: React.FC = () => {
       fuzzy: fuzzyFilter
     },
     manualPagination: true,
-    pageCount: totalPages // Use totalPages for controlled pagination
+    pageCount: totalPages
   })
 
   return (
@@ -323,69 +412,56 @@ const AdminTeamManagement: React.FC = () => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          m: 5
+          flexWrap: 'wrap', // Ensures proper alignment on smaller screens
+          m: 5,
+          gap: 2 // Adds spacing between elements when wrapping
         }}
       >
-        <Grid container spacing={2} alignItems='center'>
+        <Grid container spacing={2} alignItems='center' sx={{ flex: 1 }}>
           <Grid item xs={12} sm={5} md={3}>
             <SearchFilter label='Search' value={searchTerm} onChange={handleSearch} placeholder='Search all fields' />
           </Grid>
-          <Grid item xs={12} sm={6} md={3} className='mb-1'>
+          <Grid item xs={12} sm={6} md={3}>
             <FilterDropdown
-              options={bidCreators}
+              options={data.map(project => project.teamname)}
               selectedOption={selectedManager}
               onSelect={value => {
                 setSelectedManager(value)
-                console.log('Selected Bid Creator:', value)
               }}
             />
           </Grid>
         </Grid>
+        <OpenDialogOnElementClick element={Button} elementProps={buttonAddProps} dialog={AddTeamManagement}>
+          Add Team
+        </OpenDialogOnElementClick>
       </Box>
 
-      <TableContainer component={Paper} className='shadow-none '>
+      <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <TableCell
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
-                    className='text-primary font-bold cursor-pointer'
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : typeof header.column.columnDef.header === 'function'
-                        ? header.column.columnDef.header(header.getContext())
-                        : header.column.columnDef.header}
-                    {header.column.getIsSorted() === 'asc'
-                      ? ' 🔼'
-                      : header.column.getIsSorted() === 'desc'
-                        ? ' 🔽'
-                        : ''}
+            <TableRow>
+              {table.getHeaderGroups().map(headerGroup =>
+                headerGroup.headers.map(header => (
+                  <TableCell key={header.id} onClick={header.column.getToggleSortingHandler()}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {{ asc: ' 🔼', desc: ' 🔽' }[header.column.getIsSorted() as string] ?? null}
                   </TableCell>
-                ))}
-              </TableRow>
-            ))}
+                ))
+              )}
+            </TableRow>
           </TableHead>
           <TableBody>
             {table.getRowModel().rows.map(row => (
               <TableRow key={row.id}>
                 {row.getVisibleCells().map(cell => (
-                  <TableCell key={cell.id}>
-                    {cell.column.columnDef.cell
-                      ? typeof cell.column.columnDef.cell === 'function'
-                        ? cell.column.columnDef.cell(cell.getContext())
-                        : cell.getValue()
-                      : cell.getValue()}
-                  </TableCell>
+                  <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                 ))}
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
       <div className='flex items-center justify-center mt-10 mb-2 my-4'>
         <Stack spacing={2}>
           <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
