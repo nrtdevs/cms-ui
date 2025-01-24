@@ -110,6 +110,9 @@ const HorizontalMenu = ({ dictionary }: { dictionary: Awaited<ReturnType<typeof 
         <MenuItem href={`/${locale}/financial-management`} icon={<i className='tabler-pig-money' />}>
           {dictionary['navigation'].financialmanagement}
         </MenuItem>
+        <MenuItem href={`/${locale}/logs`} icon={<i className='tabler-logs' />}>
+          {dictionary['navigation'].logs}
+        </MenuItem>
         <SubMenu label={dictionary['navigation'].dashboards} icon={<i className='tabler-smart-home' />}>
           <MenuItem href={`/${locale}demo/dashboards/crm`} icon={<i className='tabler-chart-pie-2' />}>
             {dictionary['navigation'].crm}
