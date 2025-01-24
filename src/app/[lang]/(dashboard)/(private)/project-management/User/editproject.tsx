@@ -37,7 +37,8 @@ type Project = {
   frontenddev: string
   backenddev: string
   currency: string
-  clientcountry: string
+  clientlocation: string
+  commission:string
 }
 
 type EditUserInfoProps = {
@@ -64,7 +65,8 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
     frontenddev: '',
     backenddev: '',
     currency: '',
-    clientcountry: ''
+    clientlocation: '',
+    commission: ''
   })
 
   const [tags, setTags] = useState<string[]>([])
@@ -102,7 +104,8 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
       frontenddev: '',
       backenddev: '',
       currency: '',
-      clientcountry: ''
+      clientlocation: '',
+      commission: ''
     })
   }
 
@@ -118,6 +121,9 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
     if (!projectData.clientcontact) validationErrors.clientcontact = 'Client contact is required.'
     if (!projectData.projectdescription) validationErrors.projectdescription = 'Project description is required.'
     if (!projectData.bidammount) validationErrors.bidammount = 'Bidiing Amnt is required.'
+
+    if (!projectData.clientlocation) validationErrors.clientlocation = 'Location is required.'
+    if (!projectData.commission) validationErrors.commission = 'Please Select.'
 
     // Email validation
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -192,9 +198,9 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
         <i className='tabler-x' />
       </DialogCloseButton>
       <DialogTitle variant='h4' className='flex gap-2 flex-col text-primary text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-        Edit Project Information
+        Edit Bid Information
         <Typography component='span' className='flex flex-col text-center'>
-          Editing project details will initiate a privacy audit.
+          Editing bid details will initiate a privacy audit.
         </Typography>
       </DialogTitle>
       <form onSubmit={e => e.preventDefault()}>
@@ -262,7 +268,22 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={4}>
+            {/* Commission DropDown */}
+
+            <Grid item xs={12} sm={2}>
+              <Dropdown
+                label='Commission'
+                options={['Yes', 'No']}
+                selectedOption={projectData.commission}
+                onSelect={value => handleInputChange('commission', value)}
+                required
+                error={Boolean(errors.commission)}
+                helperText={errors.commission}
+              />
+            </Grid>
+
+
+            {/* <Grid item xs={12} sm={4}>
               <CustomFileUpload
                 label='Upload Project File'
                 onChange={handleFileChange}
@@ -271,6 +292,7 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 helperText={file === null ? 'Please upload a file.' : ''}
               />
             </Grid>
+
             <Grid item xs={12} sm={12}>
               <CustomTagInput
                 label='Skills'
@@ -281,7 +303,7 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 error={Boolean(errors.skills)}
                 helperText={errors.skills}
               />
-            </Grid>
+            </Grid> */}
 
             <Grid item xs={12}>
               <Typography variant='h6' className='mt-2 text-primary font-bold'>
@@ -332,10 +354,13 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
             </Grid>
             <Grid item xs={12} sm={3}>
               <CustomTextInput
-                label='Client Country'
-                placeholder='Client Country'
-                value={projectData.clientcountry}
-                onChange={value => handleInputChange('clientcountry', value)}
+                label='Client Location'
+                placeholder='Client Location'
+                value={projectData.clientlocation}
+                onChange={value => handleInputChange('clientlocation', value)}
+                required
+                error={Boolean(errors.clientlocation)}
+                helperText={errors.clientlocation}
               />
             </Grid>
 

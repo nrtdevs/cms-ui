@@ -44,7 +44,7 @@ type Project = {
   id: number
   projectname: string
   projectdescription: string
-  skills: string[]
+  // skills: string[]
   bidammount: number
   platform: string
   bid_date: string
@@ -56,7 +56,8 @@ type Project = {
   clientcontact: string
   clientcompany: string
   currency: string
-  clientcountry: string
+  // clientcountry: string
+  clientlocation: string
 }
 
 // Button Props for edit and view icons with better styling
@@ -87,7 +88,7 @@ const buttonaddrops: ButtonProps = {
     fontSize: '0.875rem', // Slightly larger font size for better readability
     minWidth: '100px' // Fixed width for button
   },
-  children: 'Add Project'
+  children: 'Add Bid'
 }
 
 const buttonActiveProps: ButtonProps = {
@@ -115,7 +116,7 @@ const AdminProjectData: React.FC = () => {
         id: 1,
         projectname: 'Project Alpha',
         projectdescription: 'A groundbreaking project.',
-        skills: ['React', 'Node.js'],
+        // skills: ['React', 'Node.js'],
         bidammount: 1500,
         platform: 'Web',
         bid_date: '2024-02-01',
@@ -128,13 +129,15 @@ const AdminProjectData: React.FC = () => {
         clientcontact: '1234567890',
         clientcompany: 'Doe Enterprises',
         currency: 'INR',
-        clientcountry: 'IND'
+        // clientcountry: 'IND',
+        clientlocation:'USA',
+        commission: 'Yes'
       },
       {
         id: 2,
         projectname: 'Project Beta',
         projectdescription: 'An innovative app.',
-        skills: ['Angular', 'TypeScript'],
+        // skills: ['Angular', 'TypeScript'],
         bidammount: 2000,
         platform: 'Mobile',
         bid_date: '2024-02-01',
@@ -147,7 +150,9 @@ const AdminProjectData: React.FC = () => {
         clientcontact: '9876543210',
         clientcompany: 'Smith Corp',
         currency: 'USD',
-        clientcountry: 'USA'
+        // clientcountry: 'USA',
+        clientlocation:'IND',
+        commission: 'No'
       }
     ],
     []
@@ -205,15 +210,15 @@ const AdminProjectData: React.FC = () => {
           )
       },
 
-      {
-        accessorKey: 'skills',
-        header: 'Skills',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string[]>().join(', ')}
-          </Typography>
-        )
-      },
+      // {
+      //   accessorKey: 'skills',
+      //   header: 'Skills',
+      //   cell: info => (
+      //     <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+      //       {info.getValue<string[]>().join(', ')}
+      //     </Typography>
+      //   )
+      // },
       {
         accessorKey: 'platform',
         header: 'Platform',
@@ -221,18 +226,10 @@ const AdminProjectData: React.FC = () => {
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
             {info.getValue<string>()}
           </Typography>
-         
+
         )
       },
-      {
-        accessorKey: 'bid_date',
-        header: 'Bid Date',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
-        )
-      },
+
       {
         accessorKey: 'clientname',
         header: 'Client Name',
@@ -270,6 +267,7 @@ const AdminProjectData: React.FC = () => {
       //     </Typography>
       //   )
       // },
+
       {
         accessorKey: 'bidammount',
         header: 'Bid Amount',
@@ -279,6 +277,17 @@ const AdminProjectData: React.FC = () => {
           </Typography>
         )
       },
+
+      {
+        accessorKey: 'bid_date',
+        header: 'Bid Date',
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        )
+      },
+
       {
         accessorKey: 'status',
         header: 'Status',
