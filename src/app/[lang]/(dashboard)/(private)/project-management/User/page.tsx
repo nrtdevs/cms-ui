@@ -50,7 +50,7 @@ type Project = {
   clientemail: string
   clientcontact: string
   clientcompany: string
-}
+ }
 
 const buttonProps: ButtonProps = {
   variant: 'contained',

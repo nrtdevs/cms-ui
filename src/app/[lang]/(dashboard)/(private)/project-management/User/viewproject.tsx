@@ -51,7 +51,7 @@ type ViewProjectInfoProps = {
   data: {
     projectname: string
     projectdescription: string
-    skills: string[]
+    // skills: string[]
     bidammount: number
     platform: string
     bid_date: string
@@ -87,14 +87,14 @@ const ViewProjectInfo: React.FC<ViewProjectInfoProps> = ({ open, setOpen, data }
         </Box>
 
         <Grid container spacing={3} mt={2}>
-          <Grid item xs={12} sm={6}>
+          {/* <Grid item xs={12} sm={6}>
             <Typography variant='h6' className='text-primary '>
               Skills
             </Typography>
             <Typography variant='body1' color='text.secondary'>
               {data.skills.join(', ')}
             </Typography>
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} sm={6}>
             <Typography variant='h6' className='text-primary '>
               Bid Amount
@@ -143,7 +143,7 @@ const ViewProjectInfo: React.FC<ViewProjectInfoProps> = ({ open, setOpen, data }
           <Grid mt={5}>
             <Typography variant='h5' className='text-primary font-bold align-left text-left ' sx={{m:-2}} gutterBottom>
               Client Information
-              
+
             </Typography>
           </Grid>
         <br/>

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Typography } from '@mui/material'
 
 import CustomTagInput from '@/app/Custom-Cpmponents/input/customtaginput'
@@ -18,47 +17,35 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
   const [project, setProject] = useState<{
     projectname: string
     projectdescription: string
-    skills: string[]
     bidammount: string
     platform: string
     bid_date: string
-    activation_date: string
-    end_date: string
     clientname: string
     clientemail: string
     clientcontact: string
     clientcompany: string
-    status: string
     currency: string
-    clientcountry: string
+    clientlocation: string
+    commission: string // Keep commission as string for UI representation
   }>({
     projectname: '',
     projectdescription: '',
-    skills: [],
     bidammount: '',
     platform: '',
     bid_date: '',
-    activation_date: '',
-    end_date: '',
     clientname: '',
     clientemail: '',
     clientcontact: '',
     clientcompany: '',
-    status: '',
     currency: '',
-    clientcountry: ''
+    clientlocation: '',
+    commission: '' // Initially empty
   })
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({}) // Track errors
   const [isSubmitted, setIsSubmitted] = useState(false)
 
-  const [file, setFile] = useState<File | null>(null) // Define the file state
-
   const options = ['React', 'Node.js', 'Angular', 'Vue', 'JavaScript']
-
-  const handleFileChange = (selectedFile: File | null) => {
-    setFile(selectedFile) // Update file state
-  }
 
   const handleChange = (name: string, value: string) => {
     setProject(prev => ({
@@ -77,13 +64,11 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
 
   const validateEmail = (email: string) => {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
-
     return emailPattern.test(email)
   }
 
   const validatePhoneNumber = (phone: string) => {
     const phonePattern = /^\+([1-9]{1}[0-9]{1,2})\d{10}$/ // Country code followed by 10 digit number
-
     return phonePattern.test(phone)
   }
 
@@ -91,7 +76,7 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
     const newErrors: { [key: string]: string } = {}
 
     // Validate required fields
-    if (!project.projectname) newErrors.projectname = 'Project Name is required'
+    if (!project.projectname) newErrors.projectname = 'Name is required'
     if (!project.bidammount) newErrors.bidammount = 'Bid Amount is required'
     if (!project.clientname) newErrors.clientname = 'Client Name is required'
     if (!project.clientcontact) newErrors.clientcontact = 'Client Contact is required'
@@ -103,43 +88,26 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
     }
 
     if (!project.clientcontact || !validatePhoneNumber(project.clientcontact))
-      newErrors.clientcontact = 'Valid Client Contact with country code is required'
-    if (!project.bid_date) newErrors.bid_date = 'Bid Date is required' // Error for Bid Date
-    if (project.skills.length === 0) newErrors.skills = 'At least one skill is required' // Error for Skills
+      newErrors.clientcontact = 'Valid Contact is required'
+    if (!project.bid_date) newErrors.bid_date = 'Bid Date is required'
+    if (!project.clientlocation) newErrors.clientlocation = 'Location is required'
+    if (!project.currency) newErrors.currency = 'Please Select Currency'
+    if (!project.platform) newErrors.platform = 'Platform is required'
+    if (!project.commission) newErrors.commission = 'Please Select'
 
     // If errors exist, set them in the state
     if (Object.keys(newErrors).length > 0) {
+      const commissionVal =  project.commission === 'Yes' ? true : false
       setErrors(newErrors)
       setIsSubmitted(true)
-
       return
     }
-
-    console.log({
-      ...project,
-      skills: project.skills
-    })
-
     setOpen(false)
+    console.log('Final Project Data to be Saved:', project);
   }
 
   const handleClose = () => {
     setOpen(false)
-  }
-
-  const handleSkillsChange = (newSkills: string[]) => {
-    setProject(prev => ({
-      ...prev,
-      skills: newSkills
-    }))
-
-    // Remove error for skills if any skill is added
-    if (newSkills.length > 0 && errors.skills) {
-      setErrors(prevErrors => ({
-        ...prevErrors,
-        skills: ''
-      }))
-    }
   }
 
   return (
@@ -152,9 +120,9 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
       aria-hidden={false}
     >
       <DialogTitle variant='h4' className='flex gap-2 flex-col text-primary text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-        Add Project Information
+        Add Bid Information
         <Typography component='span' className='flex flex-col text-center'>
-          Please enter the details for the new project.
+          Please enter the details for the new bid.
         </Typography>
       </DialogTitle>
       <form onSubmit={e => e.preventDefault()}>
@@ -210,6 +178,8 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
                 value={project.platform}
                 onChange={value => handleChange('platform', value)}
                 required
+                error={isSubmitted && !!errors.platform}
+                helperText={isSubmitted && errors.platform ? errors.platform : undefined}
               />
             </Grid>
 
@@ -225,26 +195,16 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={9}>
-              <CustomTagInput
-                label='Skills'
-                tags={project.skills}
-                onChange={handleSkillsChange}
-                options={options}
-                placeholder='Type a tag and press Enter'
+            {/* Commission DropDown */}
+            <Grid item xs={12} sm={2}>
+              <Dropdown
+                label='Commission'
+                options={['Yes', 'No']}
+                selectedOption={project.commission}
+                onSelect={value => handleChange('commission', value)}
                 required
-                error={isSubmitted && !!errors.skills} // Show error if no skills
-                helperText={isSubmitted && errors.skills ? errors.skills : undefined}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={3}>
-              <CustomFileUpload
-                label='Upload Project File'
-                onChange={handleFileChange}
-                fileName={file ? file.name : ''}
-                error={file === null}
-                helperText={file === null ? 'Please upload a file.' : ''}
+                error={isSubmitted && !!errors.commission}
+                helperText={isSubmitted && errors.commission ? errors.commission : undefined}
               />
             </Grid>
 
@@ -296,17 +256,20 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
                 onChange={value => handleChange('clientcompany', value)}
               />
             </Grid>
+
+            {/* Client Location */}
             <Grid item xs={12} sm={3}>
               <CustomTextInput
-                label='Client Country'
-                placeholder='Client Country'
-                value={project.clientcountry}
-                onChange={value => handleChange('clientcountry', value)}
+                label='Client Location'
+                placeholder='Client Location'
+                value={project.clientlocation}
+                onChange={value => handleChange('clientlocation', value)}
                 required
-                error={isSubmitted && !!errors.clientcountry}
-                helperText={isSubmitted && errors.clientcountry ? errors.clientcountry : undefined}
+                error={isSubmitted && !!errors.clientlocation}
+                helperText={isSubmitted && errors.clientlocation ? errors.clientlocation : undefined}
               />
             </Grid>
+
             <Grid item xs={12}>
               <CustomDescriptionInput
                 label='Project Description'
