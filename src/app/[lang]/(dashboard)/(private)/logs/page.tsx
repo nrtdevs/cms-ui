@@ -13,13 +13,19 @@ import {
   TableBody,
   Paper,
   Box,
-  Stack
+  Stack,
+  Button,
+  ButtonProps
 } from '@mui/material'
 
 import { SortingState, FilterFn, createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 
 import Paginator from '../../../../Custom-Cpmponents/paginator/Paginator'
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
+
+
+import ViewLogsInfo from './viewlogs'
+import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
 
 // Adjusted users array to match headers
 const users = Array.from({ length: 100 }, (_, index) => ({
@@ -45,6 +51,15 @@ interface Timesheet {
   description: string
   attributes: string
   createdDate: string
+}
+
+const buttonviewProps: ButtonProps = {
+  variant: 'contained',
+  color: 'primary',
+  size: 'small',
+  className: 'bg-primary text-white p-0 rounded-sm',
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  children: <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
 }
 
 const Page: React.FC = () => {
@@ -118,6 +133,39 @@ const Page: React.FC = () => {
             {info.row.original.createdDate}
           </Typography>
         )
+      }),
+      columnHelper.display({
+        id: 'actions',
+        header: 'Actions',
+        cell: info => {
+          const user = info.row.original
+
+          return (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {/* <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonProps}
+                dialog={EditUserInfo}
+                dialogProps={{ data: user }}
+              /> */}
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonviewProps}
+                dialog={ViewLogsInfo}
+                dialogProps={{ data: user }}
+              />
+              <Button
+                variant='contained'
+                color='secondary'
+                size='small'
+                className='bg-[#fc7182] text-white p-0 rounded-sm ml-1'
+                sx={{ fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' }}
+              >
+                <i style={{ fontSize: '15px' }} className='tabler-square-off' />
+              </Button>
+            </Box>
+          )
+        }
       })
     ],
     [columnHelper]
