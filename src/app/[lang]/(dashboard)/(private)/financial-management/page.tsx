@@ -1,15 +1,13 @@
 'use client'
 
-import { Box } from '@mui/material'
+import AdminTeamManagement from './finance/page'
 
-import AdminFinanceTracking from './admin/page'
-
-const FinancialModulePage: React.FC = () => {
+const page = () => {
   return (
-    <Box>
-      <AdminFinanceTracking></AdminFinanceTracking>
-    </Box>
+    <div>
+      <AdminTeamManagement />
+    </div>
   )
 }
 
-export default FinancialModulePage
+export default page
