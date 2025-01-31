@@ -152,7 +152,6 @@ const AddTeamManagement: React.FC<AddTeamProps> = ({ open, setOpen }) => {
               />
             </Grid>
 
-
             <Grid item xs={12} sm={4}>
               <Dropdown
                 label='Team Lead'
@@ -209,7 +208,6 @@ const AddTeamManagement: React.FC<AddTeamProps> = ({ open, setOpen }) => {
                 onChange={value => handleInputChange('description', value)}
               />
             </Grid>
-
           </Grid>
         </DialogContent>
         <DialogActions className='justify-center pbs-0 sm:pbe-16 sm:pli-16'>

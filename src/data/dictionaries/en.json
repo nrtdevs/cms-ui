@@ -107,6 +107,8 @@
     "adduser": "Add User",
     "financialmanagement": "Financial Management",
     "teamsmanagement": "Teams Management",
-    "logs":" Logs"
+    "logs": " Logs",
+    "payments": "Payments",
+    "finance": "Finance"
   }
 }

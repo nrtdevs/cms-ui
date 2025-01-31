@@ -107,8 +107,16 @@ const HorizontalMenu = ({ dictionary }: { dictionary: Awaited<ReturnType<typeof 
         <MenuItem href={`/${locale}/team-management`} icon={<i className='tabler-brand-teams' />}>
           {dictionary['navigation'].teamsmanagement}
         </MenuItem>
-        <MenuItem href={`/${locale}/financial-management`} icon={<i className='tabler-pig-money' />}>
-          {dictionary['navigation'].financialmanagement}
+        <SubMenu label={dictionary['navigation'].financialmanagement} icon={<i className='tabler-pig-money' />}>
+          <MenuItem href={`/${locale}/financial-management`} icon={<i className='tabler-pig-money' />}>
+            {dictionary['navigation'].finance}
+          </MenuItem>
+          <MenuItem href={`/${locale}/financial-management/finance`} icon={<i className='tabler-pig-money' />}>
+            {dictionary['navigation'].payment}
+          </MenuItem>
+        </SubMenu>
+        <MenuItem href={`/${locale}/tickets`} icon={<i className='tabler-ticket' />}>
+          Tickets
         </MenuItem>
         <MenuItem href={`/${locale}/logs`} icon={<i className='tabler-logs' />}>
           {dictionary['navigation'].logs}

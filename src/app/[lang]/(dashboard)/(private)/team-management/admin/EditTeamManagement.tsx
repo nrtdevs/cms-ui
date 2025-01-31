@@ -46,7 +46,7 @@ const EditTeamManagement: React.FC<EditTeamProps> = ({ open, setOpen, data }) =>
   useEffect(() => {
     setTeamData(data)
   }, [data])
-   
+
   const handleInputChange = (field: keyof Project, value: string | string[] | Member[]) => {
     setTeamData(prevData => ({
       ...prevData,
@@ -137,7 +137,7 @@ const EditTeamManagement: React.FC<EditTeamProps> = ({ open, setOpen, data }) =>
     'Victoria Moore',
     'Evelyn White',
     'Liam Martinez'
-  ];
+  ]
 
   const teamLeadStatus = ['InProgress', 'Completed', 'Active', 'Pending']
 

@@ -107,6 +107,8 @@
     "adduser": " Ajouter un utilisateur",
     "financialmanagement": "Gestion financière",
     "teamsmanagement": "Gestion des équipes",
-    "logs":"Journaux"
+    "logs": "Journaux",
+    "payments": "Suivi des paiements",
+    "finance": "Finance"
   }
 }

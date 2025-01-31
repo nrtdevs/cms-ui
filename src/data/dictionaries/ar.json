@@ -107,6 +107,8 @@
     "adduser": "إضافة مستخدم",
     "financialmanagement": "الإدارة المالية",
     "teamsmanagement": "إدارة الفرق",
-    "logs":"سجلات"
+    "logs": "سجلات",
+    "payments": "تتبع الدفع",
+    "finance": "المالية"
   }
 }

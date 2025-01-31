@@ -33,15 +33,21 @@ import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
 import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
 import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdown'
-import EditTeamManagement from './EditTeamManagement'
-import ViewTeamManagement from './ViewTeamManagement'
-import AddTeamManagement from './AddTeamManagement'
+import ViewFinance from './viewFinance'
+import EditFinance from './editFinance'
+import AddFinance from './addFinance'
 
 type Project = {
   id: string
-  teamname: string
-  description: string
-  status: string
+  projectName: string
+  amount: string
+  transactionId: string
+  paymentMode: string
+  refId: string
+  paymentDate: string
+  receivedAmt: string
+  pendingAmt: string
+  description: string // Added description field
 }
 
 const buttonProps: ButtonProps = {
@@ -65,7 +71,7 @@ const buttonviewProps: ButtonProps = {
 const buttonAddProps: ButtonProps = {
   variant: 'contained',
   className: 'bg-primary text-white rounded-sm py-1 px-4',
-  children: 'Add Team',
+  children: 'Add Payment',
   size: 'large'
 }
 
@@ -80,184 +86,70 @@ const AdminTeamManagement: React.FC = () => {
     () => [
       {
         id: '1',
-        teamname: 'Project Alpha',
-        description: 'A groundbreaking project.',
-        status: 'Active',
-        teamLead: 'John Doe', // Team lead name
-        members: [
-          { id: 'm1', name: 'Alice Smith' },
-          { id: 'm2', name: 'Bob Johnson' }
-        ], // List of team members
-        techStack: ['React.js', 'Node.js', 'MongoDB'] // Tech stack used
+        projectName: 'Project Alpha',
+        amount: '$5000',
+        transactionId: 'T12345',
+        paymentMode: 'Credit Card',
+        refId: 'R1234',
+        paymentDate: '2025-01-01',
+        receivedAmt: '$3000',
+        pendingAmt: '$2000',
+        description: 'Initial project phase',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`
       },
       {
         id: '2',
-        teamname: 'Project Beta',
-        description: 'An innovative app.',
-        status: 'InProgress',
-        teamLead: 'Sarah Lee',
-        members: [
-          { id: 'm3', name: 'Charlie Brown' },
-          { id: 'm4', name: 'David Clark' }
-        ],
-        techStack: ['Vue.js', 'Firebase', 'Express.js']
+        projectName: 'Project Beta',
+        amount: '$7500',
+        transactionId: 'T12346',
+        paymentMode: 'Bank Transfer',
+        refId: 'R1235',
+        paymentDate: '2025-01-10',
+        receivedAmt: '$5000',
+        pendingAmt: '$2500',
+        description: 'Client onboarding and setup',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`
       },
       {
         id: '3',
-        teamname: 'Project Gamma',
-        description: 'A new social platform.',
-        status: 'Completed',
-        teamLead: 'Emily Davis',
-        members: [
-          { id: 'm5', name: 'George Harris' },
-          { id: 'm6', name: 'Grace Martin' }
-        ],
-        techStack: ['Angular.js', 'Node.js', 'MySQL']
+        projectName: 'Project Gamma',
+        amount: '$10000',
+        transactionId: 'T12347',
+        paymentMode: 'PayPal',
+        refId: 'R1236',
+        paymentDate: '2025-01-15',
+        receivedAmt: '$7000',
+        pendingAmt: '$3000',
+        description: 'Marketing campaign launch',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`
       },
       {
         id: '4',
-        teamname: 'Project Delta',
-        description: 'Revolutionary AI software.',
-        status: 'Active',
-        teamLead: 'Michael Wright',
-        members: [
-          { id: 'm7', name: 'Hannah King' },
-          { id: 'm8', name: 'Isabella Scott' }
-        ],
-        techStack: ['Python', 'TensorFlow', 'Keras']
+        projectName: 'Project Delta',
+        amount: '$6000',
+        transactionId: 'T12348',
+        paymentMode: 'Bank Transfer',
+        refId: 'R1237',
+        paymentDate: '2025-01-20',
+        receivedAmt: '$4000',
+        pendingAmt: '$2000',
+        description: 'Product development phase',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`
       },
       {
         id: '5',
-        teamname: 'Project Epsilon',
-        description: 'Next-gen e-commerce solution.',
-        status: 'InProgress',
-        teamLead: 'James Taylor',
-        members: [
-          { id: 'm9', name: 'Liam Rodriguez' },
-          { id: 'm10', name: 'Mia Gonzalez' }
-        ],
-        techStack: ['React.js', 'Redux', 'Node.js']
-      },
-      {
-        id: '6',
-        teamname: 'Project Zeta',
-        description: 'Advanced data analytics tool.',
-        status: 'Pending',
-        teamLead: 'Olivia Martinez',
-        members: [
-          { id: 'm11', name: 'Sophia Lee' },
-          { id: 'm12', name: 'Lucas Anderson' }
-        ],
-        techStack: ['R', 'Python', 'D3.js']
-      },
-      {
-        id: '7',
-        teamname: 'Project Eta',
-        description: 'Cutting-edge VR experience.',
-        status: 'Completed',
-        teamLead: 'Benjamin Wilson',
-        members: [
-          { id: 'm13', name: 'William Moore' },
-          { id: 'm14', name: 'Amelia Taylor' }
-        ],
-        techStack: ['Unity', 'C#', 'VR']
-      },
-      {
-        id: '8',
-        teamname: 'Project Theta',
-        description: 'Cloud-based storage system.',
-        status: 'Active',
-        teamLead: 'Lucas Allen',
-        members: [
-          { id: 'm15', name: 'Ella Martinez' },
-          { id: 'm16', name: 'Ava Clark' }
-        ],
-        techStack: ['AWS', 'Docker', 'React.js']
-      },
-      {
-        id: '9',
-        teamname: 'Project Iota',
-        description: 'Sustainable energy technology.',
-        status: 'InProgress',
-        teamLead: 'Daniel Thompson',
-        members: [
-          { id: 'm17', name: 'Chloe Harris' },
-          { id: 'm18', name: 'Jacob Lee' }
-        ],
-        techStack: ['Java', 'Spring', 'Angular.js']
-      },
-      {
-        id: '10',
-        teamname: 'Project Kappa',
-        description: 'Smart home automation platform.',
-        status: 'Pending',
-        teamLead: 'Mason Carter',
-        members: [
-          { id: 'm19', name: 'Charlotte Perez' },
-          { id: 'm20', name: 'Ethan Mitchell' }
-        ],
-        techStack: ['IoT', 'Python', 'React Native']
-      },
-      {
-        id: '11',
-        teamname: 'Project Lambda',
-        description: 'Blockchain-based solution.',
-        status: 'Active',
-        teamLead: 'Isabella Williams',
-        members: [
-          { id: 'm21', name: 'Zoe Taylor' },
-          { id: 'm22', name: 'Evan Young' }
-        ],
-        techStack: ['Solidity', 'Ethereum', 'Truffle']
-      },
-      {
-        id: '12',
-        teamname: 'Project Mu',
-        description: 'AI-driven healthcare platform.',
-        status: 'InProgress',
-        teamLead: 'Alexander Martinez',
-        members: [
-          { id: 'm23', name: 'Oliver Johnson' },
-          { id: 'm24', name: 'Mason Anderson' }
-        ],
-        techStack: ['Python', 'TensorFlow', 'Pandas']
-      },
-      {
-        id: '13',
-        teamname: 'Project Nu',
-        description: 'Autonomous vehicle technology.',
-        status: 'Completed',
-        teamLead: 'Victoria Moore',
-        members: [
-          { id: 'm25', name: 'Sophia Brown' },
-          { id: 'm26', name: 'Aiden Harris' }
-        ],
-        techStack: ['C++', 'ROS', 'Python']
-      },
-      {
-        id: '14',
-        teamname: 'Project Xi',
-        description: 'Online learning platform.',
-        status: 'Active',
-        teamLead: 'Evelyn White',
-        members: [
-          { id: 'm27', name: 'Jack Robinson' },
-          { id: 'm28', name: 'Avery Adams' }
-        ],
-        techStack: ['JavaScript', 'React.js', 'Node.js']
-      },
-      {
-        id: '15',
-        teamname: 'Project Omicron',
-        description: 'Digital payment solution.',
-        status: 'Pending',
-        teamLead: 'Liam Martinez',
-        members: [
-          { id: 'm29', name: 'Grace Walker' },
-          { id: 'm30', name: 'Leo Hall' }
-        ],
-        techStack: ['Java', 'Spring Boot', 'Angular.js']
+        projectName: 'Project Epsilon',
+        amount: '$8500',
+        transactionId: 'T12349',
+        paymentMode: 'Credit Card',
+        refId: 'R1238',
+        paymentDate: '2025-01-25',
+        receivedAmt: '$5500',
+        pendingAmt: '$3000',
+        description: 'Final review and adjustments',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`
       }
+      // Add more projects here...
     ],
     []
   )
@@ -268,7 +160,7 @@ const AdminTeamManagement: React.FC = () => {
 
   const filteredData = useMemo(() => {
     return data
-      .filter(project => (selectedManager ? project.teamname === selectedManager : true))
+      .filter(project => (selectedManager ? project.projectName === selectedManager : true))
       .filter(project => Object.values(project).some(value => value.toString().toLowerCase().includes(searchTerm)))
   }, [data, selectedManager, searchTerm])
 
@@ -309,10 +201,10 @@ const AdminTeamManagement: React.FC = () => {
         enableSorting: true
       },
       {
-        accessorKey: 'teamname',
+        accessorKey: 'projectName',
         header: () => (
           <span className='text-primary' style={{ fontWeight: 'bold' }}>
-            Team Name
+            Project Name
           </span>
         ),
         cell: info => (
@@ -323,24 +215,80 @@ const AdminTeamManagement: React.FC = () => {
         enableSorting: true
       },
       {
-        accessorKey: 'description',
+        accessorKey: 'amount',
+        header: () => (
+          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+            Amount
+          </span>
+        ),
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        ),
+        enableSorting: true
+      },
+      {
+        accessorKey: 'transactionId',
+        header: () => (
+          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+            Transaction ID
+          </span>
+        ),
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        ),
+        enableSorting: true
+      },
+      {
+        accessorKey: 'paymentMode',
+        header: () => (
+          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+            Payment Mode
+          </span>
+        ),
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        ),
+        enableSorting: true
+      },
+      {
+        accessorKey: 'refId',
+        header: () => (
+          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+            Ref ID
+          </span>
+        ),
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        ),
+        enableSorting: true
+      },
+      {
+        accessorKey: 'paymentDate',
+        header: () => (
+          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+            Payment Date
+          </span>
+        ),
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        ),
+        enableSorting: true
+      },
+      {
+        accessorKey: 'description', // New column for description
         header: () => (
           <span className='text-primary' style={{ fontWeight: 'bold' }}>
             Description
-          </span>
-        ),
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
-        ),
-        enableSorting: true
-      },
-      {
-        accessorKey: 'status',
-        header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
-            Status
           </span>
         ),
         cell: info => (
@@ -365,13 +313,13 @@ const AdminTeamManagement: React.FC = () => {
               <OpenDialogOnElementClick
                 element={Button}
                 elementProps={buttonProps}
-                dialog={EditTeamManagement}
+                dialog={EditFinance}
                 dialogProps={{ data: project }}
               />
               <OpenDialogOnElementClick
                 element={Button}
                 elementProps={buttonviewProps}
-                dialog={ViewTeamManagement}
+                dialog={ViewFinance}
                 dialogProps={{ data: project }}
               />
               <Button
@@ -412,9 +360,9 @@ const AdminTeamManagement: React.FC = () => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          flexWrap: 'wrap', // Ensures proper alignment on smaller screens
+          flexWrap: 'wrap',
           m: 5,
-          gap: 2 // Adds spacing between elements when wrapping
+          gap: 2
         }}
       >
         <Grid container spacing={2} alignItems='center' sx={{ flex: 1 }}>
@@ -423,7 +371,7 @@ const AdminTeamManagement: React.FC = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <FilterDropdown
-              options={data.map(project => project.teamname)}
+              options={data.map(project => project.projectName)}
               selectedOption={selectedManager}
               onSelect={value => {
                 setSelectedManager(value)
@@ -431,7 +379,7 @@ const AdminTeamManagement: React.FC = () => {
             />
           </Grid>
         </Grid>
-        <OpenDialogOnElementClick element={Button} elementProps={buttonAddProps} dialog={AddTeamManagement} />
+        <OpenDialogOnElementClick element={Button} elementProps={buttonAddProps} dialog={AddFinance} />
       </Box>
 
       <TableContainer component={Paper}>
