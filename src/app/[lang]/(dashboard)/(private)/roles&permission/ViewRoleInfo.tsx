@@ -47,6 +47,7 @@ const ViewRoleInfo: React.FC<ViewRoleProps> = ({ open, setOpen, roleData }) => {
   }, [roleData])
 
   console.log('roleData.permissions:', roleData?.permissions)
+  console.log('roleData.permissions:', roleData)
 
   const handleClose = () => {
     setOpen(false)
@@ -75,7 +76,7 @@ const ViewRoleInfo: React.FC<ViewRoleProps> = ({ open, setOpen, roleData }) => {
                 </Box>
                 <Box>
                   <Typography variant='body1'>
-                    <strong>User Type:</strong> {roleData?.userType}
+                    <strong>User Type:</strong> {roleData?.usertype}
                   </Typography>
                 </Box>
               </Box>

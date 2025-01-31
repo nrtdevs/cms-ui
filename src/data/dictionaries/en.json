@@ -106,6 +106,7 @@
     "projecttracking": "Project Tracking",
     "adduser": "Add User",
     "financialmanagement": "Financial Management",
-    "teamsmanagement": "Teams Management"
+    "teamsmanagement": "Teams Management",
+    "logs":" Logs"
   }
 }

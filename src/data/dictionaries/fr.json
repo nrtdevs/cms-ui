@@ -106,6 +106,7 @@
     "projecttracking": "Suivi de projet",
     "adduser": " Ajouter un utilisateur",
     "financialmanagement": "Gestion financière",
-    "teamsmanagement": "Gestion des équipes"
+    "teamsmanagement": "Gestion des équipes",
+    "logs":"Journaux"
   }
 }

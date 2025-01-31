@@ -20,7 +20,7 @@ import Dropdown from '@/app/Custom-Cpmponents/Select-dropdown/dropdown'
 
 type Project = {
   name: string
-  userType: string
+  usertype: string
   description: string
   permissions: string
 }
@@ -38,37 +38,10 @@ type EditUserInfoProps = {
   groupedPermissions: { [group: string]: Permission[] }
 }
 
-const permissions: Permission[] = [
-  { id: '34', permissionname: 'read', permission_group: 'Dashboard' },
-  { id: '72', permissionname: 'create', permission_group: 'User' },
-  { id: '58', permissionname: 'read', permission_group: 'User' },
-  { id: '61', permissionname: 'update', permission_group: 'User' },
-  { id: '19', permissionname: 'delete', permission_group: 'User' },
-  { id: '95', permissionname: 'block', permission_group: 'User' },
-  { id: '23', permissionname: 'create', permission_group: 'Bidding' },
-  { id: '47', permissionname: 'read', permission_group: 'Bidding' },
-  { id: '12', permissionname: 'update', permission_group: 'Bidding' },
-  { id: '8', permissionname: 'approve', permission_group: 'Bidding' },
-  { id: '74', permissionname: 'block', permission_group: 'Bidding' },
-  { id: '63', permissionname: 'view', permission_group: 'Reporting' },
-  { id: '21', permissionname: 'generate', permission_group: 'Reporting' },
-  { id: '89', permissionname: 'download', permission_group: 'Reporting' },
-  { id: '16', permissionname: 'create', permission_group: 'Content' },
-  { id: '43', permissionname: 'edit', permission_group: 'Content' },
-  { id: '77', permissionname: 'delete', permission_group: 'Content' },
-  { id: '52', permissionname: 'approve', permission_group: 'Content' },
-  { id: '91', permissionname: 'manage', permission_group: 'Settings' },
-  { id: '35', permissionname: 'update', permission_group: 'Settings' },
-  { id: '68', permissionname: 'view', permission_group: 'Settings' },
-  { id: '30', permissionname: 'create', permission_group: 'Notifications' },
-  { id: '59', permissionname: 'edit', permission_group: 'Notifications' },
-  { id: '24', permissionname: 'delete', permission_group: 'Notifications' }
-]
-
 const EditTrackStatus = ({ open, setOpen, roleData, groupedPermissions }: EditUserInfoProps) => {
   const [roleDatas, setRoleData] = useState<Project>({
     name: '',
-    userType: '',
+    usertype: '',
     description: '',
     permissions: ''
   })
@@ -87,7 +60,7 @@ const EditTrackStatus = ({ open, setOpen, roleData, groupedPermissions }: EditUs
     const validationErrors: any = {}
 
     if (!roleDatas.name) validationErrors.name = 'Name is required.'
-    if (!roleDatas.userType) validationErrors.userType = 'User Type is required.'
+    if (!roleDatas.usertype) validationErrors.userType = 'User Type is required.'
     if (!roleDatas.description) validationErrors.description = 'Description is required.'
     if (!roleDatas.permissions) validationErrors.permissions = 'Permissions are required.'
 
@@ -105,7 +78,7 @@ const EditTrackStatus = ({ open, setOpen, roleData, groupedPermissions }: EditUs
     setOpen(false)
     setRoleData({
       name: '',
-      userType: '',
+      usertype: '',
       description: '',
       permissions: ''
     })
@@ -198,8 +171,8 @@ const EditTrackStatus = ({ open, setOpen, roleData, groupedPermissions }: EditUs
               <Dropdown
                 label='User Type'
                 options={['user', 'superadmin']}
-                selectedOption={roleDatas.userType}
-                onSelect={value => handleInputChange('userType', value)}
+                selectedOption={roleDatas?.usertype}
+                onSelect={value => handleInputChange('usertype', value)}
               />
             </Grid>
             <Grid item xs={12} sm={3}>
@@ -220,6 +193,7 @@ const EditTrackStatus = ({ open, setOpen, roleData, groupedPermissions }: EditUs
                 helperText={errors.permissions}
               />
             </Grid>
+
             <Grid item xs={12} sm={12}>
               <TableContainer>
                 <Table>
@@ -233,6 +207,7 @@ const EditTrackStatus = ({ open, setOpen, roleData, groupedPermissions }: EditUs
                       </TableCell>
                     </TableRow>
                   </TableHead>
+
                   <TableBody>
                     {groupedPermissions && Object.keys(groupedPermissions).length > 0 ? (
                       Object.keys(groupedPermissions).map(group => {
@@ -254,6 +229,7 @@ const EditTrackStatus = ({ open, setOpen, roleData, groupedPermissions }: EditUs
                                   </Typography>
                                 </Box>
                               </TableCell>
+
                               <TableCell>
                                 <Box display='flex' flexWrap='wrap' alignItems='center'>
                                   {groupPermissions.map(permission => (
