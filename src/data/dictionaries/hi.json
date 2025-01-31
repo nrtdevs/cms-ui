@@ -107,6 +107,8 @@
     "adduser": "उपयोगकर्ता जोड़ें",
     "financialmanagement": "वित्तीय प्रबंधन",
     "teamsmanagement": "टीम प्रबंधन",
-    "logs":"लॉग्स"
+    "logs": "लॉग्स",
+    "payments": "भुगतान",
+    "finance": "वित्त"
   }
 }

@@ -98,12 +98,20 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
         <MenuItem href={`/${locale}/team-management`} icon={<i className='tabler-brand-teams' />}>
           {dictionary['navigation'].teamsmanagement}
         </MenuItem>
-        <MenuItem href={`/${locale}/financial-management`} icon={<i className='tabler-pig-money' />}>
-          {dictionary['navigation'].financialmanagement}
-        </MenuItem>
+        <SubMenu label={dictionary['navigation'].financialmanagement} icon={<i className='tabler-pig-money' />}>
+          <MenuItem href={`/${locale}/financial-management`} icon={<i className='tabler-pig-money' />}>
+            {dictionary['navigation'].finance}
+          </MenuItem>
+          <MenuItem href={`/${locale}/financial-management/payment`} icon={<i className='tabler-pig-money' />}>
+            {dictionary['navigation'].payment}
+          </MenuItem>
+        </SubMenu>
 
         <MenuItem href={`/${locale}/roles&permission`} icon={<i className='tabler-users' />}>
           Roles & Permissions
+        </MenuItem>
+        <MenuItem href={`/${locale}/tickets`} icon={<i className='tabler-ticket' />}>
+          Tickets
         </MenuItem>
 
         <MenuItem href={`/${locale}/logs`} icon={<i className='tabler-logs' />}>
