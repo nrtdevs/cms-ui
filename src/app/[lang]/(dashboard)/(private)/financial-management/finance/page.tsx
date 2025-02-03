@@ -1,84 +1,58 @@
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
-import { flexRender } from '@tanstack/react-table'
-
-import type { ButtonProps } from '@mui/material'
+import React, { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
 import {
-  Typography,
-  Button,
   Box,
-  Card,
-  Grid,
+  Button,
   Stack,
+  Typography,
+  TableCell,
+  Card,
   TableContainer,
   Table,
   TableHead,
   TableRow,
-  TableCell,
   TableBody,
-  Paper
+  Paper,
+  TextField
 } from '@mui/material'
-
 import {
   useReactTable,
+  createColumnHelper,
   ColumnDef,
   getCoreRowModel,
   getSortedRowModel,
   SortingState,
   FilterFn
 } from '@tanstack/react-table'
-
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
-import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
-import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdown'
-import ViewPayments from './view/[slug]/page'
-import { useRouter, useParams } from 'next/navigation'
 
-type Project = {
+interface Project {
   id: string
-  projectName: string // Project Name
-  totalBudget: number // Total Budget
-  receivedAmount: number // Received Amount
-  pendingAmount: number // Pending Amount
-  totalPayments: number // Total Payments
-  totalPaymentsList: Array<{
-    id: string
-    paymentMode: string
-    amount: number
-  }>
-
-  // Total Payments array
+  projectName: string
+  totalBudget: number
+  receivedAmount: number
+  pendingAmount: number
+  totalPayments: number
+  totalPaymentsList: Array<{ id: string; paymentMode: string; amount: number }>
+  amount: string
+  transactionId: string
+  refId: string
+  paymentDate: string
 }
 
-const buttonAddProps: ButtonProps = {
-  variant: 'contained',
-  className: 'bg-primary text-white rounded-sm py-1 px-4',
-  children: 'Add Team',
-  size: 'large'
-}
-
-const AdminTeamManagement: React.FC = () => {
-  const [selectedManager, setSelectedManager] = useState<string>('')
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [searchTerm, setSearchTerm] = useState<string>('')
-  const [isViewPaymentsOpen, setIsViewPaymentsOpen] = useState(false)
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
-  const [userData, setUserData] = useState<Project | null>(null)
-
+const Page: React.FC = () => {
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const columnHelper = createColumnHelper<Project>()
   const router = useRouter()
-  const { slug } = useParams()
-  const { lang: locale } = useParams()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [selectedManager, setSelectedManager] = useState<string>('')
+  const [searchTerm, setSearchTerm] = useState<string>('')
 
-  const handleViewTrackStatusClick = (project: Project) => {
-    setSelectedProject(project)
-    setIsViewPaymentsOpen(true)
-    router.push(`/${locale}/financial-management/${project.id}`)
-  }
-
-  const handleCloseViewTrackStatus = () => {
-    setIsViewPaymentsOpen(false)
-    setSelectedProject(null)
+  const handleSearch = (value: string) => {
+    setSearchTerm(value.toLowerCase())
   }
 
   const data: Project[] = useMemo(
@@ -340,29 +314,12 @@ const AdminTeamManagement: React.FC = () => {
     ],
     []
   )
-
-  console.log(slug)
-
-  const totalPayments = data[1]?.totalPayments
-
-  const buttonviewProps: ButtonProps = {
-    variant: 'contained',
-    color: 'primary',
-    size: 'large',
-    className: 'bg-primary text-white p-0 rounded-sm ',
-    sx: {
-      fontSize: '1rem',
-      borderRadius: '50%',
-      margin: '20 auto'
-    },
-    children: <span>{totalPayments}</span>
+  const fuzzyFilter: FilterFn<Project> = (row, columnId, filterValue) => {
+    const cellValue = row.getValue(columnId)
+    return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
   }
 
   const rowsPerPage = 10
-
-  const handleSearch = (value: string) => {
-    setSearchTerm(value.toLowerCase())
-  }
 
   const filteredData = useMemo(() => {
     return data
@@ -372,128 +329,102 @@ const AdminTeamManagement: React.FC = () => {
 
   const totalPages = Math.ceil(filteredData.length / rowsPerPage)
 
-  const [currentPage, setCurrentPage] = useState(1)
-
   const handlePageChange = (page: number) => {
     if (page !== currentPage) {
       setCurrentPage(page)
     }
   }
 
-  useEffect(() => {
-    const user = data.find(user => user.id === String(slug))
-
-    setUserData(user || null)
-  }, [slug])
-
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * rowsPerPage
     return filteredData.slice(startIndex, startIndex + rowsPerPage)
   }, [filteredData, currentPage])
 
-  const fuzzyFilter: FilterFn<Project> = (row, columnId, filterValue) => {
-    const cellValue = row.getValue(columnId)
-    return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
-  }
-
-  const columns: ColumnDef<Project, any>[] = useMemo(
+  const columns = useMemo(
     () => [
-      {
-        accessorKey: 'id',
+      columnHelper.accessor('id', {
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary cursor-pointer' style={{ fontWeight: 'bold' }}>
             #
           </span>
         ),
         cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }} className='text-primary'>
-            {info.getValue<string>()}
+          <Typography className='text-primary cursor-pointer' color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.row.original.id}
           </Typography>
-        ),
-        enableSorting: true
-      },
-      {
-        accessorKey: 'projectName',
+        )
+      }),
+      columnHelper.accessor('projectName', {
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary cursor-pointer' style={{ fontWeight: 'bold' }}>
             Project Name
           </span>
         ),
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
+            {info.row.original.projectName}
           </Typography>
-        ),
-        enableSorting: true
-      },
-      {
-        accessorKey: 'totalBudget',
+        )
+      }),
+      columnHelper.accessor('totalBudget', {
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary cursor-pointer' style={{ fontWeight: 'bold' }}>
             Total Budget
           </span>
         ),
         cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            ${info.getValue<number>().toLocaleString()}
+          <Typography color='text.primary ' sx={{ whiteSpace: 'nowrap' }}>
+            {info.row.original.totalBudget}
           </Typography>
-        ),
-        enableSorting: true
-      },
-      {
-        accessorKey: 'receivedAmount',
+        )
+      }),
+      columnHelper.accessor('receivedAmount', {
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary cursor-pointer' style={{ fontWeight: 'bold' }}>
             Received Amount
           </span>
         ),
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            ${info.getValue<number>().toLocaleString()}
+            {info.row.original.receivedAmount}
           </Typography>
-        ),
-        enableSorting: true
-      },
-      {
-        accessorKey: 'pendingAmount',
+        )
+      }),
+      columnHelper.accessor('pendingAmount', {
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary cursor-pointer' style={{ fontWeight: 'bold' }}>
             Pending Amount
           </span>
         ),
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            ${info.getValue<number>().toLocaleString()}
+            {info.row.original.pendingAmount}
           </Typography>
-        ),
-        enableSorting: true
-      },
-      {
+        )
+      }),
+
+      columnHelper.display({
         id: 'Total Payments',
         header: () => (
           <span className='text-primary' style={{ fontWeight: 'bold' }}>
             Total Payments
           </span>
         ),
-        cell: info => {
-          const project = info.row.original
-          return (
-            <Button
-              onClick={() => router.push(`/financial-management/view/${project.id}`)}
-              className='bg-[#7b91b1] text-white p-0 rounded-sm'
-              sx={{ fontSize: '25px', minWidth: '20px', minHeight: '20px' }}
-            >
-              {project.totalPayments}
-              <i style={{ fontSize: '25px' }} className='tabler-eye text-white'></i>
-            </Button>
-          )
-        }
-      }
+        cell: info => (
+          <Button
+            onClick={() => router.push(`/financial-management/payment/${info.row.original.id}`)}
+            className='p-1 rounded-sm text-primary bg-[#7367f0] text-white hover:bg-blue-600 transition-colors flex items-center space-x-2'
+          >
+            {/* <i style={{ fontSize: '18px' }} className='tabler-eye'></i> */}
+            <span>{info.row.original.totalPayments}</span>
+          </Button>
+        )
+      })
     ],
-    []
+    [columnHelper]
   )
 
-  const table = useReactTable({
+  const table = useReactTable<Project>({
     data: paginatedData,
     columns,
     state: { sorting },
@@ -508,79 +439,67 @@ const AdminTeamManagement: React.FC = () => {
   })
 
   return (
-    <Card>
-      <Box>
-        {isViewPaymentsOpen && selectedProject ? (
-          <ViewPayments data={selectedProject} onClose={handleCloseViewTrackStatus} />
-        ) : (
-          <>
-            <Card
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap', // Ensures proper alignment on smaller screens
-                m: 5,
-                gap: 2 // Adds spacing between elements when wrapping
-              }}
-            >
-              <Grid container spacing={2} alignItems='center' sx={{ flex: 1 }}>
-                <Grid item xs={12} sm={5} md={3}>
-                  <SearchFilter
-                    label='Search'
-                    value={searchTerm}
-                    onChange={handleSearch}
-                    placeholder='Search all fields'
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <FilterDropdown
-                    options={data.map(project => project.projectName)}
-                    selectedOption={selectedManager}
-                    onSelect={value => {
-                      setSelectedManager(value)
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </Card>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    {table.getHeaderGroups().map(headerGroup =>
-                      headerGroup.headers.map(header => (
-                        <TableCell key={header.id} onClick={header.column.getToggleSortingHandler()}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
-                          {{ asc: ' 🔼', desc: ' 🔽' }[header.column.getIsSorted() as string] ?? null}
-                        </TableCell>
-                      ))
-                    )}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                      ))}
-                    </TableRow>
+    <Card className='container mx-auto p-4'>
+      <div className='flex justify-between items-center mb-6'>
+        <Typography variant='h4' fontWeight='bold' className='text-primary'>
+          Finance Management
+        </Typography>
+        <SearchFilter label='Search' value={searchTerm} onChange={handleSearch} placeholder='Search all fields' />
+      </div>
+
+      <Box className='mt-5 p-4'>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <TableCell
+                      className='font-semibold'
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : typeof header.column.columnDef.header === 'function'
+                          ? header.column.columnDef.header(header.getContext())
+                          : header.column.columnDef.header}
+                      {header.column.getIsSorted() === 'asc'
+                        ? ' 🔼'
+                        : header.column.getIsSorted() === 'desc'
+                          ? ' 🔽'
+                          : ''}
+                    </TableCell>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <div className='flex items-center justify-center mt-10 mb-2 my-4'>
-              <Stack spacing={2}>
-                <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-              </Stack>
-            </div>
-          </>
-        )}
+                </TableRow>
+              ))}
+            </TableHead>
+
+            <TableBody>
+              {table.getRowModel().rows.map((row, index) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell key={cell.id}>
+                      {cell.column.columnDef.cell
+                        ? typeof cell.column.columnDef.cell === 'function'
+                          ? cell.column.columnDef.cell(cell.getContext())
+                          : cell.getValue()
+                        : cell.getValue()}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <div className='flex items-center justify-center mt-10 mb-2 my-4'>
+          <Stack spacing={2}>
+            <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+          </Stack>
+        </div>
       </Box>
     </Card>
   )
 }
 
-export default AdminTeamManagement
+export default Page
