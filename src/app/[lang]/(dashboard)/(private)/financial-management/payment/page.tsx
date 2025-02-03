@@ -36,6 +36,7 @@ import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdo
 import ViewFinance from './viewFinance'
 import EditFinance from './editFinance'
 import AddFinance from './addFinance'
+import { useRouter } from 'next/navigation'
 
 type Project = {
   id: string
@@ -48,6 +49,7 @@ type Project = {
   receivedAmt: string
   pendingAmt: string
   description: string // Added description field
+  totalPayments: number
 }
 
 const buttonProps: ButtonProps = {
@@ -81,6 +83,7 @@ const AdminTeamManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('')
 
   const rowsPerPage = 10
+  const router = useRouter()
 
   const data: Project[] = useMemo(
     () => [
@@ -95,7 +98,8 @@ const AdminTeamManagement: React.FC = () => {
         receivedAmt: '$3000',
         pendingAmt: '$2000',
         description: 'Initial project phase',
-        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        totalPayments: 0
       },
       {
         id: '2',
@@ -108,7 +112,8 @@ const AdminTeamManagement: React.FC = () => {
         receivedAmt: '$5000',
         pendingAmt: '$2500',
         description: 'Client onboarding and setup',
-        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        totalPayments: 1
       },
       {
         id: '3',
@@ -121,7 +126,8 @@ const AdminTeamManagement: React.FC = () => {
         receivedAmt: '$7000',
         pendingAmt: '$3000',
         description: 'Marketing campaign launch',
-        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        totalPayments: 9
       },
       {
         id: '4',
@@ -134,7 +140,8 @@ const AdminTeamManagement: React.FC = () => {
         receivedAmt: '$4000',
         pendingAmt: '$2000',
         description: 'Product development phase',
-        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        totalPayments: 5
       },
       {
         id: '5',
@@ -147,10 +154,83 @@ const AdminTeamManagement: React.FC = () => {
         receivedAmt: '$5500',
         pendingAmt: '$3000',
         description: 'Final review and adjustments',
-        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        totalPayments: 7
+      },
+      {
+        id: '6',
+        projectName: 'Project Zeta',
+        amount: '$12000',
+        transactionId: 'T12350',
+        paymentMode: 'Bank Transfer',
+        refId: 'R1239',
+        paymentDate: '2025-02-01',
+        receivedAmt: '$8000',
+        pendingAmt: '$4000',
+        description: 'Prototype testing and validation',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        totalPayments: 3
+      },
+      {
+        id: '7',
+        projectName: 'Project Eta',
+        amount: '$9500',
+        transactionId: 'T12351',
+        paymentMode: 'PayPal',
+        refId: 'R1240',
+        paymentDate: '2025-02-05',
+        receivedAmt: '$6200',
+        pendingAmt: '$3300',
+        description: 'Website development phase',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        totalPayments: 8
+      },
+      {
+        id: '8',
+        projectName: 'Project Theta',
+        amount: '$11000',
+        transactionId: 'T12352',
+        paymentMode: 'Credit Card',
+        refId: 'R1241',
+        paymentDate: '2025-02-10',
+        receivedAmt: '$7500',
+        pendingAmt: '$3500',
+        description: 'Cloud infrastructure setup',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        totalPayments: 6
+      },
+      {
+        id: '9',
+        projectName: 'Project Iota',
+        amount: '$13000',
+        transactionId: 'T12353',
+        paymentMode: 'Bank Transfer',
+        refId: 'R1242',
+        paymentDate: '2025-02-15',
+        receivedAmt: '$9500',
+        pendingAmt: '$3500',
+        description: 'Product launch preparation',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        totalPayments: 4
+      },
+      {
+        id: '10',
+        projectName: 'Project Kappa',
+        amount: '$16000',
+        transactionId: 'T12354',
+        paymentMode: 'PayPal',
+        refId: 'R1243',
+        paymentDate: '2025-02-20',
+        receivedAmt: '$11000',
+        pendingAmt: '$5000',
+        description: 'Final phase development and testing',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        totalPayments: 2
       }
-      // Add more projects here...
     ],
+
+    // Return the projects with the `totalPayments` added to each
+
     []
   )
 
@@ -189,7 +269,7 @@ const AdminTeamManagement: React.FC = () => {
       {
         accessorKey: 'id',
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary' style={{ fontWeight: 'bold', cursor: 'pointer' }}>
             #
           </span>
         ),
@@ -203,7 +283,7 @@ const AdminTeamManagement: React.FC = () => {
       {
         accessorKey: 'projectName',
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary' style={{ fontWeight: 'bold', cursor: 'pointer' }}>
             Project Name
           </span>
         ),
@@ -217,7 +297,7 @@ const AdminTeamManagement: React.FC = () => {
       {
         accessorKey: 'amount',
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary' style={{ fontWeight: 'bold', cursor: 'pointer' }}>
             Amount
           </span>
         ),
@@ -231,7 +311,7 @@ const AdminTeamManagement: React.FC = () => {
       {
         accessorKey: 'transactionId',
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary' style={{ fontWeight: 'bold', cursor: 'pointer' }}>
             Transaction ID
           </span>
         ),
@@ -245,7 +325,7 @@ const AdminTeamManagement: React.FC = () => {
       {
         accessorKey: 'paymentMode',
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary' style={{ fontWeight: 'bold', cursor: 'pointer' }}>
             Payment Mode
           </span>
         ),
@@ -259,7 +339,7 @@ const AdminTeamManagement: React.FC = () => {
       {
         accessorKey: 'refId',
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary' style={{ fontWeight: 'bold', cursor: 'pointer' }}>
             Ref ID
           </span>
         ),
@@ -273,7 +353,7 @@ const AdminTeamManagement: React.FC = () => {
       {
         accessorKey: 'paymentDate',
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary' style={{ fontWeight: 'bold', cursor: 'pointer' }}>
             Payment Date
           </span>
         ),
@@ -287,12 +367,21 @@ const AdminTeamManagement: React.FC = () => {
       {
         accessorKey: 'description', // New column for description
         header: () => (
-          <span className='text-primary' style={{ fontWeight: 'bold' }}>
+          <span className='text-primary' style={{ fontWeight: 'bold', cursor: 'pointer' }}>
             Description
           </span>
         ),
         cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+          <Typography
+            color='text.primary'
+            sx={{
+              whiteSpace: 'nowrap', // Prevents wrapping
+              overflow: 'hidden', // Hides any overflowing content
+              textOverflow: 'ellipsis', // Adds an ellipsis (...) for overflow text
+              maxWidth: 130, // Limits the width of the column, adjust as necessary
+              display: 'block' // Ensures block display for proper truncation
+            }}
+          >
             {info.getValue<string>()}
           </Typography>
         ),
@@ -312,16 +401,18 @@ const AdminTeamManagement: React.FC = () => {
             <Box sx={{ display: 'flex', gap: 1 }}>
               <OpenDialogOnElementClick
                 element={Button}
-                elementProps={buttonProps}
-                dialog={EditFinance}
-                dialogProps={{ data: project }}
-              />
-              <OpenDialogOnElementClick
-                element={Button}
                 elementProps={buttonviewProps}
                 dialog={ViewFinance}
                 dialogProps={{ data: project }}
               />
+
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonProps}
+                dialog={EditFinance}
+                dialogProps={{ data: project }}
+              />
+
               <Button
                 variant='contained'
                 color='secondary'
