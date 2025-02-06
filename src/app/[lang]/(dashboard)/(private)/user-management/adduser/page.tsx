@@ -26,12 +26,15 @@ interface AddUserProps {
 
 const positionTypes = ['Project-Manager', 'Team-Lead', 'Developer', 'Designer', 'Tester']
 
+// Regex for validation (defined once)
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+const contactNumberRegex = /^\+91\s?\d{10}$/ // Allowing space before 10 digits
+
 const AddUser: React.FC<AddUserProps> = ({ open, setOpen }) => {
   const handleClose = () => {
     setOpen(false)
   }
 
-  // Initial empty data state
   const initialUserData: UserData = {
     firstName: '',
     lastName: '',
@@ -56,21 +59,21 @@ const AddUser: React.FC<AddUserProps> = ({ open, setOpen }) => {
       validateField(field, value)
     }
   }
-
   const validateField = (field: keyof UserData, value: string) => {
     let error = ''
+    const trimmedValue = value.trim() // Trim leading and trailing spaces
 
-    // Required field validation
-    if (!value) {
-      error = `${field} is required`
+    if (!trimmedValue) {
+      error = '' // Show error if the value is empty or just spaces
     } else {
-      // Additional validations
-      if (field === 'email' && !/\S+@\S+\.\S+/.test(value)) {
+      // Email validation
+      if (field === 'email' && !emailRegex.test(trimmedValue)) {
         error = 'Invalid email format'
       }
 
-      if (field === 'contactNumber' && !/^\+33-\d{3}-\d{3}-\d{3}$/.test(value)) {
-        error = 'Invalid contact number format (+33-xxx-xxx-xxx)'
+      // Contact number validation
+      if (field === 'contactNumber' && !contactNumberRegex.test(trimmedValue.replace(/\s/g, ''))) {
+        error = 'Invalid contact number'
       }
     }
 
@@ -80,49 +83,32 @@ const AddUser: React.FC<AddUserProps> = ({ open, setOpen }) => {
     }))
   }
 
-
   const validateAllFields = () => {
     const newErrors: { [key in keyof UserData]?: string } = {}
 
-    // Loop through each field in userData
-    Object.keys(userData).forEach(key => {
-      const field = key as keyof UserData
-      const value = userData[field]
-
-      // Skip validation for unnecessary fields and perform validation only for required ones
-      if (!value) {
-        // If value is empty, mark it as required
-        newErrors[field] = `${field} is required`
-      } else {
-        // Only perform validations on required fields (do not check if field is optional)
-        if (field === 'email' && !/\S+@\S+\.\S+/.test(value)) {
-          newErrors[field] = 'Invalid email format'
-        }
-
-        if (field === 'contactNumber' && !/^\+33-\d{3}-\d{3}-\d{3}$/.test(value)) {
-          newErrors[field] = 'Invalid contact number format (+33-xxx-xxx-xxx)'
-        }
-      }
-    })
+    if (!userData.firstName.trim()) newErrors.firstName = 'First Name is required'
+    if (!userData.lastName.trim()) newErrors.lastName = 'Last Name is required'
+    if (!userData.employeeId.trim()) newErrors.employeeId = 'Employee ID is required'
+    if (!userData.email.trim()) newErrors.email = 'Email is required'
+    else if (!emailRegex.test(userData.email.trim())) newErrors.email = 'Invalid email format'
+    if (!userData.contactNumber.trim()) newErrors.contactNumber = 'Contact Number is required'
+    else if (!contactNumberRegex.test(userData.contactNumber.trim().replace(/\s/g, '')))
+      newErrors.contactNumber = 'Invalid contact number'
+    if (!userData.password.trim()) newErrors.password = 'Password is required'
+    if (!userData.position.trim()) newErrors.position = 'Position is required'
+    if (!userData.employeeTypes.trim()) newErrors.employeeTypes = 'Employee Type is required'
 
     setErrors(newErrors)
 
-    // Return true if there are no errors
     return Object.keys(newErrors).length === 0
   }
-
 
   const handleAddUser = () => {
     if (validateAllFields()) {
       console.log('New user data:', userData)
-
-      // Close dialog immediately
       handleClose()
-
-      // Reset form data
       setUserData(initialUserData)
 
-      // Show success Swal
       Swal.fire({
         title: 'Success!',
         text: 'User added successfully!',
@@ -150,12 +136,12 @@ const AddUser: React.FC<AddUserProps> = ({ open, setOpen }) => {
       <form onSubmit={e => e.preventDefault()}>
         <DialogContent className='overflow-visible pbs-0 sm:pli-16'>
           <Grid container spacing={5}>
-            {/* User Details Section */}
             <Grid item xs={12}>
               <Typography variant='h6' className='text-primary font-bold'>
                 User Details
               </Typography>
             </Grid>
+
             <Grid item xs={12} sm={4}>
               <CustomTextInput
                 label='First Name'
@@ -206,7 +192,7 @@ const AddUser: React.FC<AddUserProps> = ({ open, setOpen }) => {
 
             <Grid item xs={12} sm={4}>
               <CustomTextInput
-                placeholder='+33-xxx-xxx-xxx'
+                placeholder='+91XXXXXXXXXX'
                 label='Contact Number'
                 value={userData.contactNumber}
                 onChange={value => handleInputChange('contactNumber', value)}

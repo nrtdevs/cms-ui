@@ -27,13 +27,14 @@ interface EditFinanceProps {
 }
 
 const ProjectData = ['Project Alpha', 'Project Beta', 'Project Gamma']
+const paymentModes = ['Credit Card', 'Debit Card', 'Bank Transfer', 'PayPal']
+const amountRegex = /^\d*\.?\d{0,3}$/  // Allows numbers with up to 3 decimal places
 
 const EditFinance: React.FC<EditFinanceProps> = ({ open, setOpen, data }) => {
   const handleClose = () => {
     setOpen(false)
   }
 
-  // Initialize state with the financial data
   const [financeData, setFinanceData] = useState(data)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
@@ -42,58 +43,58 @@ const EditFinance: React.FC<EditFinanceProps> = ({ open, setOpen, data }) => {
   }, [data])
 
   const handleInputChange = (field: keyof typeof financeData, value: string | number) => {
-    setFinanceData(prevData => ({
-      ...prevData,
-      [field]: value
-    }))
-
-    if (errors[field]) {
-      validateField(field, value)
-    }
-  }
-
-  const validateField = (field: keyof typeof financeData, value: string | number) => {
+    let inputValue = value.toString()
     let error = ''
 
-    // Required field validation
-    if (!value || (typeof value === 'string' && value.trim() === '')) {
-      error = `${field} is required`
+    if (field === 'amount') {
+      if (!/^\d*\.?\d*$/.test(inputValue)) {
+        return
+      }
+
+      if (!amountRegex.test(inputValue)) {
+        return
+      }
+    }
+
+    if (!inputValue && inputValue !== '0') {
+      // error = `${field} is required`
     }
 
     setErrors(prevErrors => ({
       ...prevErrors,
       [field]: error
     }))
+
+    setFinanceData(prevData => ({
+      ...prevData,
+      [field]: inputValue
+    }))
   }
 
   const validateAllFields = () => {
     const newErrors: { [key: string]: string } = {}
 
-    // Loop through each field in financeData
-    Object.keys(financeData).forEach(key => {
-      const field = key as keyof typeof financeData
-      const value = financeData[field]
-
-      // Perform validation for required fields
-      if (!value || (typeof value === 'string' && value.trim() === '')) {
-        newErrors[field] = `${field} is required`
-      }
-    })
+    if (!financeData.projectName) newErrors.projectName = 'Team Lead is required'
+    if (!financeData.amount) {
+      newErrors.amount = 'Amount is required'
+    } else if (!amountRegex.test(financeData.amount)) {
+      newErrors.amount = 'Only numbers are allowed'
+    }
+    if (!financeData.transactionId.trim()) newErrors.transactionId = 'Transaction Id is required'
+    if (!financeData.paymentMode) newErrors.paymentMode = 'Payment Mode is required'
+    if (!financeData.refId.trim()) newErrors.refId = 'Reference Id is required'
+    if (!financeData.paymentDate) newErrors.paymentDate = 'Payment Date is required'
+    if (!financeData.paymentSlip) newErrors.paymentSlip = 'Payment Slip is required'
 
     setErrors(newErrors)
-
-    // Return true if there are no errors
     return Object.keys(newErrors).length === 0
   }
 
   const handleEditFinance = () => {
     if (validateAllFields()) {
       console.log('Updated finance data:', financeData)
-
-      // Close dialog immediately
       handleClose()
 
-      // Show success Swal
       Swal.fire({
         title: 'Success!',
         text: 'Finance details updated successfully!',
@@ -130,8 +131,8 @@ const EditFinance: React.FC<EditFinanceProps> = ({ open, setOpen, data }) => {
             <Grid item xs={12} sm={6}>
               <Dropdown
                 label='Team Lead'
-                options={ProjectData} // Map to member names for dropdown
-                selectedOption={financeData.projectName} // Pass team lead name as selected option
+                options={ProjectData}
+                selectedOption={financeData.projectName}
                 onSelect={value => handleInputChange('projectName', value)}
                 error={!!errors.projectName}
                 helperText={errors.projectName}
@@ -145,6 +146,9 @@ const EditFinance: React.FC<EditFinanceProps> = ({ open, setOpen, data }) => {
                 placeholder='Amount'
                 value={financeData.amount}
                 onChange={value => handleInputChange('amount', value)}
+                error={!!errors.amount}
+                helperText={errors.amount}
+                required
               />
             </Grid>
 
@@ -163,7 +167,7 @@ const EditFinance: React.FC<EditFinanceProps> = ({ open, setOpen, data }) => {
             <Grid item xs={12} sm={6}>
               <Dropdown
                 label='Payment Mode'
-                options={['Credit Card', 'Debit Card', 'Bank Transfer', 'PayPal']}
+                options={paymentModes}
                 selectedOption={financeData.paymentMode}
                 onSelect={value => handleInputChange('paymentMode', value)}
                 error={!!errors.paymentMode}
@@ -210,6 +214,9 @@ const EditFinance: React.FC<EditFinanceProps> = ({ open, setOpen, data }) => {
                 label='Upload Payment Slip...'
                 onChange={value => handleInputChange('paymentSlip', value ? value.name : '')}
                 fileName={financeData.paymentSlip || ''}
+                error={!!errors.paymentSlip}
+                helperText={errors.paymentSlip}
+                required
               />
             </Grid>
           </Grid>
