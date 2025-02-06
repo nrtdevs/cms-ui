@@ -8,6 +8,8 @@ import CustomDescriptionInput from '@/app/Custom-Cpmponents/input/customdescript
 import CustomFileUpload from '@/app/Custom-Cpmponents/Upload-file/CustomfileUpload'
 import Dropdown from '@/app/Custom-Cpmponents/Select-dropdown/dropdown'
 
+import Swal from 'sweetalert2'
+
 interface AddProjectInfoProps {
   open: boolean
   setOpen: (open: boolean) => void
@@ -26,7 +28,7 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
     clientcompany: string
     currency: string
     clientlocation: string
-    commission: string // Keep commission as string for UI representation
+    commission: string
   }>({
     projectname: '',
     projectdescription: '',
@@ -39,21 +41,21 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
     clientcompany: '',
     currency: '',
     clientlocation: '',
-    commission: '' // Initially empty
+    commission: ''
   })
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({}) // Track errors
+  const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const options = ['React', 'Node.js', 'Angular', 'Vue', 'JavaScript']
 
   const handleChange = (name: string, value: string) => {
+
     setProject(prev => ({
       ...prev,
       [name]: value
     }))
 
-    // Remove error if field is filled
     if (value && errors[name]) {
       setErrors(prevErrors => ({
         ...prevErrors,
@@ -62,13 +64,15 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
     }
   }
 
+  // Email validation regex
   const validateEmail = (email: string) => {
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
     return emailPattern.test(email)
   }
 
+  // Phone number validation regex
   const validatePhoneNumber = (phone: string) => {
-    const phonePattern = /^\+([1-9]{1}[0-9]{1,2})\d{10}$/ // Country code followed by 10 digit number
+    const phonePattern = /^\+([1-9]{1}[0-9]{1,2})\d{10}$/
     return phonePattern.test(phone)
   }
 
@@ -76,34 +80,52 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
     const newErrors: { [key: string]: string } = {}
 
     // Validate required fields
-    if (!project.projectname) newErrors.projectname = 'Name is required'
+    if (!project.projectname.trim()) newErrors.projectname = 'Name is required'
     if (!project.bidammount) newErrors.bidammount = 'Bid Amount is required'
-    if (!project.clientname) newErrors.clientname = 'Client Name is required'
-    if (!project.clientcontact) newErrors.clientcontact = 'Client Contact is required'
+    else if (isNaN(Number(project.bidammount)) || parseFloat(project.bidammount) <= 0) newErrors.bidammount = 'Bid Amount must be a valid positive number'
 
-    if (!project.clientemail) {
+    if (!project.clientname.trim()) newErrors.clientname = 'Client Name is required'
+
+    if (!project.clientcontact.trim()) {
+      newErrors.clientcontact = 'Client Contact is required'
+    } else if (!validatePhoneNumber(project.clientcontact)) {
+      newErrors.clientcontact = 'Valid Client Contact is required'
+    }
+
+    if (!project.clientemail.trim()) {
       newErrors.clientemail = 'Client Email is required'
     } else if (!validateEmail(project.clientemail)) {
       newErrors.clientemail = 'Valid Client Email is required'
     }
 
-    if (!project.clientcontact || !validatePhoneNumber(project.clientcontact))
-      newErrors.clientcontact = 'Valid Contact is required'
     if (!project.bid_date) newErrors.bid_date = 'Bid Date is required'
-    if (!project.clientlocation) newErrors.clientlocation = 'Location is required'
+    if (!project.clientlocation.trim()) newErrors.clientlocation = 'Location is required'
     if (!project.currency) newErrors.currency = 'Please Select Currency'
-    if (!project.platform) newErrors.platform = 'Platform is required'
-    if (!project.commission) newErrors.commission = 'Please Select'
+    if (!project.platform.trim()) newErrors.platform = 'Platform is required'
+    if (!project.commission) newErrors.commission = 'Please Select Commission'
 
     // If errors exist, set them in the state
     if (Object.keys(newErrors).length > 0) {
-      const commissionVal =  project.commission === 'Yes' ? true : false
       setErrors(newErrors)
       setIsSubmitted(true)
       return
     }
+
     setOpen(false)
-    console.log('Final Project Data to be Saved:', project);
+    console.log('Final Project Data to be Saved:', project)
+    Swal.fire({
+            title: 'Success!',
+            text: 'User bid successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            showConfirmButton: true,
+            customClass: {
+              confirmButton: 'custom-swal-button'
+            },
+            hideClass: {
+              popup: 'animate__animated animate__fadeOutDown animate__faster'
+            }
+          })
   }
 
   const handleClose = () => {
@@ -141,8 +163,8 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
                 value={project.projectname}
                 required
                 onChange={value => handleChange('projectname', value)}
-                error={isSubmitted && !!errors.projectname} // Show error if submitted
-                helperText={isSubmitted && errors.projectname ? errors.projectname : undefined} // Show error message if exists
+                error={isSubmitted && !!errors.projectname}
+                helperText={isSubmitted && errors.projectname ? errors.projectname : undefined}
               />
             </Grid>
 
@@ -190,7 +212,7 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
                 value={project.bid_date}
                 onChange={value => handleChange('bid_date', value)}
                 required
-                error={isSubmitted && !!errors.bid_date} // Show error if bid date is empty
+                error={isSubmitted && !!errors.bid_date}
                 helperText={isSubmitted && errors.bid_date ? errors.bid_date : undefined}
               />
             </Grid>
@@ -234,7 +256,7 @@ const AddProjectInfo: React.FC<AddProjectInfoProps> = ({ open, setOpen }) => {
                 onChange={value => handleChange('clientemail', value)}
                 required
                 error={isSubmitted && !!errors.clientemail}
-                helperText={isSubmitted && errors.clientemail ? errors.clientemail : undefined} // Show error for invalid or missing email
+                helperText={isSubmitted && errors.clientemail ? errors.clientemail : undefined}
               />
             </Grid>
             <Grid item xs={12} sm={3}>
