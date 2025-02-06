@@ -1,4 +1,3 @@
-
 'use client'
 
 // React Imports
@@ -15,6 +14,12 @@ import Typography from '@mui/material/Typography'
 import CustomTextInput from '@/app/Custom-Cpmponents/input/custominput'
 import DialogCloseButton from '@/components/dialogs/DialogCloseButton'
 import Dropdown from '@/app/Custom-Cpmponents/Select-dropdown/dropdown'
+
+import Swal from 'sweetalert2'
+
+// Regex for validation (defined once)
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA009]{2,}$/
+const contactNumberRegex = /^\+91\s?\d{10}$/ // Allowing space before 10 digits
 
 interface Project {
   id: string
@@ -57,21 +62,21 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
 
   useEffect(() => {
     if (data) {
-      setProjectData(data);
+      setProjectData(data)
 
       // Ensure position is always a string
       if (typeof data.position === 'string') {
-        setTags(data.position); // Use the string directly
+        setTags(data.position) // Use the string directly
       } else {
-        setTags(''); // Fallback to an empty string for non-string types
+        setTags('') // Fallback to an empty string for non-string types
       }
     }
-  }, [data]);
+  }, [data])
 
   const handleClose = () => {
-    setOpen(false);
-    resetForm();
-  };
+    setOpen(false)
+    resetForm()
+  }
 
   const resetForm = () => {
     setProjectData({
@@ -84,74 +89,71 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
       position: '',
       company: '',
       employeeType: ''
-    });
-    setTags(''); // Reset tags to an empty string
-    setErrors({});
-  };
+    })
+    setTags('') // Reset tags to an empty string
+    setErrors({})
+  }
+
+  const validateField = (field: keyof Project, value: string) => {
+    let error = ''
+    const trimmedValue = value.trim() // Trim leading and trailing spaces
+    // Validate required fields
+    if (!trimmedValue) {
+      error = `${capitalizeFirstLetter(field)} is required.`
+    }
+
+    // Email validation
+    if (field === 'email' && trimmedValue && !emailRegex.test(trimmedValue)) {
+      error = 'Invalid email format'
+    }
+
+    // Contact number validation
+    if (field === 'contact' && trimmedValue && !contactNumberRegex.test(trimmedValue.replace(/\s/g, ''))) {
+      error = 'Invalid contact number'
+    }
+
+    setErrors((prevErrors: { [key: string]: string }) => ({
+      ...prevErrors,
+      [field]: error
+    }))
+  }
+
+  const validateAllFields = () => {
+    const newErrors: { [key in keyof Project]?: string } = {}
+
+    // Validate required fields
+    if (!projectData.firstname.trim()) newErrors.firstname = 'First Name is required'
+    if (!projectData.lastname.trim()) newErrors.lastname = 'Last Name is required'
+    if (!projectData.employeeId.trim()) newErrors.employeeId = 'Employee ID is required'
+    if (!projectData.email.trim()) newErrors.email = 'Email is required'
+    else if (!emailRegex.test(projectData.email.trim())) newErrors.email = 'Invalid email format'
+    if (!projectData.contact.trim()) newErrors.contact = 'Contact Number is required'
+    else if (!contactNumberRegex.test(projectData.contact.trim().replace(/\s/g, '')))
+      newErrors.contact = 'Invalid contact number'
+    if (!projectData.company.trim()) newErrors.company = 'Company is required'
+    if (!projectData.employeeType.trim()) newErrors.employeeType = 'Employee Type is required'
+    if (!tags.trim()) newErrors.position = 'Position is required'
+
+    setErrors(newErrors)
+
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSave = () => {
-    const validationErrors: Record<string, string> = {};
-
-    // Helper function to validate email
-    const validateEmail = (email: string) => {
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-      return emailPattern.test(email)
-    }
-
-    // Helper function to validate phone number (Indian format)
-    const validatePhone = (phone: string) => {
-      const phonePattern = /^\d{10}$/
-      return phonePattern.test(phone)
-    }
-
-    // Required field validation (use an array of required fields)
-    const requiredFields: Array<keyof Project> = [
-      'id',
-      'firstname',
-      'lastname',
-      'email',
-      'employeeId',
-      'contact',
-      'company',
-      'employeeType'
-    ]
-
-    requiredFields.forEach(field => {
-      if (!projectData[field]) {
-        validationErrors[field] = `${capitalizeFirstLetter(field)} is required.`
+    // Validate all fields before saving
+    if (validateAllFields()) {
+      const updatedProjectData = {
+        ...projectData,
+        position: tags.trim() // Ensure the position is trimmed
       }
-    })
 
-    // Specific field validations
-    if (projectData.email && !validateEmail(projectData.email)) {
-      validationErrors.email = 'Please enter a valid email address.'
+      // Reset form after save
+      resetForm()
+
+      // Close the dialog
+      setOpen(false)
     }
-
-    if (projectData.contact && !validatePhone(projectData.contact)) {
-      validationErrors.contact = 'Please enter a valid phone number (e.g., +919876543210).'
-    }
-
-    // Skills validation (tags)
-    if (!tags) {
-      validationErrors.position = 'Position is required.'
-    }
-
-    // If there are validation errors, set them to the state and exit
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
-      return
-    }
-
-    // If validation passed, proceed with saving data
-    const updatedProjectData = { ...projectData, position: tags }
-    // Perform further actions with updatedProjectData if needed (e.g., API call)
-
-    // Reset form after save
-    resetForm();
-
-    // Close the dialog
-    setOpen(false);
-  };
+  }
 
   // Utility function to capitalize the first letter of each word (for dynamic error messages)
   const capitalizeFirstLetter = (string: string) => {
@@ -175,15 +177,33 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
       }
 
       // Clear the error if the field is filled
-      if (value && errors[field]) {
+      if (value.trim() && errors[field]) {
         setErrors((prevErrors: { [x: string]: any }) => {
           const { [field]: _, ...rest } = prevErrors
           return rest
         })
       }
+      console.log('Updated Project Data:', updatedData)
+
+      Swal.fire({
+        title: 'Success!',
+        text: 'User edit successfully!',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        showConfirmButton: true,
+        customClass: {
+          confirmButton: 'custom-swal-button'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOutDown animate__faster'
+        }
+      })
 
       return updatedData
     })
+
+    // Validate individual field
+    validateField(field, value)
   }
 
   return (
@@ -199,9 +219,9 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
         <i className='tabler-x' />
       </DialogCloseButton>
       <DialogTitle variant='h4' className='flex gap-2 flex-col text-primary text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-        Edit Project Information
+        Edit User Information
         <Typography component='span' className='flex flex-col text-center'>
-          Editing project details will initiate a privacy audit.
+          Editing user details will initiate a privacy audit.
         </Typography>
       </DialogTitle>
       <form onSubmit={e => e.preventDefault()}>
@@ -209,7 +229,7 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
           <Grid container spacing={5}>
             <Grid item xs={12}>
               <Typography variant='h6' className='text-primary font-bold'>
-                Project Details
+                User Details
               </Typography>
             </Grid>
 
@@ -219,8 +239,9 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 placeholder='Employee ID'
                 value={projectData.employeeId}
                 onChange={e => handleInputChange('employeeId', e)}
-                error={Boolean(errors.userId)}
-                helperText={errors.userId}
+                error={Boolean(errors.employeeId)}
+                helperText={errors.employeeId}
+                required
               />
             </Grid>
 
@@ -230,8 +251,9 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 placeholder='First Name'
                 value={projectData.firstname}
                 onChange={value => handleInputChange('firstname', value)}
-                error={Boolean(errors.firstName)}
-                helperText={errors.firstName}
+                error={Boolean(errors.firstname)}
+                helperText={errors.firstname}
+                required
               />
             </Grid>
 
@@ -241,8 +263,9 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 placeholder='Last Name'
                 value={projectData.lastname}
                 onChange={e => handleInputChange('lastname', e)}
-                error={Boolean(errors.lastName)}
-                helperText={errors.lastName}
+                error={Boolean(errors.lastname)}
+                helperText={errors.lastname}
+                required
               />
             </Grid>
 
@@ -254,6 +277,7 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 onChange={value => handleInputChange('company', value)}
                 error={Boolean(errors.company)}
                 helperText={errors.company}
+                required
               />
             </Grid>
 
@@ -265,6 +289,7 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 onChange={value => handleInputChange('employeeType', value)}
                 error={Boolean(errors.employeeType)}
                 helperText={errors.employeeType}
+                required
               />
             </Grid>
 
@@ -276,6 +301,7 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 selectedOption={projectData.position}
                 error={Boolean(errors.position)}
                 helperText={errors.position}
+                required
               />
             </Grid>
 
@@ -285,9 +311,9 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 placeholder='Email'
                 value={projectData.email}
                 onChange={value => handleInputChange('email', value)}
-                required
                 error={Boolean(errors.email)}
                 helperText={errors.email}
+                required
               />
             </Grid>
 
@@ -299,6 +325,7 @@ const EditUserInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 onChange={e => handleInputChange('contact', e)}
                 error={Boolean(errors.contact)}
                 helperText={errors.contact}
+                required
               />
             </Grid>
           </Grid>

@@ -12,6 +12,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import Typography from '@mui/material/Typography'
 
+import Swal from 'sweetalert2'
 import CustomTextInput from '@/app/Custom-Cpmponents/input/custominput'
 import CustomTagInput from '@/app/Custom-Cpmponents/input/customtaginput'
 import DialogCloseButton from '@/components/dialogs/DialogCloseButton'
@@ -38,7 +39,7 @@ type Project = {
   backenddev: string
   currency: string
   clientlocation: string
-  commission:string
+  commission: string
 }
 
 type EditUserInfoProps = {
@@ -111,18 +112,20 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
 
   const handleSave = () => {
     // Validate required fields
+    console.log('enter updated:')
+
     const validationErrors: any = {}
 
     // Check required fields
-    if (!projectData.projectname) validationErrors.projectname = 'Project name is required.'
-    if (!projectData.platform) validationErrors.platform = 'Platform is required.'
-    if (!projectData.clientname) validationErrors.clientname = 'Client name is required.'
-    if (!projectData.clientemail) validationErrors.clientemail = 'Client email is required.'
-    if (!projectData.clientcontact) validationErrors.clientcontact = 'Client contact is required.'
+    if (!projectData.projectname.trim()) validationErrors.projectname = 'Project name is required.'
+    if (!projectData.platform.trim()) validationErrors.platform = 'Platform is required.'
+    if (!projectData.clientname.trim()) validationErrors.clientname = 'Client name is required.'
+    if (!projectData.clientemail.trim()) validationErrors.clientemail = 'Client email is required.'
+    if (!projectData.clientcontact.trim()) validationErrors.clientcontact = 'Client contact is required.'
     if (!projectData.projectdescription) validationErrors.projectdescription = 'Project description is required.'
     if (!projectData.bidammount) validationErrors.bidammount = 'Bidiing Amnt is required.'
 
-    if (!projectData.clientlocation) validationErrors.clientlocation = 'Location is required.'
+    if (!projectData.clientlocation.trim()) validationErrors.clientlocation = 'Location is required.'
     if (!projectData.commission) validationErrors.commission = 'Please Select.'
 
     // Email validation
@@ -133,15 +136,11 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
     }
 
     // Phone number validation (assuming Indian phone number format as an example)
-    const phonePattern = /^[+91]\d{10}$/
+    const phonePattern = /^\+([1-9]{1}[0-9]{1,2})\d{10}$/
 
     if (projectData.clientcontact && !phonePattern.test(projectData.clientcontact)) {
-      validationErrors.clientcontact = 'Please enter a valid phone number (e.g., +919876543210).'
+      validationErrors.clientcontact = 'Invalid phone number'
     }
-
-    // Skills validation
-    if (tags.length === 0) validationErrors.skills = 'At least one skill is required.'
-
     // Bid Date validation
     if (!projectData.bid_date) {
       validationErrors.bid_date = 'Bid date is required.'
@@ -149,14 +148,29 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
       validationErrors.bid_date = 'Please enter a valid date.'
     }
 
+
     // If there are validation errors, set them to the state
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
-
       return
     }
 
     const updatedProjectData = { ...projectData, skills: tags }
+    console.log('updatedProjectData', updatedProjectData)
+
+    Swal.fire({
+      title: 'Success!',
+      text: 'Finance details added successfully!',
+      icon: 'success',
+      confirmButtonText: 'OK',
+      showConfirmButton: true,
+      customClass: {
+        confirmButton: 'custom-swal-button'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOutDown animate__faster'
+      }
+    })
 
     setOpen(false)
   }
@@ -174,9 +188,7 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
       if (value && errors[field]) {
         setErrors((prevErrors: any) => {
           const updatedErrors = { ...prevErrors }
-
           delete updatedErrors[field]
-
           return updatedErrors
         })
       }
@@ -184,7 +196,6 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
       return updatedData
     })
   }
-
   return (
     <Dialog
       fullWidth
@@ -281,7 +292,6 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 helperText={errors.commission}
               />
             </Grid>
-
 
             {/* <Grid item xs={12} sm={4}>
               <CustomFileUpload

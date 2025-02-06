@@ -16,8 +16,6 @@ interface FinanceData {
   paymentMode: string
   refId: string
   paymentDate: string
-  receivedAmt: string
-  pendingAmt: string
   description: string
   paymentSlip: string
 }
@@ -27,14 +25,15 @@ interface AddFinanceProps {
   setOpen: (open: boolean) => void
 }
 
-const paymentModes = ['Credit Card', 'Debit Card', 'Bank Transfer', 'PayPal'] // Example options for payment mode
+const paymentModes = ['Credit Card', 'Debit Card', 'Bank Transfer', 'PayPal']
+
+const amountRegex = /^\d*\.?\d{0,3}$/  // Allows numbers with up to 3 decimal places
 
 const AddFinance: React.FC<AddFinanceProps> = ({ open, setOpen }) => {
   const handleClose = () => {
     setOpen(false)
   }
 
-  // Initial empty data state
   const initialFinanceData: FinanceData = {
     projectName: '',
     amount: '',
@@ -42,8 +41,6 @@ const AddFinance: React.FC<AddFinanceProps> = ({ open, setOpen }) => {
     paymentMode: '',
     refId: '',
     paymentDate: '',
-    receivedAmt: '',
-    pendingAmt: '',
     description: '',
     paymentSlip: ''
   }
@@ -51,22 +48,25 @@ const AddFinance: React.FC<AddFinanceProps> = ({ open, setOpen }) => {
   const [financeData, setFinanceData] = useState<FinanceData>(initialFinanceData)
   const [errors, setErrors] = useState<{ [key in keyof FinanceData]?: string }>({})
 
+  // Handle input changes with validation
   const handleInputChange = (field: keyof FinanceData, value: string | number) => {
-    setFinanceData(prevData => ({
-      ...prevData,
-      [field]: value
-    }))
-
-    if (errors[field]) {
-      validateField(field, value)
-    }
-  }
-
-  const validateField = (field: keyof FinanceData, value: string | number) => {
+    let inputValue = value.toString()
     let error = ''
 
-    // Required field validation
-    if (!value && value !== 0) {
+    if (field === 'amount') {
+      // Prevent alphabets and symbols
+      if (!/^\d*\.?\d*$/.test(inputValue)) {
+        return  // Ignore invalid input
+      }
+
+      // Restrict to 3 decimal places
+      if (!amountRegex.test(inputValue)) {
+        return  // Ignore input beyond 3 decimal places
+      }
+    }
+
+    // Check for required fields
+    if (!inputValue && inputValue !== '0') {
       error = `${field} is required`
     }
 
@@ -74,25 +74,30 @@ const AddFinance: React.FC<AddFinanceProps> = ({ open, setOpen }) => {
       ...prevErrors,
       [field]: error
     }))
+
+    setFinanceData(prevData => ({
+      ...prevData,
+      [field]: inputValue
+    }))
   }
 
   const validateAllFields = () => {
     const newErrors: { [key in keyof FinanceData]?: string } = {}
 
-    // Loop through each field in financeData
-    Object.keys(financeData).forEach(key => {
-      const field = key as keyof FinanceData
-      const value = financeData[field]
-
-      // Perform validation for required fields
-      if (!value && value !== '') {
-        newErrors[field] = `${field} is required`
-      }
-    })
+    if (!financeData.projectName.trim()) newErrors.projectName = 'Project Name is required'
+    if (!financeData.amount) {
+      newErrors.amount = 'Amount is required'
+    } else if (!amountRegex.test(financeData.amount)) {
+      newErrors.amount = 'Only numbers are allowed'
+    }
+    if (!financeData.transactionId.trim()) newErrors.transactionId = 'Transaction Id is required'
+    if (!financeData.paymentMode) newErrors.paymentMode = 'Payment Mode is required'
+    if (!financeData.refId.trim()) newErrors.refId = 'Reference Id is required'
+    if (!financeData.paymentDate) newErrors.paymentDate = 'Payment Date is required'
+    if (!financeData.paymentSlip) newErrors.paymentSlip = 'Payment Slip is required'
 
     setErrors(newErrors)
 
-    // Return true if there are no errors
     return Object.keys(newErrors).length === 0
   }
 
@@ -100,13 +105,9 @@ const AddFinance: React.FC<AddFinanceProps> = ({ open, setOpen }) => {
     if (validateAllFields()) {
       console.log('New finance data:', financeData)
 
-      // Close dialog immediately
       handleClose()
-
-      // Reset form data
       setFinanceData(initialFinanceData)
 
-      // Show success Swal
       Swal.fire({
         title: 'Success!',
         text: 'Finance details added successfully!',
@@ -157,7 +158,7 @@ const AddFinance: React.FC<AddFinanceProps> = ({ open, setOpen }) => {
                 label='Amount'
                 placeholder='Amount'
                 value={financeData.amount}
-                onChange={value => handleInputChange('amount', Number(value))}
+                onChange={value => handleInputChange('amount', value)}
                 error={!!errors.amount}
                 helperText={errors.amount}
                 required
@@ -211,6 +212,7 @@ const AddFinance: React.FC<AddFinanceProps> = ({ open, setOpen }) => {
                 required
               />
             </Grid>
+
             <Grid item xs={12}>
               <CustomDescriptionInput
                 label='Payment Description'
@@ -225,6 +227,9 @@ const AddFinance: React.FC<AddFinanceProps> = ({ open, setOpen }) => {
                 label='Upload Payment Slip...'
                 onChange={value => handleInputChange('paymentSlip', value ? value.name : '')}
                 fileName={financeData.paymentSlip || ''}
+                error={!!errors.paymentSlip}
+                helperText={errors.paymentSlip}
+                required
               />
             </Grid>
           </Grid>
@@ -241,4 +246,6 @@ const AddFinance: React.FC<AddFinanceProps> = ({ open, setOpen }) => {
     </Dialog>
   )
 }
+
 export default AddFinance
+
