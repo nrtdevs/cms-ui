@@ -1,6 +1,7 @@
 // Third-party Imports
 import CredentialProvider from 'next-auth/providers/credentials'
-import GoogleProvider from 'next-auth/providers/google'
+
+// import GoogleProvider from 'next-auth/providers/google'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { PrismaClient } from '@prisma/client'
 import type { NextAuthOptions } from 'next-auth'
@@ -34,6 +35,8 @@ export const authOptions: NextAuthOptions = {
          */
         const { email, password } = credentials as { email: string; password: string }
 
+        console.log(email, password)
+
         try {
           // ** Login API Call to match the user credentials and receive user data in response along with his role
           const res = await fetch(`${process.env.API_URL}/login`, {
@@ -64,14 +67,14 @@ export const authOptions: NextAuthOptions = {
           throw new Error(e.message)
         }
       }
-    }),
-
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
     })
 
-    // ** ...add more providers here
+    // GoogleProvider({
+    //   clientId: process.env.GOOGLE_CLIENT_ID as string,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+    // })
+
+    // // ** ...add more providers here
   ],
 
   // ** Please refer to https://next-auth.js.org/configuration/options#session for more `session` options
@@ -104,13 +107,18 @@ export const authOptions: NextAuthOptions = {
      * the `session()` callback. So we have to add custom parameters in `token`
      * via `jwt()` callback to make them accessible in the `session()` callback
      */
+    async redirect({ url, baseUrl }) {
+      // Check if the URL starts with the base URL; if it does, redirect to that URL
+
+      return url.startsWith(baseUrl) ? url : baseUrl
+    },
     async jwt({ token, user }) {
       if (user) {
         /*
          * For adding custom parameters to user in session, we first need to add those parameters
          * in token which then will be available in the `session()` callback
          */
-        token.name = user.name
+        token = { ...user, picture: (user as any).userType, name: user?.name }
       }
 
       return token
@@ -118,7 +126,14 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         // ** Add custom params to user in session which are added in `jwt()` callback via `token` parameter
-        session.user.name = token.name
+        session.user = {
+          ...token,
+          image: token?.userType,
+          name: token?.name,
+          jti: undefined,
+          exp: undefined,
+          iat: undefined
+        } as any
       }
 
       return session
