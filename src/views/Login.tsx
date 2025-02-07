@@ -28,6 +28,8 @@ import type { SubmitHandler } from 'react-hook-form'
 import type { InferInput } from 'valibot'
 import classnames from 'classnames'
 
+import { login } from '../app/Services/authService'
+
 // Type Imports
 import type { SystemMode } from '@core/types'
 import type { Locale } from '@/configs/i18n'
@@ -114,8 +116,8 @@ const Login = ({ mode }: { mode: SystemMode }) => {
   } = useForm<FormData>({
     resolver: valibotResolver(schema),
     defaultValues: {
-      email: 'admin@vuexy.com',
-      password: 'admin'
+      email: 'nrt@gmail.com',
+      password: 'admin@2025'
     }
   })
 
@@ -136,6 +138,8 @@ const Login = ({ mode }: { mode: SystemMode }) => {
       redirect: false
     })
 
+    console.log(res)
+
     if (res && res.ok && res.error === null) {
       // Vars
       const redirectURL = searchParams.get('redirectTo') ?? '/users/dashboard'
@@ -149,6 +153,24 @@ const Login = ({ mode }: { mode: SystemMode }) => {
       }
     }
   }
+
+  // const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
+  //   try {
+  //     const res = await login(data.email, data.password)
+
+  //     console.log('Login Successful:', res.accessToken)
+  //     const redirectURL = searchParams.get('redirectTo') ?? '/users/dashboard'
+
+  //     localStorage.setItem('accessToken', res.accessToken)
+  //     router.replace(redirectURL)
+
+  //     const localizedRedirectURL = getLocalizedUrl(redirectURL, locale as Locale)
+
+  //     router.replace(localizedRedirectURL)
+  //   } catch (error: any) {
+  //     setErrorState({ message: [error.message || 'Login failed'] })
+  //   }
+  // }
 
   return (
     <div className='flex bs-full justify-center'>
