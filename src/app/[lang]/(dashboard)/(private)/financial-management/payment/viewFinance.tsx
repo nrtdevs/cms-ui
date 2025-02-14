@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Grid, Divider, Box } from '@mui/material'
+
+import {
+  Button,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Grid,
+  Divider,
+  Box
+} from '@mui/material'
+
 
 interface ViewFinanceProps {
   open: boolean

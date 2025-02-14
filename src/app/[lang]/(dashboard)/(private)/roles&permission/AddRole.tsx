@@ -92,7 +92,6 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
     { id: 16, permissionname: 'create', permission_group: 'Content' },
     { id: 43, permissionname: 'edit', permission_group: 'Content' },
     { id: 77, permissionname: 'delete', permission_group: 'Content' },
-    { id: 52, permissionname: 'approve', permission_group: 'Content' },
     { id: 91, permissionname: 'manage', permission_group: 'Settings' },
     { id: 35, permissionname: 'update', permission_group: 'Settings' },
     { id: 68, permissionname: 'view', permission_group: 'Settings' },
@@ -223,8 +222,8 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
             </Box>
             <Box className='w-1/2'>
               <FormControl fullWidth>
-                <InputLabel>UserType</InputLabel>
-                <Select value={userType} onChange={e => setUserType(e.target.value)}>
+              <InputLabel htmlFor='userType'>User Type</InputLabel>
+                <Select value={userType} onChange={e => setUserType(e.target.value)} label='User Type' id='userType'>
                   <MenuItem value=''>Select UserType</MenuItem>
                   <MenuItem value='User'>User</MenuItem>
                   <MenuItem value='SuperAdmin'>SuperAdmin</MenuItem>

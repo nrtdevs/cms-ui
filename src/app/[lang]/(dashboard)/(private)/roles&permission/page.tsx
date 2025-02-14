@@ -41,7 +41,6 @@ interface PermissionGroup {
 interface Permission {
   id: number
   name: string
-  usertype: string
   userType: string
   permissionname: string
   description: string
@@ -85,7 +84,6 @@ const Page: React.FC = () => {
     () => [
       {
         id: 1,
-        usertype: 'user',
         name: 'Mid-Level Bidding Specialist',
         permissionname: 'View Permissions',
         userType: 'user',
@@ -101,8 +99,8 @@ const Page: React.FC = () => {
               { permissionname: 'create', id: 23 },
               { permissionname: 'read', id: 47 },
               { permissionname: 'update', id: 12 },
-              { permissionname: 'approve', id: 8 },
-              { permissionname: 'block', id: 74 }
+              // { permissionname: 'approve', id: 8 },
+              // { permissionname: 'block', id: 74 }
             ]
           },
           {
@@ -152,10 +150,9 @@ const Page: React.FC = () => {
       },
       {
         id: 2,
-        usertype: 'superadmin',
+        userType: 'superadmin',
         name: 'Senior Bidding Specialist',
         permissionname: 'Edit Permissions',
-        userType: 'user',
         description: 'Responsible for editing permissions within the bidding group.',
         permissions: [
           {
@@ -258,7 +255,7 @@ const Page: React.FC = () => {
           </Typography>
         )
       }),
-      columnHelper.accessor('usertype', {
+      columnHelper.accessor('userType', {
         header: 'User Type',
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
@@ -284,7 +281,7 @@ const Page: React.FC = () => {
                 element={Button}
                 elementProps={buttonProps}
                 dialog={EditRollInfo}
-                dialogProps={{ roleData }}
+                dialogProps={{ roleData  }}
               />
               <OpenDialogOnElementClick
                 element={Button}

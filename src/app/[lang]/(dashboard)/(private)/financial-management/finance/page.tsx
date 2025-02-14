@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import Paginator from '@/app/Custom-Cpmponents/paginator/Paginator'
 import {
   Box,
@@ -28,6 +28,9 @@ import {
   FilterFn
 } from '@tanstack/react-table'
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
+import Link from 'next/link'
+import { getLocalizedUrl } from '@/utils/i18n'
+import { Locale } from '@/configs/i18n'
 
 interface Project {
   id: string
@@ -319,6 +322,8 @@ const Page: React.FC = () => {
     return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
   }
 
+  const { lang: locale } = useParams()
+
   const rowsPerPage = 10
 
   const filteredData = useMemo(() => {
@@ -411,13 +416,11 @@ const Page: React.FC = () => {
           </span>
         ),
         cell: info => (
-          <Button
-            onClick={() => router.push(`/financial-management/payment/${info.row.original.id}`)}
-            className='p-1 rounded-sm text-primary bg-[#7367f0] text-white hover:bg-blue-600 transition-colors flex items-center space-x-2'
-          >
-            {/* <i style={{ fontSize: '18px' }} className='tabler-eye'></i> */}
-            <span>{info.row.original.totalPayments}</span>
-          </Button>
+          <Link href={getLocalizedUrl(`/financial-management/payment/${info.row.original.id}`, locale as Locale)}>
+            <Button className='p-1 rounded-sm text-white bg-primary ransition-colors flex items-center space-x-2'>
+              <span>{info.row.original.totalPayments}</span>
+            </Button>
+          </Link>
         )
       })
     ],
@@ -439,66 +442,68 @@ const Page: React.FC = () => {
   })
 
   return (
-    <Card className='container mx-auto p-4'>
-      <div className='flex justify-between items-center mb-6'>
-        <Typography variant='h4' fontWeight='bold' className='text-primary'>
-          Finance Management
-        </Typography>
-        <SearchFilter label='Search' value={searchTerm} onChange={handleSearch} placeholder='Search all fields' />
-      </div>
-
-      <Box className='mt-5 p-4'>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <TableCell
-                      className='font-semibold'
-                      key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : typeof header.column.columnDef.header === 'function'
-                          ? header.column.columnDef.header(header.getContext())
-                          : header.column.columnDef.header}
-                      {header.column.getIsSorted() === 'asc'
-                        ? ' 🔼'
-                        : header.column.getIsSorted() === 'desc'
-                          ? ' 🔽'
-                          : ''}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHead>
-
-            <TableBody>
-              {table.getRowModel().rows.map((row, index) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
-                      {cell.column.columnDef.cell
-                        ? typeof cell.column.columnDef.cell === 'function'
-                          ? cell.column.columnDef.cell(cell.getContext())
-                          : cell.getValue()
-                        : cell.getValue()}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <div className='flex items-center justify-center mt-10 mb-2 my-4'>
-          <Stack spacing={2}>
-            <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-          </Stack>
+    <div>
+      <Card className='container mx-auto p-4'>
+        <div className='flex justify-between items-center mb-6'>
+          <Typography variant='h4' fontWeight='bold' className='text-primary'>
+            Finance Management
+          </Typography>
+          <SearchFilter label='Search' value={searchTerm} onChange={handleSearch} placeholder='Search all fields' />
         </div>
-      </Box>
-    </Card>
+
+        <Box className='mt-5 p-4'>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                {table.getHeaderGroups().map(headerGroup => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <TableCell
+                        className='font-semibold'
+                        key={header.id}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : typeof header.column.columnDef.header === 'function'
+                            ? header.column.columnDef.header(header.getContext())
+                            : header.column.columnDef.header}
+                        {header.column.getIsSorted() === 'asc'
+                          ? ' 🔼'
+                          : header.column.getIsSorted() === 'desc'
+                            ? ' 🔽'
+                            : ''}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHead>
+
+              <TableBody>
+                {table.getRowModel().rows.map((row, index) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell key={cell.id}>
+                        {cell.column.columnDef.cell
+                          ? typeof cell.column.columnDef.cell === 'function'
+                            ? cell.column.columnDef.cell(cell.getContext())
+                            : cell.getValue()
+                          : cell.getValue()}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <div className='flex items-center justify-center mt-10 mb-2 my-4'>
+            <Stack spacing={2}>
+              <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            </Stack>
+          </div>
+        </Box>
+      </Card>
+    </div>
   )
 }
 

@@ -1,7 +1,28 @@
-'use client'
+
 
 import React, { useState, useEffect } from 'react'
-import { Button, Typography, Grid, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
+import {
+  Button,
+  Typography,
+  Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Box
+} from '@mui/material'
+import DatePickerInput from '@/app/Custom-Cpmponents/input/Datepickerinput'
+import CustomDescriptionInput from '@/app/Custom-Cpmponents/input/customdescriptioinput'
+
+interface Remark {
+  remark: string
+  date: string
+}
 
 interface Ticket {
   ticketName: string
@@ -11,6 +32,7 @@ interface Ticket {
   status: string
   priority: string
   tags: string[]
+  remarks: Remark[]
 }
 
 interface ViewTicketProps {
@@ -30,6 +52,37 @@ const ViewTickets: React.FC<ViewTicketProps> = ({ open, setOpen, data }) => {
     tags: data.tags || [] // Ensure tags is an empty array if undefined
   })
 
+  // State for storing the current remark and date
+  const [remark, setRemark] = useState<Remark>({ remark: '', date: '' })
+  const [error, setError] = useState<string>('')
+
+  // Handle change in the remark or date fields
+  const handleRemarkChange = (field: string, value: string) => {
+    setRemark(prevState => ({ ...prevState, [field]: value }))
+  }
+
+  // Handle save remark with validation
+  const handleSaveRemark = () => {
+    if (!remark.remark.trim() || !remark.date) {
+      setError('Please provide both a remark and a date.')
+      return
+    }
+
+    // Clear previous error if validation is successful
+    setError('')
+
+    // Save the current remark to the ticket
+    const updatedTicket = { ...ticketData, remarks: [...ticketData.remarks, remark] }
+    setTicketData(updatedTicket)
+    setRemark({ remark: '', date: '' }) // Clear the fields after saving
+  }
+
+  // Handle delete remark
+  const handleDeleteRemark = (index: number) => {
+    const updatedRemarks = ticketData.remarks.filter((_, i) => i !== index)
+    setTicketData(prevState => ({ ...prevState, remarks: updatedRemarks }))
+  }
+
   useEffect(() => {
     setTicketData({
       ...data,
@@ -38,62 +91,62 @@ const ViewTickets: React.FC<ViewTicketProps> = ({ open, setOpen, data }) => {
   }, [data])
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth='md'>
-      <DialogTitle variant='h4' className='flex gap-2 flex-col text-primary text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-        View Ticket Details
-        <Typography component='span' className='flex flex-col text-center'>
-          Here are the details for the ticket.
-        </Typography>
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth='sm'>
+      <DialogTitle className='text-primary font-bold align-left text-left' gutterBottom>
+        Payment Information
       </DialogTitle>
-      <DialogContent className='overflow-visible pbs-0 sm:pli-16'>
-        <Grid container spacing={5}>
-          <Grid item xs={12}>
-            <Typography variant='h6' className='text-primary font-bold'>
-              Ticket Details
-            </Typography>
-          </Grid>
 
+      <DialogContent sx={{ backgroundColor: 'background.paper', padding: '32px' }}>
+        <Box mb={3}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Typography variant='h6' className='text-primary'>
+                Ticket Name
+              </Typography>
+              <Typography variant='body1'>{ticketData.ticketName}</Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant='h6' className='text-primary'>
+                Assignee
+              </Typography>
+              <Typography variant='body1'>{ticketData.assignee}</Typography>
+            </Grid>
+          </Grid>
+        </Box>
+
+        <Grid container spacing={2} mt={2}>
           <Grid item xs={12} sm={6}>
-            <Typography variant='body1'>
-              <strong className='text-primary'>Ticket Name:</strong> {ticketData.ticketName}
+            <Typography variant='h6' className='text-primary'>
+              Status
             </Typography>
+            <Typography variant='body1'> {ticketData.status}</Typography>
           </Grid>
-
           <Grid item xs={12} sm={6}>
-            <Typography variant='body1' className='text-secondary'>
-              <strong className='text-primary'>Assignee:</strong> {ticketData.assignee}
+            <Typography variant='h6' className='text-primary'>
+              Priority
             </Typography>
+            <Typography variant='body1'>{ticketData.priority}</Typography>
           </Grid>
+        </Grid>
 
+        <Grid container spacing={2} mt={2}>
           <Grid item xs={12} sm={6}>
-            <Typography variant='body1' className='text-secondary'>
-              <strong className='text-primary'>Status:</strong> {ticketData.status}
+            <Typography variant='h6' className='text-primary'>
+              Tags
             </Typography>
+            <Typography variant='body1'>{ticketData.tags}</Typography>
           </Grid>
-
           <Grid item xs={12} sm={6}>
-            <Typography variant='body1' className='text-secondary'>
-              <strong className='text-primary'>Priority:</strong> {ticketData.priority}
+            <Typography variant='h6' className='text-primary'>
+              Ticket Description
             </Typography>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <Typography variant='body1' className='text-secondary'>
-              <strong className='text-primary'>Tags:</strong> {ticketData.tags.join(', ') || 'No tags'}
-            </Typography>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Typography variant='body1' className='text-secondary'>
-              <strong className='text-primary'>Ticket Description:</strong>{' '}
-              {ticketData.ticketDescription || 'No description available'}
-            </Typography>
+            <Typography variant='body1'>{ticketData.ticketDescription}</Typography>
           </Grid>
         </Grid>
       </DialogContent>
 
-      <DialogActions className='justify-center pbs-0 sm:pbe-16 sm:pli-16'>
-        <Button variant='contained' onClick={handleClose}>
+      <DialogActions>
+        <Button onClick={handleClose} color='secondary'>
           Close
         </Button>
       </DialogActions>

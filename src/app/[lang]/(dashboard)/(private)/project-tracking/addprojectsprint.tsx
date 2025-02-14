@@ -282,7 +282,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
     formState: { errors }
   } = useForm<FormValues>({
     defaultValues: {
-      projectname: data?.projectname,
+      projectname: data?.projectname || '', // If data is passed, use it; otherwise, set an empty string
       sprints: [defaultSprint]
     }
   })
@@ -298,14 +298,14 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
 
   useEffect(() => {
     if (data) {
-      setValue('projectname', data.projectname)
+      setValue('projectname', data.projectname) // Set project name if data exists
     }
   }, [data, setValue])
 
   const handleClose = () => {
     setOpen(false)
-    setValue('projectname', '')
-    setValue('sprints', [defaultSprint])
+    setValue('projectname', '') // Reset projectname when closing the dialog
+    setValue('sprints', [defaultSprint]) // Reset sprints when closing
   }
 
   const handleSave = (formData: FormValues) => {
@@ -332,145 +332,143 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
         <i className='tabler-x' />
       </DialogCloseButton>
       <DialogTitle variant='h4' className='flex gap-2 flex-col text-primary text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-        Add Tickets
+        Add Projects & Sprints
       </DialogTitle>
       <form onSubmit={handleSubmit(handleSave)}>
         <DialogContent>
-          <Grid container spacing={5}>
-            {/* Project Name and Title */}
-            <Grid item xs={12}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <CustomTextInput
+          <Grid container spacing={3}>
+            {/* Project Name */}
+            <Grid item xs={12} sm={6}>
+              <Controller
+                control={control}
+                name='projectname'
+                rules={{ required: 'Project name is required' }} // Add validation for project name
+                render={({ field }) => (
+                  <Dropdown
                     label='Project Name'
-                    placeholder='Enter Project Name'
-                    value={data?.projectname || ''}
-                    onChange={() => {}}
-                    disabled={true}
+                    options={['Project Alpha', 'Project Beta', 'Project Gamma']}
+                    selectedOption={field.value}
+                    onSelect={(selectedValue: string) => setValue(`projectname`, selectedValue)}
+                    error={!!errors.projectname}
+                    helperText={errors.projectname?.message} // Display error message
                   />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Controller
-                    control={control}
-                    name={`sprints.0.sprintname`}
-                    rules={{
-                      validate: value => validateSprintNames(value, 0)
-                    }}
-                    render={({ field }) => (
-                      <CustomTextInput
-                        label='Title'
-                        placeholder='Enter Title...'
-                        {...field}
-                        error={!!errors.sprints?.[0]?.sprintname}
-                        helperText={errors.sprints?.[0]?.sprintname?.message}
-                      />
-                    )}
+                )}
+              />
+            </Grid>
+
+            {/* Sprint Title */}
+            <Grid item xs={12} sm={6}>
+              <Controller
+                control={control}
+                name={`sprints.0.sprintname`}
+                rules={{
+                  required: 'Sprint title is required', // Required field validation
+                  validate: value => validateSprintNames(value, 0) // Custom validation for unique sprint name
+                }}
+                render={({ field }) => (
+                  <CustomTextInput
+                    label='Sprint Title'
+                    placeholder='Enter Sprint Title...'
+                    {...field}
+                    error={!!errors.sprints?.[0]?.sprintname}
+                    helperText={errors.sprints?.[0]?.sprintname?.message} // Display error message
                   />
-                </Grid>
-              </Grid>
+                )}
+              />
             </Grid>
 
             {/* AssignBy and Tech Stack */}
-            <Grid item xs={12}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <Controller
-                    control={control}
-                    name={`sprints.0.assignBy`}
-                    render={({ field }) => (
-                      <CustomTextInput
-                        label='Assign By'
-                        placeholder='Enter Assign By...'
-                        {...field}
-                        error={!!errors.sprints?.[0]?.assignBy}
-                        helperText={errors.sprints?.[0]?.assignBy?.message}
-                      />
-                    )}
+            <Grid item xs={12} sm={6}>
+              <Controller
+                control={control}
+                name={`sprints.0.assignBy`}
+                rules={{ required: 'Assigned By is required' }} // Required field validation
+                render={({ field }) => (
+                  <CustomTextInput
+                    label='Assign By'
+                    placeholder='Enter Assign By...'
+                    {...field}
+                    error={!!errors.sprints?.[0]?.assignBy}
+                    helperText={errors.sprints?.[0]?.assignBy?.message} // Display error message
                   />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Controller
-                    control={control}
-                    name={`sprints.0.addmodule`}
-                    render={({ field }) => (
-                      <CustomTagInput
-                        label='Select Tech Stack'
-                        tags={field.value}
-                        onChange={(value: string[]) => setValue(`sprints.0.addmodule`, value)}
-                        options={options}
-                        placeholder='Type and select tags'
-                      />
-                    )}
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                control={control}
+                name={`sprints.0.addmodule`}
+                rules={{ required: 'Tech Stack is required' }} // Required field validation
+                render={({ field }) => (
+                  <CustomTagInput
+                    label='Select Tech Stack'
+                    tags={field.value}
+                    onChange={(value: string[]) => setValue(`sprints.0.addmodule`, value)}
+                    options={options}
+                    placeholder='Type and select tags'
+                    error={!!errors.sprints?.[0]?.addmodule}
+                    helperText={errors.sprints?.[0]?.addmodule?.message} // Display error message
                   />
-                </Grid>
-              </Grid>
+                )}
+              />
             </Grid>
 
             {/* Start Date and Deadline Date */}
-            <Grid item xs={12}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <Controller
-                    control={control}
-                    name={`sprints.0.sprintStartDate`}
-                    render={({ field }) => (
-                      <DatePickerInput label='Start Date' placeholder='Enter Task Start Date' type='date' {...field} />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Controller
-                    control={control}
-                    name={`sprints.0.sprintEndDate`}
-                    render={({ field }) => (
-                      <DatePickerInput
-                        label='Deadline Date'
-                        placeholder='Enter Sprint End Date'
-                        type='date'
-                        {...field}
-                      />
-                    )}
-                  />
-                </Grid>
-              </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                control={control}
+                name={`sprints.0.sprintStartDate`}
+                rules={{ required: 'Start Date is required' }} // Required field validation
+                render={({ field }) => (
+                  <DatePickerInput label='Start Date' placeholder='Enter Task Start Date' type='date' {...field} />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                control={control}
+                name={`sprints.0.sprintEndDate`}
+                rules={{ required: 'End Date is required' }} // Required field validation
+                render={({ field }) => (
+                  <DatePickerInput label='Deadline Date' placeholder='Enter Sprint End Date' type='date' {...field} />
+                )}
+              />
             </Grid>
 
             {/* Select Tester and Developer */}
-            <Grid item xs={12}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <Controller
-                    control={control}
-                    name={`sprints.0.tester`}
-                    render={({ field }) => (
-                      <Dropdown
-                        label='Select Tester'
-                        options={testers}
-                        selectedOption={field.value}
-                        onSelect={(selectedValue: string) => setValue(`sprints.0.tester`, selectedValue)}
-                        error={!!errors.sprints?.[0]?.tester}
-                        helperText={errors.sprints?.[0]?.tester?.message}
-                      />
-                    )}
+            <Grid item xs={12} sm={6}>
+              <Controller
+                control={control}
+                name={`sprints.0.tester`}
+                rules={{ required: 'Tester is required' }} // Required field validation
+                render={({ field }) => (
+                  <Dropdown
+                    label='Select Tester'
+                    options={testers}
+                    selectedOption={field.value}
+                    onSelect={(selectedValue: string) => setValue(`sprints.0.tester`, selectedValue)}
+                    error={!!errors.sprints?.[0]?.tester}
+                    helperText={errors.sprints?.[0]?.tester?.message} // Display error message
                   />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Controller
-                    control={control}
-                    name={`sprints.0.developer`}
-                    render={({ field }) => (
-                      <Dropdown
-                        label='Select Developer'
-                        options={developers}
-                        selectedOption={field.value}
-                        onSelect={(selectedValue: string) => setValue(`sprints.0.developer`, selectedValue)}
-                        error={!!errors.sprints?.[0]?.developer}
-                        helperText={errors.sprints?.[0]?.developer?.message}
-                      />
-                    )}
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                control={control}
+                name={`sprints.0.developer`}
+                rules={{ required: 'Developer is required' }} // Required field validation
+                render={({ field }) => (
+                  <Dropdown
+                    label='Select Developer'
+                    options={developers}
+                    selectedOption={field.value}
+                    onSelect={(selectedValue: string) => setValue(`sprints.0.developer`, selectedValue)}
+                    error={!!errors.sprints?.[0]?.developer}
+                    helperText={errors.sprints?.[0]?.developer?.message} // Display error message
                   />
-                </Grid>
-              </Grid>
+                )}
+              />
             </Grid>
 
             {/* Description */}
@@ -478,6 +476,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
               <Controller
                 control={control}
                 name={`sprints.0.description`}
+                rules={{ required: 'Description is required' }} // Required field validation
                 render={({ field }) => (
                   <CustomDescriptionInput
                     label='Description'
@@ -485,7 +484,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     value={field.value}
                     onChange={(value: string) => setValue(`sprints.0.description`, value)}
                     error={!!errors.sprints?.[0]?.description}
-                    helperText={errors.sprints?.[0]?.description?.message}
+                    helperText={errors.sprints?.[0]?.description?.message} // Display error message
                   />
                 )}
               />

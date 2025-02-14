@@ -2,6 +2,8 @@
 
 import React, { useMemo, useState } from 'react'
 
+import { MoreVert } from '@mui/icons-material' // Import the Material UI icon
+
 import type { ButtonProps } from '@mui/material'
 
 import {
@@ -39,6 +41,21 @@ import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdo
 import EditTicket from './EditTickets'
 import ViewTicket from './ViewTickets'
 import AddProjectsprint from '../project-tracking/addprojectsprint'
+import AddRemark from './AddRemark'
+import { getLocalizedUrl } from '@/utils/i18n'
+import Link from '@/components/Link'
+import { useParams } from 'next/navigation'
+import { Locale } from '@/configs/i18n'
+import Dropdown from '@/app/Custom-Cpmponents/Select-dropdown/dropdown'
+
+interface Remark {
+  remark: string
+  date: string
+}
+
+interface Report{
+  report : string
+}
 
 type Project = {
   id: number
@@ -48,6 +65,8 @@ type Project = {
   end_date: string
   clientname: string
   status: string
+  report:string
+  remarks: Remark[]
 }
 
 const buttonProps: ButtonProps = {
@@ -57,6 +76,15 @@ const buttonProps: ButtonProps = {
   className: 'bg-[#7b91b1] text-white p-0 rounded-sm',
   sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
   children: <i style={{ fontSize: '15px' }} className='tabler-edit text-white' />
+}
+
+const buttonAddrops: ButtonProps = {
+  variant: 'contained',
+  color: 'primary',
+  size: 'small',
+  className: 'bg-green-700 text-white p-0 rounded-sm',
+  sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
+  children: <i style={{ fontSize: '15px' , }} className='tabler-plus text-white' />
 }
 
 const buttonviewProps: ButtonProps = {
@@ -75,60 +103,125 @@ const buttonAddProps: ButtonProps = {
   size: 'large'
 }
 
-const AdminProjectTracking: React.FC = ({}) => {
+const AdminTickets: React.FC = () => {
   const [selectedManager, setSelectedManager] = useState('')
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const { lang: locale } = useParams()
 
   const rowsPerPage = 10
+  // const reportOptions = ['In Progress', 'Pending', 'Completed', 'Completed']
+
+
+  const reportOptions = ['In Progress', 'Pending', 'Completed', 'Ongoing']
+
+  // State for data
+  const [datax, setDatax] = useState<string[]>(['In Progress', 'Pending', 'Completed', 'Ongoing']);
+  const [errors, setErrors] = useState<any>({})
+
+
+  // Handle changes in the report dropdown
+  const handleReportChange = (value: string) => {
+    setDatax(prevData =>
+      prevData.map((item) => {
+        if (item === value) {
+          return value; // Directly modify the matching value
+        }
+        return item; // Keep other values unchanged
+      })
+    );
+  };
+
+
+  const handleInputChange = (field: keyof Project, value: string) => {
+    setDatax(prevData => {
+      const updatedData = {
+        ...prevData,
+        [field]: value
+      }
+
+      // Clear the error if the field is filled
+      if (value && errors[field]) {
+        setErrors((prevErrors: any) => {
+          const updatedErrors = { ...prevErrors }
+
+          delete updatedErrors[field]
+
+          return updatedErrors
+        })
+      }
+
+      return updatedData
+    })
+  }
 
   const data = useMemo(
     () => [
       {
         id: 1,
         projectname: 'Project Alpha',
+        username: 'shivam srivastava',
         title: 'User',
         Projectstartdate: '2025-01-02',
         end_date: '2024-06-01',
         clientname: 'John Doe',
         status: 'Active',
+        report: 'In Progress', // Added report field
         ticketName: 'Login Bug Fix',
         assignee: 'Sarah Lee',
         ticketStatus: 'In Progress',
         priority: 'High',
         tags: ['Bug', 'Urgent'],
-        ticketDescription: 'Fixing the login issue where users cannot authenticate.'
+        ticketDescription: 'Fixing the login issue where users cannot authenticate.',
+        remarks: [
+          { remark: 'Initial investigation completed', date: '2025-01-03' },
+          { remark: 'Fixing authentication bug', date: '2025-01-05' },
+          { remark: 'Awaiting testing', date: '2025-01-07' }
+        ]
       },
       {
         id: 2,
         projectname: 'Project Beta',
+        username: 'gaurav sir',
         title: 'Super Admin',
         Projectstartdate: '2025-01-02',
         end_date: '2024-08-01',
         clientname: 'Jane Smith',
         status: 'Unactive',
+        report: 'Pending', // Added report field
         ticketName: 'Admin Panel Redesign',
         assignee: 'Michael Wright',
         ticketStatus: 'Not Started',
         priority: 'Medium',
         tags: ['UI', 'Design'],
-        ticketDescription: 'Redesign the admin panel to improve the user interface and accessibility.'
+        ticketDescription: 'Redesign the admin panel to improve the user interface and accessibility.',
+        remarks: [
+          { remark: 'Design phase initiated', date: '2025-01-03' },
+          { remark: 'UI mockups created', date: '2025-01-08' }
+        ]
       },
       {
         id: 3,
         projectname: 'Project Gamma',
+        username: 'gitanshu sir',
         title: 'Administrator',
         Projectstartdate: '2025-03-01',
         end_date: '2024-12-15',
         clientname: 'Emily Davis',
         status: 'Active',
+        report: 'Completed', // Added report field
         ticketName: 'Security Patch Update',
         assignee: 'Lucas Allen',
         ticketStatus: 'Completed',
         priority: 'Low',
         tags: ['Security', 'Patch'],
-        ticketDescription: 'Update security patches and make necessary fixes.'
+        ticketDescription: 'Update security patches and make necessary fixes.',
+        remarks: [
+          { remark: 'Security vulnerability discovered', date: '2025-03-05' },
+          { remark: 'Patch applied successfully', date: '2025-03-07' },
+          { remark: 'Testing and verification completed', date: '2025-03-08' }
+        ]
       },
       {
         id: 4,
@@ -138,12 +231,18 @@ const AdminProjectTracking: React.FC = ({}) => {
         end_date: '2025-10-30',
         clientname: 'David Lee',
         status: 'Unactive',
+        report: 'Ongoing', // Added report field
         ticketName: 'Backend Optimization',
         assignee: 'Olivia Martinez',
         ticketStatus: 'In Progress',
         priority: 'High',
         tags: ['Backend', 'Optimization'],
-        ticketDescription: 'Optimize backend code for faster processing and better performance.'
+        ticketDescription: 'Optimize backend code for faster processing and better performance.',
+        remarks: [
+          { remark: 'Code profiling completed', date: '2025-04-12' },
+          { remark: 'Optimization strategies discussed', date: '2025-04-15' },
+          { remark: 'Code optimization in progress', date: '2025-04-20' }
+        ]
       }
     ],
     []
@@ -243,19 +342,19 @@ const AdminProjectTracking: React.FC = ({}) => {
         header: 'Status',
         cell: info => {
           const status = info.getValue<string>()
-          let icon, borderColor, textColor, padding
+          let icon, borderColor, textColor
 
           // Set icon and colors based on status
           if (status === 'Active') {
             icon = '✓' // Green tick
             borderColor = '#198754' // Green
             textColor = '#198754'
-            padding = '29px 29px '
+
           } else if (status === 'Unactive') {
             icon = '✗' // Orange tick
             borderColor = '#fd0054' // Orange
             textColor = '#fd0054'
-            padding = '29px 20px '
+
           } else if (status === 'Completed') {
             icon = '✓' // Blue tick
             borderColor = 'blue' // Blue
@@ -264,11 +363,11 @@ const AdminProjectTracking: React.FC = ({}) => {
             icon = '✗' // Cross for undefined or other statuses
             borderColor = 'gray' // Default gray
             textColor = 'gray'
-            padding = '29px 29px '
+          
           }
 
           return (
-            <div
+            <Box
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -281,7 +380,7 @@ const AdminProjectTracking: React.FC = ({}) => {
             >
               <span style={{ fontSize: '16px', marginRight: '8px' }}>{icon}</span>
               <span>{status}</span>
-            </div>
+            </Box>
           )
         }
       },
@@ -289,25 +388,33 @@ const AdminProjectTracking: React.FC = ({}) => {
         id: 'actions',
         header: 'Actions',
         cell: info => {
+
           const project = info.row.original
-          return (
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <OpenDialogOnElementClick
-                element={Button}
-                elementProps={buttonProps}
-                dialog={EditTicket}
-                dialogProps={{ data: project }}
-              />
-              <OpenDialogOnElementClick
-                element={Button}
-                elementProps={buttonviewProps}
-                dialog={ViewTicket}
-                dialogProps={{ data: project }}
-              />
-            </Box>
-          )
+
+            return (
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <OpenDialogOnElementClick
+                  element={Button}
+                  elementProps={buttonAddrops}
+                  dialog={AddRemark}
+                  dialogProps={{ data: project }}
+                />
+                <OpenDialogOnElementClick
+                  element={Button}
+                  elementProps={buttonProps}
+                  dialog={EditTicket}
+                  dialogProps={{ data: project }}
+                />
+                <OpenDialogOnElementClick
+                  element={Button}
+                  elementProps={buttonviewProps}
+                  dialog={ViewTicket}
+                  dialogProps={{ data: project }}
+                />
+              </Box>
+            )
+          }
         }
-      }
     ],
     []
   )
@@ -398,14 +505,14 @@ const AdminProjectTracking: React.FC = ({}) => {
             </TableBody>
           </Table>
         </TableContainer>
-        <div className='flex items-center justify-center mt-10 mb-2 my-4'>
+        <Box className='flex items-center justify-center mt-10 mb-2 my-4'>
           <Stack spacing={2}>
             <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
           </Stack>
-        </div>
+        </Box>
       </Card>
     </Box>
   )
 }
 
-export default AdminProjectTracking
+export default AdminTickets

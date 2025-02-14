@@ -1,280 +1,321 @@
+
+
 'use client'
 
-// React Imports
-import { useEffect, useState } from 'react'
-
-// MUI Imports
-import Grid from '@mui/material/Grid'
-import Dialog from '@mui/material/Dialog'
-import Button from '@mui/material/Button'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-import Checkbox from '@mui/material/Checkbox'
-import Typography from '@mui/material/Typography'
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
-
-import CustomTextInput from '@/app/Custom-Cpmponents/input/custominput'
-import DialogCloseButton from '@/components/dialogs/DialogCloseButton'
-import Dropdown from '@/app/Custom-Cpmponents/Select-dropdown/dropdown'
-
-type Project = {
-  name: string
-  usertype: string
-  description: string
-  permissions: string
-}
+import React, { useState, useEffect } from 'react'
+import {
+  Container,
+  TextField,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Button,
+  Box,
+  Typography,
+  Dialog,
+  TableHead,
+  SelectChangeEvent
+} from '@mui/material'
 
 type Permission = {
-  id: string
   permissionname: string
   permission_group: string
+  id: number
 }
 
-type EditUserInfoProps = {
+interface AddRoleProps {
   open: boolean
   setOpen: (open: boolean) => void
-  roleData?: Project
-  groupedPermissions: { [group: string]: Permission[] }
+  roleData?: {
+    name: string
+    userType: string
+    description: string
+    permissions: { permission_group: string; permissions: { id: number; permissionname: string }[] }[]
+  }
 }
 
-const EditTrackStatus = ({ open, setOpen, roleData, groupedPermissions }: EditUserInfoProps) => {
-  const [roleDatas, setRoleData] = useState<Project>({
-    name: '',
-    usertype: '',
-    description: '',
-    permissions: ''
-  })
+type SelectedPermissions = {
+  [key: string]: number[]
+}
 
-  const [errors, setErrors] = useState<any>({})
-  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
+const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
+  const [userType, setUserType] = useState<string>('')
+  const [name, setName] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
+  const [selectedPermissions, setSelectedPermissions] = useState<SelectedPermissions>({})
+  const [selectAllPermissions, setSelectAllPermissions] = useState(false)
 
   useEffect(() => {
     if (roleData) {
-      setRoleData(roleData)
+      setName(roleData.name)
+      setUserType(roleData.userType)
+      setDescription(roleData.description)
+
+      const newSelectedPermissions: SelectedPermissions = {}
+      roleData.permissions.forEach(group => {
+        newSelectedPermissions[group.permission_group] = group.permissions.map(p => p.id)
+      })
+      setSelectedPermissions(newSelectedPermissions)
     }
   }, [roleData])
 
-  // Form validation logic
-  const formvalidation = (): boolean => {
-    const validationErrors: any = {}
-
-    if (!roleDatas.name) validationErrors.name = 'Name is required.'
-    if (!roleDatas.usertype) validationErrors.userType = 'User Type is required.'
-    if (!roleDatas.description) validationErrors.description = 'Description is required.'
-    if (!roleDatas.permissions) validationErrors.permissions = 'Permissions are required.'
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
-
-      return false
-    }
-
-    return true
-  }
-
-  // Handle dialog close, reset the state and errors
   const handleClose = () => {
     setOpen(false)
-    setRoleData({
-      name: '',
-      usertype: '',
-      description: '',
-      permissions: ''
+  }
+
+  const permissions: Permission[] = [
+    { id: 34, permissionname: 'read', permission_group: 'Dashboard' },
+    { id: 23, permissionname: 'create', permission_group: 'User' },
+    { id: 47, permissionname: 'read', permission_group: 'User' },
+    { id: 12, permissionname: 'update', permission_group: 'User' },
+    { id: 8, permissionname: 'approve', permission_group: 'User' },
+    { id: 74, permissionname: 'block', permission_group: 'User' },
+    { id: 23, permissionname: 'create', permission_group: 'Bidding' },
+    { id: 47, permissionname: 'read', permission_group: 'Bidding' },
+    { id: 12, permissionname: 'update', permission_group: 'Bidding' },
+    { id: 8, permissionname: 'approve', permission_group: 'Bidding' },
+    { id: 74, permissionname: 'block', permission_group: 'Bidding' },
+    { id: 30, permissionname: 'create', permission_group: 'Reporting' },
+    { id: 59, permissionname: 'edit', permission_group: 'Reporting' },
+    { id: 24, permissionname: 'delete', permission_group: 'Reporting' },
+    { id: 30, permissionname: 'create', permission_group: 'Content' },
+    { id: 59, permissionname: 'edit', permission_group: 'Content' },
+    { id: 24, permissionname: 'delete', permission_group: 'Content' },
+    { id: 30, permissionname: 'create', permission_group: 'Settings' },
+    { id: 59, permissionname: 'edit', permission_group: 'Settings' },
+    { id: 24, permissionname: 'delete', permission_group: 'Settings' },
+    { id: 30, permissionname: 'create', permission_group: 'Notifications' },
+    { id: 59, permissionname: 'edit', permission_group: 'Notifications' },
+    { id: 24, permissionname: 'delete', permission_group: 'Notifications' }
+  ]
+
+  const groupedPermissions = permissions.reduce(
+    (acc: { [key: string]: Permission[] }, { permissionname, permission_group, id }) => {
+      if (!acc[permission_group]) {
+        acc[permission_group] = []
+      }
+      acc[permission_group].push({ permissionname, permission_group, id })
+      return acc
+    },
+    {}
+  )
+
+  const handleSelectAllGroup = (group: string) => {
+    const allSelected = groupedPermissions[group].length === (selectedPermissions[group] || []).length
+    setSelectedPermissions(prev => {
+      const updatedPermissions = allSelected ? [] : groupedPermissions[group].map(permission => permission.id)
+
+      return { ...prev, [group]: updatedPermissions }
     })
-    setErrors({})
-    setSelectedPermissions([])
   }
 
-  // Handle saving the form data
-  const handleSave = () => {
-    if (formvalidation()) {
-      console.log('Saved Data:', roleDatas)
-      console.log('Selected Permissions:', selectedPermissions)
-      setOpen(false)
-    }
-  }
+  const handlePermissionChange = (group: string, permissionId: number) => {
+    setSelectedPermissions(prev => {
+      const groupPermissions = prev[group] || []
 
-  // Handle input field changes
-  const handleInputChange = (field: keyof Project, value: string) => {
-    setRoleData(prevData => ({
-      ...prevData,
-      [field]: value
-    }))
-    setErrors((prevErrors: any) => {
-      const updatedErrors = { ...prevErrors }
-
-      delete updatedErrors[field]
-
-      return updatedErrors
-    })
-  }
-
-  // Handle individual permission checkbox change
-  const handlePermissionChange = (permissionId: string) => {
-    setSelectedPermissions(prevSelected => {
-      const isSelected = prevSelected.includes(permissionId)
-
-      if (isSelected) {
-        return prevSelected.filter(id => id !== permissionId)
+      if (groupPermissions.includes(permissionId)) {
+        return {
+          ...prev,
+          [group]: groupPermissions.filter(id => id !== permissionId)
+        }
       } else {
-        return [...prevSelected, permissionId]
+        return {
+          ...prev,
+          [group]: [...groupPermissions, permissionId]
+        }
       }
     })
   }
 
-  // Check if permission is selected
-  const isPermissionSelected = (permissionId: string) => {
-    return selectedPermissions.includes(permissionId)
+  const handleSelectAllPermissions = () => {
+    const allSelected = permissions.length === Object.values(selectedPermissions).flat().length
+    setSelectAllPermissions(!allSelected)
+    const newSelectedPermissions: SelectedPermissions = {}
+
+    if (!allSelected) {
+      permissions.forEach(({ permission_group, id }) => {
+        if (!newSelectedPermissions[permission_group]) {
+          newSelectedPermissions[permission_group] = []
+        }
+        newSelectedPermissions[permission_group].push(id)
+      })
+    }
+
+    setSelectedPermissions(newSelectedPermissions)
   }
 
-  // Handle select all permissions for a group
-  const handleSelectAllGroup = (group: string) => {
-    const groupPermissions = groupedPermissions[group]
+  const isPermissionSelected = (group: string, permissionId: number) => {
+    return selectedPermissions[group]?.includes(permissionId) || false
+  }
 
-    const allSelected = groupPermissions.every(permission => selectedPermissions.includes(permission.id))
+  const handleUserTypeChange = (event: SelectChangeEvent<string>) => {
+    const selectedType = event.target.value
+    setUserType(selectedType)
 
-    if (allSelected) {
-      setSelectedPermissions(prevSelected =>
-        prevSelected.filter(id => !groupPermissions.some(permission => permission.id === id))
-      )
+    // Set permissions based on user type
+    if (selectedType === 'superadmin') {
+      // Select all permissions for Super Admin
+      const allPermissions: SelectedPermissions = {}
+      permissions.forEach(({ permission_group, id }) => {
+        if (!allPermissions[permission_group]) {
+          allPermissions[permission_group] = []
+        }
+        allPermissions[permission_group].push(id)
+      })
+      setSelectedPermissions(allPermissions)
+      setSelectAllPermissions(true) // Make sure the 'Select All Permissions' checkbox is checked
     } else {
-      setSelectedPermissions(prevSelected =>
-        [...prevSelected, ...groupPermissions.map(permission => permission.id)].filter(
-          (value, index, self) => self.indexOf(value) === index
-        )
-      )
+      // Only set "user" permissions
+      // const userPermissions = permissions.filter(p => p.permission_group === 'User');
+      // const userPermissionsSelected: SelectedPermissions = { User: userPermissions.map(p => p.id) };
+      // setSelectedPermissions(userPermissionsSelected);
+      setSelectAllPermissions(true) // Uncheck the 'Select All Permissions' checkbox for user
     }
   }
 
+  const handleSubmit = () => {
+    if (!name || !userType) {
+      alert('Name and UserType are required fields.')
+      return
+    }
+
+    const permissionsToSubmit = Object.entries(selectedPermissions).map(([group, permissionNames]) => ({
+      permission_group: group,
+      permissions: permissionNames
+        .map(permissionName => {
+          const permission = permissions.find(p => p.id === permissionName && p.permission_group === group)
+          return permission ? { permissionname: permission.permissionname, id: permission.id } : null
+        })
+        .filter(p => p !== null)
+    }))
+
+    const formData = {
+      name,
+      userType,
+      description,
+      permissions: permissionsToSubmit
+    }
+
+    console.log('Form submitted with the following data:', formData)
+
+    setName('')
+    setUserType('')
+    setDescription('')
+    setSelectedPermissions({})
+    setSelectAllPermissions(false)
+    handleClose()
+  }
+
   return (
-    <Dialog fullWidth open={open} onClose={handleClose} maxWidth='md' scroll='body'>
-      <DialogCloseButton onClick={() => setOpen(false)} disableRipple>
-        <i className='tabler-x' />
-      </DialogCloseButton>
-      <DialogTitle variant='h4' className='flex gap-2 flex-col text-primary text-center'>
-        Edit Tracking Information
-      </DialogTitle>
-      <form onSubmit={e => e.preventDefault()}>
-        <DialogContent>
-          <Grid container spacing={5}>
-            <Grid item xs={12} sm={3}>
-              <CustomTextInput
-                label='Name'
-                value={roleDatas.name}
-                onChange={value => handleInputChange('name', value)}
-                error={Boolean(errors.name)}
-                helperText={errors.name}
+    <Dialog open={open} onClose={handleClose} maxWidth='md' fullWidth>
+      <Container className='p-8 min-h-screen'>
+        <h1 className='text-2xl mb-6 text-primary'>{roleData ? 'Edit Role' : 'Add Role'}</h1>
+        <Box className='space-y-4'>
+          <Box className='flex items-center space-x-4 mb-4'>
+            <Box className='w-1/2'>
+              <TextField
+                label='Name *'
+                placeholder='Enter Name'
+                fullWidth
+                value={name}
+                onChange={e => setName(e.target.value)}
+                InputLabelProps={{ className: 'text-gray-400' }}
               />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <Dropdown
-                label='User Type'
-                options={['user', 'superadmin']}
-                selectedOption={roleDatas?.usertype}
-                onSelect={value => handleInputChange('usertype', value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <CustomTextInput
-                label='Description'
-                value={roleDatas.description}
-                onChange={value => handleInputChange('description', value)}
-                error={Boolean(errors.description)}
-                helperText={errors.description}
-              />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <CustomTextInput
-                label='Permissions'
-                value={roleDatas.permissions}
-                onChange={value => handleInputChange('permissions', value)}
-                error={Boolean(errors.permissions)}
-                helperText={errors.permissions}
-              />
-            </Grid>
+            </Box>
+            <Box className='w-1/2'>
+              <FormControl fullWidth>
+                <InputLabel htmlFor='userType'>User Type</InputLabel>
+                <Select value={userType} onChange={handleUserTypeChange} label='User Type' id='userType'>
+                  <MenuItem value='user'>User</MenuItem>
+                  <MenuItem value='superadmin'>Super Admin</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Box>
 
-            <Grid item xs={12} sm={12}>
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell className='center text-primary items-right'>
-                        <strong>Permission Group</strong>
-                      </TableCell>
-                      <TableCell className='center text-primary items-right'>
-                        <strong>Permissions</strong>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
+          <Box className='mb-4'>
+            <TextField
+              label='Description'
+              placeholder='Enter description'
+              multiline
+              rows={4}
+              fullWidth
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              InputLabelProps={{ className: 'text-gray-400' }}
+            />
+          </Box>
 
-                  <TableBody>
-                    {groupedPermissions && Object.keys(groupedPermissions).length > 0 ? (
-                      Object.keys(groupedPermissions).map(group => {
-                        const groupPermissions = groupedPermissions[group]
+          <Box className='flex justify-end'>
+            <Checkbox checked={selectAllPermissions} onChange={handleSelectAllPermissions} color='primary' />
+            <Typography className='text-primary mt-1.5'>Select All Permissions</Typography>
+          </Box>
 
-                        if (groupPermissions.length > 0) {
-                          return (
-                            <TableRow key={group}>
-                              <TableCell>
-                                <Box display='flex' alignItems='center' marginRight={2}>
-                                  <Checkbox
-                                    checked={groupPermissions.every(permission =>
-                                      selectedPermissions.includes(permission.id)
-                                    )}
-                                    onChange={() => handleSelectAllGroup(group)}
-                                  />
-                                  <Typography variant='h6' style={{ marginLeft: '8px' }}>
-                                    {group}
-                                  </Typography>
-                                </Box>
-                              </TableCell>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell className='center text-primary items-right'>
+                    <strong>Permission Group</strong>
+                  </TableCell>
+                  <TableCell className='center text-primary items-right'>
+                    <strong>Permissions</strong>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.keys(groupedPermissions).map(group => (
+                  <TableRow key={group}>
+                    <TableCell>
+                      <Box display='flex' alignItems='center' marginRight={2}>
+                        <Checkbox
+                          checked={groupedPermissions[group].length === (selectedPermissions[group]?.length || 0)}
+                          onChange={() => handleSelectAllGroup(group)}
+                          color='primary'
+                        />
+                        {group}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Box display='flex' flexWrap='wrap' alignItems='center'>
+                        {groupedPermissions[group].map(permission => (
+                          <Box key={permission.id} display='flex' alignItems='center' marginRight={2}>
+                            <Checkbox
+                              checked={isPermissionSelected(group, permission.id)}
+                              onChange={() => handlePermissionChange(group, permission.id)}
+                              color='primary'
+                            />
+                            <Typography variant='body1' style={{ marginLeft: '8px' }}>
+                              {permission.permissionname.charAt(0).toUpperCase() + permission.permissionname.slice(1)}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-                              <TableCell>
-                                <Box display='flex' flexWrap='wrap' alignItems='center'>
-                                  {groupPermissions.map(permission => (
-                                    <Box key={permission.id} display='flex' alignItems='center' marginRight={2}>
-                                      <Checkbox
-                                        checked={isPermissionSelected(permission.id)}
-                                        onChange={() => handlePermissionChange(permission.id)}
-                                        color='primary'
-                                      />
-                                      <Typography variant='body1' style={{ marginLeft: '8px' }}>
-                                        {permission.permissionname.charAt(0).toUpperCase() +
-                                          permission.permissionname.slice(1)}
-                                      </Typography>
-                                    </Box>
-                                  ))}
-                                </Box>
-                              </TableCell>
-                            </TableRow>
-                          )
-                        }
-
-                        return null
-                      })
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={2}>No permission groups available</TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button variant='outlined' color='secondary' onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant='contained' onClick={handleSave}>
-            Save
-          </Button>
-        </DialogActions>
-      </form>
+          <Box className='flex justify-end mt-4'>
+            <Button variant='outlined' className='border-gray-500 text-gray-300' onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant='contained' className='ml-4 bg-primary' onClick={handleSubmit}>
+              {roleData ? 'Update' : 'Save'}
+            </Button>
+          </Box>
+        </Box>
+      </Container>
     </Dialog>
   )
 }
-
 export default EditTrackStatus
