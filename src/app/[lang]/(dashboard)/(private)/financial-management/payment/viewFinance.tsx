@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+
 import {
   Button,
   Typography,
@@ -10,6 +11,7 @@ import {
   Divider,
   Box
 } from '@mui/material'
+
 
 interface ViewFinanceProps {
   open: boolean
@@ -136,3 +138,4 @@ const ViewFinance: React.FC<ViewFinanceProps> = ({ open, setOpen, data }) => {
 }
 
 export default ViewFinance
+
