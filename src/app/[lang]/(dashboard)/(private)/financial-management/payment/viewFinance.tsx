@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Grid, Divider, Box } from '@mui/material'
+import {
+  Button,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Grid,
+  Divider,
+  Box
+} from '@mui/material'
 
 interface ViewFinanceProps {
   open: boolean
@@ -126,4 +136,3 @@ const ViewFinance: React.FC<ViewFinanceProps> = ({ open, setOpen, data }) => {
 }
 
 export default ViewFinance
-

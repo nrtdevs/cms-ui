@@ -1,6 +1,9 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import classnames from 'classnames'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import type { Theme } from '@mui/material/styles'
 import { useParams, useRouter } from 'next/navigation'
 import {
   Box,
@@ -14,11 +17,15 @@ import {
   Typography,
   Paper,
   Card,
-  CardHeader
+  CardHeader,
+  CardContent,
+  Grid,
+  Divider,
+  Avatar
 } from '@mui/material'
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
-import ViewPaymentDetails from './ViewPaymentDetails'
-import EditPaymentDetails from './EditPaymentDetails'
+import ViewFinance from '../viewFinance'
+import EditFinance from '../editFinance'
 
 interface Payment {
   id: string
@@ -40,6 +47,11 @@ interface ViewPaymentsProps {
     paymentDate: string
     totalPaymentsList: Payment[]
     projectId: string
+    projectName: string
+    receivedAmt: number
+    pendingAmt: number
+    description: string
+    paymentSlip: string
   }
 }
 
@@ -53,7 +65,7 @@ const paymentsData = [
     refId: 'R5678A',
     paymentDate: '2025-01-01',
     totalAmount: '20000',
-    pendingAmount: '0',
+
     totalPaymentsList: [
       {
         id: 'p1',
@@ -61,7 +73,14 @@ const paymentsData = [
         amount: 10000,
         refId: 'R5678A',
         transactionId: 'T1234A',
-        paymentDate: '2025-01-01'
+        paymentDate: '2025-01-01',
+        totalAmount: '20000',
+        pendingAmount: '10$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Initial project phase',
+        receivedAmt: '$3000',
+        totalPayments: 0,
+        projectName: 'Project Alpha'
       },
       {
         id: 'p2',
@@ -301,6 +320,19 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
   const router = useRouter()
   const [paymentData, setPaymentData] = useState<any | null>(null)
 
+  const data = [
+    {
+      title: paymentData?.projectName,
+      subtitle: 'Payment Details',
+      icon: 'tabler-user'
+    },
+    {
+      title: paymentData?.amount,
+      subtitle: 'Total Payment Amount',
+      icon: 'tabler-file-invoice'
+    }
+  ]
+
   const buttonviewProps = {
     variant: 'contained',
     color: 'primary',
@@ -320,9 +352,12 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
   }
 
   useEffect(() => {
-    const payment = paymentsData.flat().find(payment => payment.projectId === slug)
+    const payment = paymentsData.find(payment => payment.projectId === slug)
     setPaymentData(payment || null)
   }, [slug])
+
+  const isBelowMdScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
+  const isBelowSmScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'))
 
   if (!paymentData) {
     return (
@@ -336,32 +371,45 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
 
   return (
     <div className='container mx-auto'>
-      <Box className='p-5 shadow-lg'>
-        <Card
-          sx={{
-            padding: 2,
-            boxShadow: 3,
-
-            marginBottom: '25px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-
-            minWidth: '50%' // Prevents it from stretching too wide
-          }}
-          className='space-x-4'
-        >
-          <Typography variant='h5' className='font-bold text-primary '>
-            {paymentData?.projectName}
-          </Typography>
-          <Typography variant='h5' className='font-medium text-secondary'>
-            <strong>Pending Amount:</strong> {paymentData?.pendingAmount}
-          </Typography>
-          <Typography variant='h5' className='font-medium text-secondary'>
-            <strong>Total Amount:</strong> {paymentData?.totalAmount}
-          </Typography>
+      <Box className='p-5  mb-5'>
+        <Card className=' mb-5'>
+          <CardContent>
+            <Grid container spacing={6}>
+              {data.map((item, index) => (
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={3}
+                  key={index}
+                  className={classnames({
+                    '[&:nth-of-type(odd)>div]:pie-6 [&:nth-of-type(odd)>div]:border-ie':
+                      isBelowMdScreen && !isBelowSmScreen,
+                    '[&:not(:last-child)>div]:pie-6 [&:not(:last-child)>div]:border-ie': !isBelowMdScreen
+                  })}
+                >
+                  <div className='flex justify-between items-center'>
+                    <div className='flex flex-col'>
+                      <Typography variant='h4'>{item.title}</Typography>
+                      <Typography>{item.subtitle}</Typography>
+                    </div>
+                    <Avatar variant='rounded' className='is-[42px] bs-[42px]'>
+                      <i className={classnames(item.icon, 'text-[26px]')} />
+                    </Avatar>
+                  </div>
+                  {isBelowMdScreen && !isBelowSmScreen && index < data.length - 2 && (
+                    <Divider
+                      className={classnames('mbs-6', {
+                        'mie-6': index % 2 === 0
+                      })}
+                    />
+                  )}
+                  {isBelowSmScreen && index < data.length - 1 && <Divider className='mbs-6' />}
+                </Grid>
+              ))}
+            </Grid>
+          </CardContent>
         </Card>
-
         <TableContainer component={Paper} sx={{ maxHeight: '500px' }}>
           <Table sx={{ minWidth: 750 }}>
             <TableHead>
@@ -428,13 +476,13 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
                     <OpenDialogOnElementClick
                       element={Button}
                       elementProps={buttonviewProps}
-                      dialog={ViewPaymentDetails}
+                      dialog={ViewFinance}
                       dialogProps={{ data: payment }}
                     />
                     <OpenDialogOnElementClick
                       element={Button}
                       elementProps={buttonProps}
-                      dialog={EditPaymentDetails}
+                      dialog={EditFinance}
                       dialogProps={{ data: payment }}
                     />
                   </TableCell>
@@ -454,5 +502,4 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
     </div>
   )
 }
-
 export default ViewPayments
