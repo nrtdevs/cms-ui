@@ -227,12 +227,13 @@ const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) =>
                 value={name}
                 onChange={e => setName(e.target.value)}
                 InputLabelProps={{ className: 'text-gray-400' }}
+                required
               />
             </Box>
             <Box className='w-1/2'>
               <FormControl fullWidth>
                 <InputLabel htmlFor='userType'>User Type</InputLabel>
-                <Select value={userType} onChange={handleUserTypeChange} label='User Type' id='userType'>
+                <Select value={userType} onChange={handleUserTypeChange} label='User Type' id='userType' required>
                   <MenuItem value='user'>User</MenuItem>
                   <MenuItem value='superadmin'>Super Admin</MenuItem>
                 </Select>
@@ -250,6 +251,7 @@ const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) =>
               value={description}
               onChange={e => setDescription(e.target.value)}
               InputLabelProps={{ className: 'text-gray-400' }}
+              required
             />
           </Box>
 
@@ -306,11 +308,11 @@ const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) =>
           </TableContainer>
 
           <Box className='flex justify-end mt-4'>
-            <Button variant='outlined' className='border-gray-500 text-gray-300' onClick={handleClose}>
-              Close
-            </Button>
             <Button variant='contained' className='ml-4 bg-primary' onClick={handleSubmit}>
               {roleData ? 'Update' : 'Save'}
+            </Button>
+            <Button variant='outlined' className='border-gray-500 text-gray-300 ml-4' onClick={handleClose}>
+              Close
             </Button>
           </Box>
         </Box>

@@ -196,37 +196,37 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
             <Paper elevation={3} sx={{ padding: 4, backgroundColor: 'transparent' }}>
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     Project Name:
                   </Typography>
-                  <Typography variant='body1'>{data?.projectname}</Typography>
+                  <Typography variant='body1' >{data?.projectname}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     Project Description:
                   </Typography>
                   <Typography variant='body1'>{data?.projectdescription}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     Skills:
                   </Typography>
                   <Typography variant='body1'>{data?.skills.join(', ')}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     Platform:
                   </Typography>
                   <Typography variant='body1'>{data?.platform}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     Status:
                   </Typography>
                   <Typography variant='body1'>{data?.status}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     Actual Bid Amount:
                   </Typography>
                   <Typography variant='body1'>
@@ -234,25 +234,25 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     Bid Date:
                   </Typography>
                   <Typography variant='body1'>{data?.bid_date}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     Activation Date:
                   </Typography>
                   <Typography variant='body1'>{data?.activation_date}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     End Date:
                   </Typography>
                   <Typography variant='body1'>{data?.end_date}</Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     Received Amount:
                   </Typography>
                   <Typography variant='body1'>
@@ -260,7 +260,7 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     Pending Amount:
                   </Typography>
                   <Typography variant='body1'>
@@ -268,7 +268,7 @@ const ViewTrackStatus: React.FC<ViewTrackStatusProps> = ({ data, onClose }) => {
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant='subtitle1' className='font-bold'>
+                  <Typography variant='subtitle1' className='font-bold text-primary'>
                     Project Start Date:
                   </Typography>
                   <Typography variant='body1'>{data?.Projectstartdate}</Typography>

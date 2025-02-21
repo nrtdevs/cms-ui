@@ -390,7 +390,7 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
                 >
                   <div className='flex justify-between items-center'>
                     <div className='flex flex-col'>
-                      <Typography variant='h4'>{item.title}</Typography>
+                      <Typography variant='h4' className='text-primary'>{item.title}</Typography>
                       <Typography>{item.subtitle}</Typography>
                     </div>
                     <Avatar variant='rounded' className='is-[42px] bs-[42px]'>
@@ -414,41 +414,41 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
           <Table sx={{ minWidth: 750 }}>
             <TableHead>
               <TableRow>
-                <TableCell className='text-primary' align='center' sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
+                <TableCell className='text-primary' align='center' sx={{ fontSize: '1rem' }}>
                   Payment Mode
                 </TableCell>
                 <TableCell
                   className='text-primary'
                   align='center'
-                  sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'text.primary' }}
+                  sx={{ fontSize: '1rem', color: 'text.primary' }}
                 >
                   Amount
                 </TableCell>
                 <TableCell
                   className='text-primary'
                   align='center'
-                  sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'text.primary' }}
+                  sx={{ fontSize: '1rem', color: 'text.primary' }}
                 >
                   Payment Date
                 </TableCell>
                 <TableCell
                   className='text-primary'
                   align='center'
-                  sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'text.primary' }}
+                  sx={{  fontSize: '1rem', color: 'text.primary' }}
                 >
                   Reference ID
                 </TableCell>
                 <TableCell
                   className='text-primary'
                   align='center'
-                  sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'text.primary' }}
+                  sx={{  fontSize: '1rem', color: 'text.primary' }}
                 >
                   Transaction ID
                 </TableCell>
                 <TableCell
                   className='text-primary'
                   align='center'
-                  sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'text.primary' }}
+                  sx={{  fontSize: '1rem', color: 'text.primary' }}
                 >
                   Actions
                 </TableCell>

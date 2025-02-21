@@ -351,6 +351,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     onSelect={(selectedValue: string) => setValue(`projectname`, selectedValue)}
                     error={!!errors.projectname}
                     helperText={errors.projectname?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -372,6 +373,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     {...field}
                     error={!!errors.sprints?.[0]?.sprintname}
                     helperText={errors.sprints?.[0]?.sprintname?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -390,6 +392,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     {...field}
                     error={!!errors.sprints?.[0]?.assignBy}
                     helperText={errors.sprints?.[0]?.assignBy?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -408,6 +411,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     placeholder='Type and select tags'
                     error={!!errors.sprints?.[0]?.addmodule}
                     helperText={errors.sprints?.[0]?.addmodule?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -420,7 +424,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                 name={`sprints.0.sprintStartDate`}
                 rules={{ required: 'Start Date is required' }} // Required field validation
                 render={({ field }) => (
-                  <DatePickerInput label='Start Date' placeholder='Enter Task Start Date' type='date' {...field} />
+                  <DatePickerInput label='Start Date' placeholder='Enter Task Start Date' type='date' {...field} required/>
                 )}
               />
             </Grid>
@@ -430,7 +434,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                 name={`sprints.0.sprintEndDate`}
                 rules={{ required: 'End Date is required' }} // Required field validation
                 render={({ field }) => (
-                  <DatePickerInput label='Deadline Date' placeholder='Enter Sprint End Date' type='date' {...field} />
+                  <DatePickerInput label='Deadline Date' placeholder='Enter Sprint End Date' type='date' {...field} required />
                 )}
               />
             </Grid>
@@ -449,6 +453,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     onSelect={(selectedValue: string) => setValue(`sprints.0.tester`, selectedValue)}
                     error={!!errors.sprints?.[0]?.tester}
                     helperText={errors.sprints?.[0]?.tester?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -466,6 +471,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     onSelect={(selectedValue: string) => setValue(`sprints.0.developer`, selectedValue)}
                     error={!!errors.sprints?.[0]?.developer}
                     helperText={errors.sprints?.[0]?.developer?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -485,6 +491,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     onChange={(value: string) => setValue(`sprints.0.description`, value)}
                     error={!!errors.sprints?.[0]?.description}
                     helperText={errors.sprints?.[0]?.description?.message} // Display error message
+                    required
                   />
                 )}
               />
