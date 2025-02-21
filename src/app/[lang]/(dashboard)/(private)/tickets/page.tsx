@@ -349,12 +349,10 @@ const AdminTickets: React.FC = () => {
             icon = '✓' // Green tick
             borderColor = '#198754' // Green
             textColor = '#198754'
-
           } else if (status === 'Unactive') {
-            icon = '✗' // Orange tick
-            borderColor = '#fd0054' // Orange
+            icon = '✗' // Red cross
+            borderColor = '#fd0054' // Red
             textColor = '#fd0054'
-
           } else if (status === 'Completed') {
             icon = '✓' // Blue tick
             borderColor = 'blue' // Blue
@@ -363,27 +361,38 @@ const AdminTickets: React.FC = () => {
             icon = '✗' // Cross for undefined or other statuses
             borderColor = 'gray' // Default gray
             textColor = 'gray'
-          
           }
 
           return (
             <Box
-              style={{
+              sx={{
                 display: 'flex',
                 alignItems: 'center',
                 color: textColor,
                 border: `1px solid ${borderColor}`,
                 padding: '4px 8px',
                 borderRadius: '4px',
-                width: '60%'
+                width: 'auto',
+                maxWidth: '80%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                '@media (max-width: 768px)': {
+                  borderWidth: '1px',
+                  width: '100%'
+                },
+                '@media (max-width: 480px)': {
+                  padding: '2px 4px'
+                }
               }}
             >
               <span style={{ fontSize: '16px', marginRight: '8px' }}>{icon}</span>
               <span>{status}</span>
             </Box>
           )
-        }
-      },
+
+        }      },
+
       {
         id: 'actions',
         header: 'Actions',

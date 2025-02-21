@@ -509,7 +509,7 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
                       </Typography>
                       <Typography>{item.subtitle}</Typography>
                     </div>
-                    </div>
+                  </div>
                   {isBelowMdScreen && !isBelowSmScreen && index < data.length - 2 && (
                     <Divider
                       className={classnames('mbs-6', {
@@ -527,42 +527,22 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
           <Table sx={{ minWidth: 750 }}>
             <TableHead>
               <TableRow>
-                <TableCell className='text-primary' align='center' sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
+                <TableCell className='text-primary' align='center' sx={{ fontSize: '1rem' }}>
                   Payment Mode
                 </TableCell>
-                <TableCell
-                  className='text-primary'
-                  align='center'
-                  sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'text.primary' }}
-                >
+                <TableCell className='text-primary' align='center' sx={{ fontSize: '1rem', color: 'text.primary' }}>
                   Amount
                 </TableCell>
-                <TableCell
-                  className='text-primary'
-                  align='center'
-                  sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'text.primary' }}
-                >
+                <TableCell className='text-primary' align='center' sx={{ fontSize: '1rem', color: 'text.primary' }}>
                   Payment Date
                 </TableCell>
-                <TableCell
-                  className='text-primary'
-                  align='center'
-                  sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'text.primary' }}
-                >
+                <TableCell className='text-primary' align='center' sx={{ fontSize: '1rem', color: 'text.primary' }}>
                   Reference ID
                 </TableCell>
-                <TableCell
-                  className='text-primary'
-                  align='center'
-                  sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'text.primary' }}
-                >
+                <TableCell className='text-primary' align='center' sx={{ fontSize: '1rem', color: 'text.primary' }}>
                   Transaction ID
                 </TableCell>
-                <TableCell
-                  className='text-primary'
-                  align='center'
-                  sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'text.primary' }}
-                >
+                <TableCell className='text-primary' align='center' sx={{ fontSize: '1rem', color: 'text.primary' }}>
                   Actions
                 </TableCell>
               </TableRow>
