@@ -28,7 +28,7 @@ const CustomFileUpload: React.FC<FileUploadProps> = ({
 
   return (
     <Grid item xs={12} sm={12}>
-      <Typography className='mb-1 text-sm font-medium text-gray-700'>
+      <Typography className='mb-1 text-sm font-medium text-700'>
         {label}
         {required && <span style={{ color: 'red', marginLeft: '4px' }}>*</span>}
       </Typography>

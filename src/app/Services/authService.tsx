@@ -1,12 +1,28 @@
 import axios from 'axios'
 
 interface LoginResponse {
-  accessToken: string
-  user: {
-    id: number
-    email: string
-    name: string
+  data: {
+    accessToken: string
+    user: {
+      id: number
+      email: string
+      firstName: string
+      lastName: string
+      mobileNo: number
+      roleDetails: {
+        id: number
+        name: string
+        permissions: {
+          id: number
+          slug: string
+        }[]
+      }
+    }
   }
+  errors: any | null
+  message: string
+  meta: any | null
+  success: boolean
 }
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {

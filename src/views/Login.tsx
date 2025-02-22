@@ -48,6 +48,8 @@ import { useSettings } from '@core/hooks/useSettings'
 // Util Imports
 import { getLocalizedUrl } from '@/utils/i18n'
 
+// import { useAuth } from '@/contexts/authContext'
+
 // Styled Custom Components
 const LoginIllustration = styled('img')(({ theme }) => ({
   zIndex: 2,
@@ -109,6 +111,8 @@ const Login = ({ mode }: { mode: SystemMode }) => {
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
   const authBackground = useImageVariant(mode, lightImg, darkImg)
 
+  // const { setRoleDetails } = useAuth()
+
   const {
     control,
     handleSubmit,
@@ -138,13 +142,31 @@ const Login = ({ mode }: { mode: SystemMode }) => {
       redirect: false
     })
 
-    console.log(res)
-
     if (res && res.ok && res.error === null) {
-      // Vars
-      const redirectURL = searchParams.get('redirectTo') ?? '/users/dashboard'
+      try {
+        const res = await login(data.email, data.password)
 
-      router.replace(getLocalizedUrl(redirectURL, locale as Locale))
+        console.log('Login Successful:', res.data.user.roleDetails)
+        const redirectURL = searchParams.get('redirectTo') ?? '/users/dashboard'
+
+        router.replace(getLocalizedUrl(redirectURL, locale as Locale))
+        const userRoleDetails = res.data.user.roleDetails
+
+        console.log(userRoleDetails)
+
+        localStorage.setItem('accessToken', res?.data?.accessToken)
+
+        // setRoleDetails({
+        //   role: userRoleDetails.name,
+        //   permissions: userRoleDetails.permissions.map(permission => permission.slug)
+        // })
+
+        const localizedRedirectURL = getLocalizedUrl(redirectURL, locale as Locale)
+
+        router.replace(localizedRedirectURL)
+      } catch (error: any) {
+        setErrorState({ message: [error.message] })
+      }
     } else {
       if (res?.error) {
         const error = JSON.parse(res.error)
