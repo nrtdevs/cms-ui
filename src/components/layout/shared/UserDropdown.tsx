@@ -76,7 +76,7 @@ const UserDropdown = () => {
     try {
       // Sign out from the app
       await signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL })
-      localStorage.removeItem('accessToken')
+      sessionStorage.removeItem('accessToken')
     } catch (error) {
       console.error(error)
 
