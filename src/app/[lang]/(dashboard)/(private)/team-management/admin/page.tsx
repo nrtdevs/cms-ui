@@ -17,7 +17,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper
+  Paper,
+  Chip
 } from '@mui/material'
 
 import {
@@ -36,6 +37,8 @@ import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdo
 import EditTeamManagement from './EditTeamManagement'
 import ViewTeamManagement from './ViewTeamManagement'
 import AddTeamManagement from './AddTeamManagement'
+import { ThemeColor } from '@/@core/types'
+
 
 type Project = {
   id: string
@@ -82,7 +85,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '1',
         teamname: 'Project Alpha',
         description: 'A groundbreaking project.',
-        status: 'Active',
+        status: 'active',
         teamLead: 'John Doe', // Team lead name
         members: [
           { id: 'm1', name: 'Alice Smith' },
@@ -94,7 +97,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '2',
         teamname: 'Project Beta',
         description: 'An innovative app.',
-        status: 'InProgress',
+        status: 'pending',
         teamLead: 'Sarah Lee',
         members: [
           { id: 'm3', name: 'Charlie Brown' },
@@ -106,7 +109,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '3',
         teamname: 'Project Gamma',
         description: 'A new social platform.',
-        status: 'Completed',
+        status: 'active',
         teamLead: 'Emily Davis',
         members: [
           { id: 'm5', name: 'George Harris' },
@@ -118,7 +121,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '4',
         teamname: 'Project Delta',
         description: 'Revolutionary AI software.',
-        status: 'Active',
+        status: 'active',
         teamLead: 'Michael Wright',
         members: [
           { id: 'm7', name: 'Hannah King' },
@@ -130,7 +133,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '5',
         teamname: 'Project Epsilon',
         description: 'Next-gen e-commerce solution.',
-        status: 'InProgress',
+        status: 'active',
         teamLead: 'James Taylor',
         members: [
           { id: 'm9', name: 'Liam Rodriguez' },
@@ -142,7 +145,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '6',
         teamname: 'Project Zeta',
         description: 'Advanced data analytics tool.',
-        status: 'Pending',
+        status: 'pending',
         teamLead: 'Olivia Martinez',
         members: [
           { id: 'm11', name: 'Sophia Lee' },
@@ -154,7 +157,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '7',
         teamname: 'Project Eta',
         description: 'Cutting-edge VR experience.',
-        status: 'Completed',
+        status: 'active',
         teamLead: 'Benjamin Wilson',
         members: [
           { id: 'm13', name: 'William Moore' },
@@ -166,7 +169,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '8',
         teamname: 'Project Theta',
         description: 'Cloud-based storage system.',
-        status: 'Active',
+        status: 'active',
         teamLead: 'Lucas Allen',
         members: [
           { id: 'm15', name: 'Ella Martinez' },
@@ -178,7 +181,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '9',
         teamname: 'Project Iota',
         description: 'Sustainable energy technology.',
-        status: 'InProgress',
+        status: 'pending',
         teamLead: 'Daniel Thompson',
         members: [
           { id: 'm17', name: 'Chloe Harris' },
@@ -190,7 +193,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '10',
         teamname: 'Project Kappa',
         description: 'Smart home automation platform.',
-        status: 'Pending',
+        status: 'pending',
         teamLead: 'Mason Carter',
         members: [
           { id: 'm19', name: 'Charlotte Perez' },
@@ -202,7 +205,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '11',
         teamname: 'Project Lambda',
         description: 'Blockchain-based solution.',
-        status: 'Active',
+        status: 'active',
         teamLead: 'Isabella Williams',
         members: [
           { id: 'm21', name: 'Zoe Taylor' },
@@ -214,7 +217,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '12',
         teamname: 'Project Mu',
         description: 'AI-driven healthcare platform.',
-        status: 'InProgress',
+        status: 'pending',
         teamLead: 'Alexander Martinez',
         members: [
           { id: 'm23', name: 'Oliver Johnson' },
@@ -226,7 +229,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '13',
         teamname: 'Project Nu',
         description: 'Autonomous vehicle technology.',
-        status: 'Completed',
+        status: 'active',
         teamLead: 'Victoria Moore',
         members: [
           { id: 'm25', name: 'Sophia Brown' },
@@ -238,7 +241,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '14',
         teamname: 'Project Xi',
         description: 'Online learning platform.',
-        status: 'Active',
+        status: 'active',
         teamLead: 'Evelyn White',
         members: [
           { id: 'm27', name: 'Jack Robinson' },
@@ -250,7 +253,7 @@ const AdminTeamManagement: React.FC = () => {
         id: '15',
         teamname: 'Project Omicron',
         description: 'Digital payment solution.',
-        status: 'Pending',
+        status: 'pending',
         teamLead: 'Liam Martinez',
         members: [
           { id: 'm29', name: 'Grace Walker' },
@@ -262,6 +265,15 @@ const AdminTeamManagement: React.FC = () => {
     []
   )
 
+  type UserStatusType = {
+    [key: string]: ThemeColor
+  }
+
+  const userStatusObj: UserStatusType = {
+    active: 'success',
+    pending: 'warning',
+    inactive: 'secondary'
+  }
   const handleSearch = (value: string) => {
     setSearchTerm(value.toLowerCase())
   }
@@ -345,7 +357,16 @@ const AdminTeamManagement: React.FC = () => {
         ),
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
+             <div className='flex items-center gap-3'>
+            <Chip
+              variant='tonal'
+              label={info.getValue<string>()}
+              size='small'
+              color={userStatusObj[info.getValue<string>()]}
+              className='capitalize'
+            />
+          </div>
+
           </Typography>
         ),
         enableSorting: true

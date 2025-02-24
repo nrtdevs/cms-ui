@@ -3,6 +3,8 @@
 import React, { useMemo, useState } from 'react'
 
 import type { ButtonProps } from '@mui/material'
+import { ThemeColor } from '@/@core/types'
+
 
 import {
   Typography,
@@ -17,7 +19,8 @@ import {
   Box,
   Card,
   Stack,
-  Grid
+  Grid,
+  Chip
 } from '@mui/material'
 
 import {
@@ -119,7 +122,7 @@ const AdminProjectTracking: React.FC = () => {
         activation_date: '2024-01-01',
         end_date: '2024-06-01',
         clientname: 'John Doe',
-        status: 'Active',
+        status: 'active',
         bid_creater: 'Rihana',
         clientemail: 'john.doe@example.com',
         clientcontact: '1234567890',
@@ -145,7 +148,7 @@ const AdminProjectTracking: React.FC = () => {
         activation_date: '2024-02-01',
         end_date: '2024-08-01',
         clientname: 'Jane Smith',
-        status: 'In Progress',
+        status: 'pending',
         currency: 'INR',
         clientemail: 'jane.smith@example.com',
         clientcontact: '9876543210',
@@ -162,6 +165,17 @@ const AdminProjectTracking: React.FC = () => {
     ],
     []
   )
+
+
+  type UserStatusType = {
+    [key: string]: ThemeColor
+  }
+
+  const userStatusObj: UserStatusType = {
+    active: 'success',
+    pending: 'warning',
+    inactive: 'secondary'
+  }
 
   const bidCreators = Array.from(new Set(data.map(item => item.bid_creater)))
 
@@ -270,34 +284,16 @@ const AdminProjectTracking: React.FC = () => {
         header: 'Status',
         cell: info => {
           const status = info.getValue<string>()
-          let borderColor, textColor
-
-          // Set colors based on status
-          if (status === 'Active') {
-            borderColor = '#198754' // Green
-            textColor = '#198754' // Green
-          } else if (status === 'In Progress') {
-            borderColor = '#dfa418' // Orange
-            textColor = '#dfa418' // Orange
-          } else if (status === 'Completed') {
-            borderColor = 'blue' // Blue
-            textColor = 'blue' // Blue
-          }
-
-          return (
-            <Button
-              color='inherit'
-              style={{
-                whiteSpace: 'nowrap',
-                borderColor: borderColor, // Apply the appropriate border color
-                backgroundColor: 'transparent',
-                borderStyle: 'solid',
-                borderWidth: '2px',
-                color: textColor // Apply the appropriate text color
-              }}
-            >
-              {status}
-            </Button>
+          return(
+          <div className='flex items-center gap-3'>
+          <Chip
+            variant='tonal'
+            label={status}
+            size='small'
+            color={userStatusObj[status]}
+            className='capitalize'
+          />
+        </div>
           )
         }
       },

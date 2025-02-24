@@ -332,7 +332,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
         <i className='tabler-x' />
       </DialogCloseButton>
       <DialogTitle variant='h4' className='flex gap-2 flex-col text-primary text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-        Add Projects & Sprints
+        Add Ticket
       </DialogTitle>
       <form onSubmit={handleSubmit(handleSave)}>
         <DialogContent>
@@ -368,8 +368,8 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                 }}
                 render={({ field }) => (
                   <CustomTextInput
-                    label='Sprint Title'
-                    placeholder='Enter Sprint Title...'
+                    label=' Title'
+                    placeholder='Enter  Title...'
                     {...field}
                     error={!!errors.sprints?.[0]?.sprintname}
                     helperText={errors.sprints?.[0]?.sprintname?.message} // Display error message
@@ -447,7 +447,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                 rules={{ required: 'Tester is required' }} // Required field validation
                 render={({ field }) => (
                   <Dropdown
-                    label='Select Tester'
+                    label=' Tester'
                     options={testers}
                     selectedOption={field.value}
                     onSelect={(selectedValue: string) => setValue(`sprints.0.tester`, selectedValue)}
@@ -465,7 +465,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                 rules={{ required: 'Developer is required' }} // Required field validation
                 render={({ field }) => (
                   <Dropdown
-                    label='Select Developer'
+                    label=' Developer'
                     options={developers}
                     selectedOption={field.value}
                     onSelect={(selectedValue: string) => setValue(`sprints.0.developer`, selectedValue)}

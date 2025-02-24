@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react'
 import {
   Button,
@@ -16,8 +14,6 @@ import {
   TableRow,
   Box
 } from '@mui/material'
-import DatePickerInput from '@/app/Custom-Cpmponents/input/Datepickerinput'
-import CustomDescriptionInput from '@/app/Custom-Cpmponents/input/customdescriptioinput'
 
 interface Remark {
   remark: string
@@ -91,41 +87,51 @@ const ViewTickets: React.FC<ViewTicketProps> = ({ open, setOpen, data }) => {
   }, [data])
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth='sm'>
-      <DialogTitle className='text-primary font-bold align-left text-left' gutterBottom>
-        Payment Information
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth='md'>
+      <DialogTitle className='text-primary font-bold text-left' gutterBottom>
+        Ticket Information
       </DialogTitle>
 
       <DialogContent sx={{ backgroundColor: 'background.paper', padding: '32px' }}>
+        {/* Ticket Name and Assignee */}
         <Box mb={3}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Typography variant='h6' className='text-primary'>
                 Ticket Name
               </Typography>
-              <Typography variant='body1'>{ticketData.ticketName}</Typography>
+              <Typography variant='body1' className='font-light'>
+                {ticketData.ticketName}
+              </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant='h6' className='text-primary'>
                 Assignee
               </Typography>
-              <Typography variant='body1'>{ticketData.assignee}</Typography>
+              <Typography variant='body1' className='font-light'>
+                {ticketData.assignee}
+              </Typography>
             </Grid>
           </Grid>
         </Box>
 
+        {/* Status, Priority, Tags, Ticket Description */}
         <Grid container spacing={2} mt={2}>
           <Grid item xs={12} sm={6}>
             <Typography variant='h6' className='text-primary'>
               Status
             </Typography>
-            <Typography variant='body1'> {ticketData.status}</Typography>
+            <Typography variant='body1' className='font-light'>
+              {ticketData.status}
+            </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant='h6' className='text-primary'>
               Priority
             </Typography>
-            <Typography variant='body1'>{ticketData.priority}</Typography>
+            <Typography variant='body1' className='font-light'>
+              {ticketData.priority}
+            </Typography>
           </Grid>
         </Grid>
 
@@ -134,15 +140,58 @@ const ViewTickets: React.FC<ViewTicketProps> = ({ open, setOpen, data }) => {
             <Typography variant='h6' className='text-primary'>
               Tags
             </Typography>
-            <Typography variant='body1'>{ticketData.tags}</Typography>
+            <Typography variant='body1' className='font-light'>
+              {ticketData.tags}
+            </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant='h6' className='text-primary'>
               Ticket Description
             </Typography>
-            <Typography variant='body1'>{ticketData.ticketDescription}</Typography>
+            <Typography variant='body1' className='font-light'>
+              {ticketData.ticketDescription}
+            </Typography>
           </Grid>
         </Grid>
+
+        {/* Remarks Section */}
+      </DialogContent>
+
+      <DialogTitle className='flex flex-col text-primary text-left items-left'>
+        View Remarks
+        <Typography component='span' className='flex text-center'>
+          Here are the details for the Remarks
+        </Typography>
+      </DialogTitle>
+      <DialogContent sx={{ backgroundColor: 'background.paper', padding: '32px' }}>
+        <Box mt={4}>
+          <Grid item xs={12}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align='left'>
+                    <strong className='text-primary'>Date</strong>
+                  </TableCell>
+                  <TableCell align='left'>
+                    <strong className='text-primary'>Remark</strong>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {ticketData.remarks.map((remark, index) => (
+                  <TableRow key={index}>
+                    <TableCell align='left' className='font-light'>
+                      {remark.date}
+                    </TableCell>
+                    <TableCell align='left' className='font-light'>
+                      {remark.remark}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Grid>
+        </Box>
       </DialogContent>
 
       <DialogActions>
@@ -153,5 +202,4 @@ const ViewTickets: React.FC<ViewTicketProps> = ({ open, setOpen, data }) => {
     </Dialog>
   )
 }
-
 export default ViewTickets
