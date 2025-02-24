@@ -154,8 +154,6 @@ const Login = ({ mode }: { mode: SystemMode }) => {
 
         console.log(userRoleDetails)
 
-        localStorage.setItem('accessToken', res?.data?.accessToken)
-
         // setRoleDetails({
         //   role: userRoleDetails.name,
         //   permissions: userRoleDetails.permissions.map(permission => permission.slug)
