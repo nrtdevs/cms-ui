@@ -52,7 +52,6 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
   const [selectAllPermissions, setSelectAllPermissions] = useState(false)
 
   useEffect(() => {
-    // If roleData is provided (edit case), prefill the form
     if (roleData) {
       setName(roleData.name)
       setUserType(roleData.userType)
@@ -67,6 +66,8 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
       })
       setSelectedPermissions(newSelectedPermissions)
     }
+  
+
   }, [roleData])
 
   const handleClose = () => {

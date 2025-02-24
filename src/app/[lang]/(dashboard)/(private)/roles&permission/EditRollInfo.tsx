@@ -1,5 +1,3 @@
-
-
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -23,6 +21,7 @@ import {
   TableHead,
   SelectChangeEvent
 } from '@mui/material'
+import { permissionList } from '@/app/Services/roleService'
 
 type Permission = {
   permissionname: string
@@ -51,6 +50,7 @@ const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) =>
   const [description, setDescription] = useState<string>('')
   const [selectedPermissions, setSelectedPermissions] = useState<SelectedPermissions>({})
   const [selectAllPermissions, setSelectAllPermissions] = useState(false)
+  const [permissions, setPermissions] = useState<Permission[]>([])
 
   useEffect(() => {
     if (roleData) {
@@ -66,35 +66,55 @@ const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) =>
     }
   }, [roleData])
 
+  useEffect(() => {
+    const fetchRoleData = async () => {
+      try {
+        const data = await permissionList()
+
+        const formattedPermission: Permission[] = data.data.map((permission: any) => ({
+          permissionname: permission.name,
+          permission_group: permission.group,
+          id: permission.id
+        }))
+
+        setPermissions(formattedPermission)
+      } catch (error) {
+        console.error('Error fetching role data:', error)
+      }
+    }
+
+    fetchRoleData()
+  }, [])
   const handleClose = () => {
     setOpen(false)
   }
+  console.log('roleData', roleData?.permissions)
 
-  const permissions: Permission[] = [
-    { id: 34, permissionname: 'read', permission_group: 'Dashboard' },
-    { id: 23, permissionname: 'create', permission_group: 'User' },
-    { id: 47, permissionname: 'read', permission_group: 'User' },
-    { id: 12, permissionname: 'update', permission_group: 'User' },
-    { id: 8, permissionname: 'approve', permission_group: 'User' },
-    { id: 74, permissionname: 'block', permission_group: 'User' },
-    { id: 23, permissionname: 'create', permission_group: 'Bidding' },
-    { id: 47, permissionname: 'read', permission_group: 'Bidding' },
-    { id: 12, permissionname: 'update', permission_group: 'Bidding' },
-    { id: 8, permissionname: 'approve', permission_group: 'Bidding' },
-    { id: 74, permissionname: 'block', permission_group: 'Bidding' },
-    { id: 30, permissionname: 'create', permission_group: 'Reporting' },
-    { id: 59, permissionname: 'edit', permission_group: 'Reporting' },
-    { id: 24, permissionname: 'delete', permission_group: 'Reporting' },
-    { id: 30, permissionname: 'create', permission_group: 'Content' },
-    { id: 59, permissionname: 'edit', permission_group: 'Content' },
-    { id: 24, permissionname: 'delete', permission_group: 'Content' },
-    { id: 30, permissionname: 'create', permission_group: 'Settings' },
-    { id: 59, permissionname: 'edit', permission_group: 'Settings' },
-    { id: 24, permissionname: 'delete', permission_group: 'Settings' },
-    { id: 30, permissionname: 'create', permission_group: 'Notifications' },
-    { id: 59, permissionname: 'edit', permission_group: 'Notifications' },
-    { id: 24, permissionname: 'delete', permission_group: 'Notifications' }
-  ]
+  // const permissions: Permission[] = [
+  //   { id: 1, permissionname: 'read', permission_group: 'Dashboard' },
+  //   { id: 2, permissionname: 'create', permission_group: 'User' },
+  //   { id: 3, permissionname: 'read', permission_group: 'User' },
+  //   { id: 4, permissionname: 'update', permission_group: 'User' },
+  //   { id: 5, permissionname: 'approve', permission_group: 'User' },
+  //   { id: 6, permissionname: 'block', permission_group: 'User' },
+  //   { id: 7, permissionname: 'create', permission_group: 'Bidding' },
+  //   { id: 8, permissionname: 'read', permission_group: 'Bidding' },
+  //   { id: 9, permissionname: 'update', permission_group: 'Bidding' },
+  //   { id: 10, permissionname: 'approve', permission_group: 'Bidding' },
+  //   { id: 74, permissionname: 'block', permission_group: 'Bidding' },
+  //   { id: 30, permissionname: 'create', permission_group: 'Reporting' },
+  //   { id: 59, permissionname: 'edit', permission_group: 'Reporting' },
+  //   { id: 24, permissionname: 'delete', permission_group: 'Reporting' },
+  //   { id: 30, permissionname: 'create', permission_group: 'Content' },
+  //   { id: 59, permissionname: 'edit', permission_group: 'Content' },
+  //   { id: 24, permissionname: 'delete', permission_group: 'Content' },
+  //   { id: 30, permissionname: 'create', permission_group: 'Settings' },
+  //   { id: 59, permissionname: 'edit', permission_group: 'Settings' },
+  //   { id: 24, permissionname: 'delete', permission_group: 'Settings' },
+  //   { id: 30, permissionname: 'create', permission_group: 'Notifications' },
+  //   { id: 59, permissionname: 'edit', permission_group: 'Notifications' },
+  //   { id: 24, permissionname: 'delete', permission_group: 'Notifications' }
+  // ]
 
   const groupedPermissions = permissions.reduce(
     (acc: { [key: string]: Permission[] }, { permissionname, permission_group, id }) => {
@@ -235,7 +255,7 @@ const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) =>
                 <InputLabel htmlFor='userType'>User Type</InputLabel>
                 <Select value={userType} onChange={handleUserTypeChange} label='User Type' id='userType' required>
                   <MenuItem value='user'>User</MenuItem>
-                  <MenuItem value='superadmin'>Super Admin</MenuItem>
+                  <MenuItem value='super_admin'>Super Admin</MenuItem>
                 </Select>
               </FormControl>
             </Box>
