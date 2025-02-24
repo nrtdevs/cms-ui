@@ -1,33 +1,26 @@
-
 'use client'
 
-import CustomDescriptionInput from '@/app/Custom-Cpmponents/input/customdescriptioinput'
-import CustomDateInput from '@/app/Custom-Cpmponents/input/Datepickerinput' // Assuming this is your custom date input
+import React, { useState, useEffect } from 'react'
 import {
   Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
+  Typography,
   Grid,
+  Card,
+  CardContent,
+  CardActions,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Typography
+  Box
 } from '@mui/material'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-
-interface ViewTicketProps {
-  open: boolean
-  setOpen: (open: boolean) => void
-  data: Ticket // The ticket data to be viewed
-}
+import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
+import ViewRemarkData from './ViewRemarkData'
 
 interface Remark {
-  text: string
+  remark: string
   date: string
   username: string
 }
@@ -39,555 +32,284 @@ interface Ticket {
   assignee: string
   status: string
   priority: string
-  tags: string[] // Tags can be an empty array if not provided
-  remarks: Remark[] // Remarks will always default to an empty array
-  username: string // Username comes from the props
+  developer: string
+  tester: string
+  assignedTo: string
+  startDate: string
+  deadline: string
+  projectName: string
+  tags: string[]
+  remarks: Remark[]
 }
 
-const Remarks: React.FC<ViewTicketProps> = ({ data, open, setOpen }) => {
-  const [remarks, setRemarks] = useState<Remark[]>([])
-
-  const { slug } = useParams()
-  const router = useRouter()
-
-  const handleClose = () => {
-    setOpen(false)
-  }
-
-  // Initialize state with the ticket data, ensuring remarks is always an array
-  const [ticketData, setTicketData] = useState<Ticket>({
-    ...data,
-    tags: data?.tags || [], // Default tags to an empty array if missing
-    remarks: data?.remarks || [], // Default remarks to an empty array if missing
-    username: data?.username || '' // Ensure username is included
-  })
-
-  const remarksData = [
+const ViewTickets: React.FC = () => {
+  const data: Ticket[] = [
     {
+      ticketName: 'Login Bug Fix',
       id: '1',
+      projectName: 'Authentication System', // Project Name field
+      ticketDescription: 'Fixing the login issue where users cannot authenticate.',
+      assignee: 'Sarah Lee', // Assignee field
+      assignedTo: 'John Doe', // AssignedTo field
+      developer: 'John Doe', // Developer role
+      tester: 'Alice Johnson', // Tester role
+      startDate: '2025-01-01', // Start Date
+      deadline: '2025-01-15', // Task Deadline
+      status: 'In Progress',
+      priority: 'High',
+      tags: ['Bug', 'Urgent'],
       remarks: [
-        { remarkId: 'R1', text: 'Payment for Project Alpha' },
-        { remarkId: 'R2', text: 'Initial deposit received' }
-      ],
-      date: '2025-01-01',
-      username: 'john_doe'
+        { remark: 'Initial investigation completed', date: '2025-01-03', username: 'John Doe' },
+        { remark: 'Fixing authentication bug', date: '2025-01-05', username: 'John Doe' },
+        { remark: 'Awaiting testing', date: '2025-01-07', username: 'Sarah Lee' }
+      ]
     },
     {
+      ticketName: 'Admin Panel Redesign',
       id: '2',
+      projectName: 'Admin UI Project', // Project Name field
+      ticketDescription: 'Redesign the admin panel to improve the user interface and accessibility.',
+      assignee: 'Michael Wright', // Assignee field
+      assignedTo: 'Emily White', // AssignedTo field
+      developer: 'Emily White', // Developer role
+      tester: 'Eve Carter', // Tester role
+      startDate: '2025-01-04', // Start Date
+      deadline: '2025-02-01', // Task Deadline
+      status: 'Not Started',
+      priority: 'Medium',
+      tags: ['UI', 'Design'],
       remarks: [
-        { remarkId: 'R1', text: 'Payment for Project Beta' },
-        { remarkId: 'R2', text: 'Second installment received' }
-      ],
-      date: '2025-01-05',
-      username: 'jane_smith'
+        { remark: 'Design phase initiated', date: '2025-01-03', username: 'Emily White' },
+        { remark: 'UI mockups created', date: '2025-01-08', username: 'Emily White' }
+      ]
     },
     {
+      ticketName: 'Security Patch Update',
       id: '3',
+      projectName: 'Security Updates', // Project Name field
+      ticketDescription: 'Update security patches and make necessary fixes.',
+      assignee: 'Lucas Allen', // Assignee field
+      assignedTo: 'James Black', // AssignedTo field
+      developer: 'James Black', // Developer role
+      tester: 'Olivia Martinez', // Tester role
+      startDate: '2025-02-10', // Start Date
+      deadline: '2025-03-10', // Task Deadline
+      status: 'Completed',
+      priority: 'Low',
+      tags: ['Security', 'Patch'],
       remarks: [
-        { remarkId: 'R1', text: 'Payment for Project Gamma' },
-        { remarkId: 'R2', text: 'Final payment completed' }
-      ],
-      date: '2025-01-10',
-      username: 'mike_jones'
+        { remark: 'Security vulnerability discovered', date: '2025-03-05', username: 'James Black' },
+        { remark: 'Patch applied successfully', date: '2025-03-07', username: 'James Black' },
+        { remark: 'Testing and verification completed', date: '2025-03-08', username: 'Olivia Martinez' }
+      ]
     },
     {
+      ticketName: 'Backend Optimization',
       id: '4',
+      projectName: 'Performance Improvement', // Project Name field
+      ticketDescription: 'Optimize backend code for faster processing and better performance.',
+      assignee: 'Olivia Martinez', // Assignee field
+      assignedTo: 'David Green', // AssignedTo field
+      developer: 'David Green', // Developer role
+      tester: 'Alice Johnson', // Tester role
+      startDate: '2025-04-01', // Start Date
+      deadline: '2025-04-30', // Task Deadline
+      status: 'In Progress',
+      priority: 'High',
+      tags: ['Backend', 'Optimization'],
       remarks: [
-        { remarkId: 'R1', text: 'Payment for Project Delta' },
-        { remarkId: 'R2', text: 'Partial payment made' }
-      ],
-      date: '2025-01-15',
-      username: 'lisa_white'
-    },
-    {
-      id: '5',
-      remarks: [
-        { remarkId: 'R1', text: 'Payment for Project Epsilon' },
-        { remarkId: 'R2', text: 'Advance payment completed' }
-      ],
-      date: '2025-01-20',
-      username: 'sara_lee'
-    },
-    {
-      id: '6',
-      remarks: [
-        { remarkId: 'R1', text: 'Payment for Project Zeta' },
-        { remarkId: 'R2', text: 'Payment received' }
-      ],
-      date: '2025-02-01',
-      username: 'alex_brown'
-    },
-    {
-      id: '7',
-      remarks: [
-        { remarkId: 'R1', text: 'Payment for Project Eta' },
-        { remarkId: 'R2', text: 'First installment paid' }
-      ],
-      date: '2025-02-05',
-      username: 'chris_miller'
-    },
-    {
-      id: '8',
-      remarks: [
-        { remarkId: 'R1', text: 'Payment for Project Theta' },
-        { remarkId: 'R2', text: 'Payment in full received' }
-      ],
-      date: '2025-02-10',
-      username: 'kelly_wilson'
-    },
-    {
-      id: '9',
-      remarks: [
-        { remarkId: 'R1', text: 'Payment for Project Iota' },
-        { remarkId: 'R2', text: 'Deposit made' }
-      ],
-      date: '2025-02-15',
-      username: 'daniel_evans'
-    },
-    {
-      id: '10',
-      remarks: [
-        { remarkId: 'R1', text: 'Payment for Project Kappa' },
-        { remarkId: 'R2', text: 'Final balance paid' }
-      ],
-      date: '2025-02-20',
-      username: 'nancy_clark'
+        { remark: 'Code profiling Completed', date: '2025-04-12', username: 'David Green' },
+        { remark: 'Optimization strategies discussed', date: '2025-04-15', username: 'David Green' },
+        { remark: 'Code optimization in progress', date: '2025-04-20', username: 'Olivia Martinez' }
+      ]
     }
   ]
 
-  // State for storing the current remark and date
-  const [remark, setRemark] = useState<Remark>({ text: '', date: '', username: '' })
+  const buttonviewProps = {
+    variant: 'contained',
+    color: 'primary',
+    size: 'small',
+    className: 'bg-primary text-white p-0 rounded-sm',
+    sx: { fontSize: '0.4rem', minWidth: '20px', minHeight: '20px', marginRight: '10px' },
+    children: <i style={{ fontSize: '14px' }} className='tabler-eye text-white' />
+  }
+
+  // State for the selected ticket
+  const [ticketData, setTicketData] = useState<Ticket | null>(null)
+
+  const [open, setOpen] = useState(true)
   const [error, setError] = useState<string>('')
 
-  const handleRemarkChange = (field: string, value: string) => {
-    setRemark(prevState => ({ ...prevState, [field]: value }))
-  }
+  const { slug } = useParams() // Get the slug from the URL (useParams will return an object with the slug)
+  const router = useRouter()
 
-  // Handle save remark with validation
-  const handleSaveRemark = () => {
-    if (!remark.text.trim() || !remark.date) {
-      setError('Please provide a remark and a date.')
-      return
-    }
-
-    // Clear previous error if validation is successful
-    setError('')
-
-    // Save the current remark to the ticket
-    const updatedTicket = { ...ticketData, remarks: [...ticketData.remarks, remark] }
-    setTicketData(updatedTicket)
-    setRemark({ text: '', date: '', username: data?.username }) // Clear the fields after saving
-  }
-
-  // Handle delete remark
-  const handleDeleteRemark = (index: number) => {
-    const updatedRemarks = ticketData.remarks.filter((_, i) => i !== index)
-    setTicketData(prevState => ({ ...prevState, remarks: updatedRemarks }))
-  }
-
+  // UseEffect to get the ticket data based on the slug from the URL
   useEffect(() => {
-    // Directly use the remarks from the `data` prop if available
-    if (data?.remarks) {
-      setTicketData({
-        ...data,
-        tags: data?.tags || [], // Default tags to an empty array if missing
-        remarks: data?.remarks || [], // Default remarks to an empty array if missing
-        username: data?.username || '' // Ensure username is included
-      })
+    if (slug) {
+      const ticket = data.find(ticket => ticket.id === slug)
+      setTicketData(ticket || null)
     }
-  }, [data, slug])
+  }, [slug])
+
+  if (!ticketData) {
+    return (
+      <Box sx={{ maxWidth: '100vw', margin: 'auto', padding: '20px' }}>
+        <Typography variant='h4' color='error' gutterBottom>
+          Ticket not found
+        </Typography>
+      </Box>
+    )
+  }
 
   return (
-    <div>
-      {/* Card component to replace Dialog */}
-      <Card sx={{ maxWidth: 900, margin: 'auto', padding: '20px', boxShadow: 3 }}>
-        <CardHeader
-          title='View Remarks'
-          subheader='Here are the details for the Remarks'
-          titleTypographyProps={{
-            variant: 'h4',
-            fontWeight: 'bold',
-            textAlign: 'center'
-          }}
-          subheaderTypographyProps={{
-            variant: 'body1',
-            align: 'center',
-            color: 'text.secondary'
-          }}
-          sx={{ paddingBottom: 2 }}
-        />
-        <CardContent>
-          <Typography variant='h5' align='center' gutterBottom>
-            Saved Remarks
-          </Typography>
-          <Table sx={{ marginBottom: 3 }}>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.main' }}>#</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.main' }}>Remark</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.main' }}>Date</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.main' }}>Username</TableCell>
-                <TableCell align='center' sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {ticketData.remarks.map((remark, index) => (
-                <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{remark.text}</TableCell>
-                  <TableCell>{remark.date}</TableCell>
-                  <TableCell>{remark.username}</TableCell>
-                  <TableCell align='center'>
-                    <Button variant='outlined' color='error' onClick={() => handleDeleteRemark(index)}>
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+    <>
+      <Card sx={{ boxShadow: 3, padding: '20px' }}>
+        <Typography className='text-primary font-bold text-left text-lg'>Ticket Information</Typography>
 
-          {/* Add new remark */}
-          <Grid item xs={12}>
-            <Typography variant='h6' color='primary' align='center' gutterBottom>
-              Add Remark
-            </Typography>
-            <Grid container spacing={2} justifyContent='center'>
-              <CustomDateInput
-                label='Date'
-                value={remark.date}
-                onChange={value => handleRemarkChange('date', value)}
-                error={!!error}
-              />
-            </Grid>
-            <CustomDescriptionInput
-              label='Remark'
-              value={remark.text}
-              onChange={value => handleRemarkChange('text', value)}
-              error={!!error}
-            />
-            {/* Username is automatically set from props */}
-            {/* <Typography variant='body1' color='text.secondary' align='center' sx={{ marginTop: 2 }}>
-              Username: {data?.username}
-            </Typography> */}
-            {/* Show error if validation fails */}
-            {error && (
-              <Typography variant='body2' color='error' align='center' sx={{ marginTop: 2 }}>
-                {error}
+        <CardContent sx={{ backgroundColor: 'background.paper', padding: '32px' }}>
+          <Grid container spacing={4}>
+            <Grid item xs={12} sm={4}>
+              <Typography variant='h6' className='text-primary font-bold'>
+                Title
               </Typography>
-            )}
-
-            <Button variant='contained' color='primary' onClick={handleSaveRemark} fullWidth sx={{ marginTop: 3 }}>
-              Save Remark
-            </Button>
+              <Typography variant='body1' className='font-light '>
+                {ticketData.ticketName}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Typography variant='h6' className='text-primary font-bold'>
+                Project Name
+              </Typography>
+              <Typography variant='body1' className='font-light'>
+                {ticketData.projectName}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Typography variant='h6' className='text-primary font-bold'>
+                Assignee
+              </Typography>
+              <Typography variant='body1' className='font-light'>
+                {ticketData.assignee}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Typography variant='h6' className='text-primary font-bold'>
+                Tech Stack
+              </Typography>
+              <Typography variant='body1' className='font-light'>
+                {ticketData.tags.join(', ')}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Typography variant='h6' className='text-primary font-bold'>
+                Developer
+              </Typography>
+              <Typography variant='body1' className='font-light'>
+                {ticketData.developer}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Typography variant='h6' className='text-primary font-bold'>
+                Tester
+              </Typography>
+              <Typography variant='body1' className='font-light'>
+                {ticketData.tester}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Typography variant='h6' className='text-primary font-bold'>
+                Start Date
+              </Typography>
+              <Typography variant='body1' className='font-light'>
+                {ticketData.startDate}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Typography variant='h6' className='text-primary font-bold'>
+                Deadline
+              </Typography>
+              <Typography variant='body1' className='font-light'>
+                {ticketData.deadline}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <Typography variant='h6' className='text-primary font-bold'>
+                Ticket Description
+              </Typography>
+              <Typography variant='body1' className='font-light'>
+                {ticketData.ticketDescription}
+              </Typography>
+            </Grid>
           </Grid>
+        </CardContent>
+      </Card>
+      <Card sx={{ boxShadow: 3, marginTop: '14px' }}>
+        <CardContent sx={{ backgroundColor: 'background.paper', padding: '32px' }}>
+          <Typography className='flex flex-col text-primary text-left items-left font-bold text-lg'>
+            View Remarks
+            <Typography component='span' className='flex text-center'>
+              Here are the details for the Remarks
+            </Typography>
+          </Typography>
+
+          <Box mt={4}>
+            <Grid item xs={12}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell align='left'>
+                      <strong className='text-primary font-bold text-md'>User</strong>
+                    </TableCell>
+                    <TableCell align='center'>
+                      <strong className='text-primary font- text-md'>Remark</strong>
+                    </TableCell>
+                    <TableCell align='center'>
+                      <strong className='text-primary font-bold text-md'>Date</strong>
+                    </TableCell>
+                    <TableCell align='center'>
+                      <strong className='text-primary font-bold text-md'>Actions</strong>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {ticketData.remarks.map(remark => (
+                    <TableRow key={remark.date}>
+                      <TableCell align='left' className='font-light'>
+                        {remark.username}
+                      </TableCell>
+                      <TableCell
+                        align='center'
+                        className='font-light'
+                      >{remark.remark}
+                      </TableCell>
+                      <TableCell align='center' className='font-light'>
+                        {remark.date}
+                      </TableCell>
+                      <TableCell align='center' className='font-light'>
+                        <OpenDialogOnElementClick
+                          element={Button}
+                          elementProps={buttonviewProps}
+                          dialog={ViewRemarkData}
+                          dialogProps={{ data: remark }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Grid>
+          </Box>
         </CardContent>
 
         <CardActions sx={{ paddingTop: 2 }}>
-          <Button variant='outlined' onClick={handleClose} fullWidth>
-            Close
-          </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'right', marginTop: 3 }}>
+            <Button variant='contained' onClick={() => router.push('/tickets')}>
+              Back To Tickets...
+            </Button>
+          </Box>
         </CardActions>
       </Card>
-    </div>
+    </>
   )
 }
-export default Remarks
-
-// 'use client'
-
-// import CustomDescriptionInput from '@/app/Custom-Cpmponents/input/customdescriptioinput'
-// import DatePickerInput from '@/app/Custom-Cpmponents/input/Datepickerinput'
-// import {
-//   Button,
-//   Card,
-//   CardActions,
-//   CardContent,
-//   CardHeader,
-//   Grid,
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableHead,
-//   TableRow,
-//   Typography
-// } from '@mui/material'
-// import { useParams, useRouter } from 'next/navigation'
-// import { useEffect, useState } from 'react'
-
-// interface ViewTicketProps {
-//   open: boolean
-//   setOpen: (open: boolean) => void
-//   data: Ticket // The ticket data to be viewed
-// }
-
-// interface Remark {
-//   remark: string
-//   date: string
-// }
-
-// interface Ticket {
-//   ticketName: string
-//   id: string
-//   ticketDescription: string
-//   assignee: string
-//   status: string
-//   priority: string
-//   tags?: string[] // Make tags optional
-//   remarks: Remark[]
-// }
-
-// const Remarks: React.FC<ViewTicketProps> = ({ data, open, setOpen }) => {
-//   const [remarks, setRemarks] = useState<any | null>(null)
-
-//   const remarksData = [
-//     {
-//       id: '1',
-//       remarks: [
-//         { remarkId: 'R1', text: 'Payment for Project Alpha' },
-//         { remarkId: 'R2', text: 'Initial deposit received' }
-//       ],
-//       date: '2025-01-01',
-//       username: 'john_doe'
-//     },
-//     {
-//       id: '2',
-//       remarks: [
-//         { remarkId: 'R1', text: 'Payment for Project Beta' },
-//         { remarkId: 'R2', text: 'Second installment received' }
-//       ],
-//       date: '2025-01-05',
-//       username: 'jane_smith'
-//     },
-//     {
-//       id: '3',
-//       remarks: [
-//         { remarkId: 'R1', text: 'Payment for Project Gamma' },
-//         { remarkId: 'R2', text: 'Final payment completed' }
-//       ],
-//       date: '2025-01-10',
-//       username: 'mike_jones'
-//     },
-//     {
-//       id: '4',
-//       remarks: [
-//         { remarkId: 'R1', text: 'Payment for Project Delta' },
-//         { remarkId: 'R2', text: 'Partial payment made' }
-//       ],
-//       date: '2025-01-15',
-//       username: 'lisa_white'
-//     },
-//     {
-//       id: '5',
-//       remarks: [
-//         { remarkId: 'R1', text: 'Payment for Project Epsilon' },
-//         { remarkId: 'R2', text: 'Advance payment completed' }
-//       ],
-//       date: '2025-01-20',
-//       username: 'sara_lee'
-//     },
-//     {
-//       id: '6',
-//       remarks: [
-//         { remarkId: 'R1', text: 'Payment for Project Zeta' },
-//         { remarkId: 'R2', text: 'Payment received' }
-//       ],
-//       date: '2025-02-01',
-//       username: 'alex_brown'
-//     },
-//     {
-//       id: '7',
-//       remarks: [
-//         { remarkId: 'R1', text: 'Payment for Project Eta' },
-//         { remarkId: 'R2', text: 'First installment paid' }
-//       ],
-//       date: '2025-02-05',
-//       username: 'chris_miller'
-//     },
-//     {
-//       id: '8',
-//       remarks: [
-//         { remarkId: 'R1', text: 'Payment for Project Theta' },
-//         { remarkId: 'R2', text: 'Payment in full received' }
-//       ],
-//       date: '2025-02-10',
-//       username: 'kelly_wilson'
-//     },
-//     {
-//       id: '9',
-//       remarks: [
-//         { remarkId: 'R1', text: 'Payment for Project Iota' },
-//         { remarkId: 'R2', text: 'Deposit made' }
-//       ],
-//       date: '2025-02-15',
-//       username: 'daniel_evans'
-//     },
-//     {
-//       id: '10',
-//       remarks: [
-//         { remarkId: 'R1', text: 'Payment for Project Kappa' },
-//         { remarkId: 'R2', text: 'Final balance paid' }
-//       ],
-//       date: '2025-02-20',
-//       username: 'nancy_clark'
-//     }
-//   ]
-
-//   const { slug } = useParams()
-//   const router = useRouter()
-
-//   const handleClose = () => {
-//     setOpen(false)
-//   }
-
-//   // Initialize state with the ticket data, use optional chaining for `tags`
-//   const [ticketData, setTicketData] = useState<Ticket>({
-//     ...data,
-//     tags: data.tags ?? [] // Use an empty array if `tags` is undefined
-//   })
-
-//   // State for storing the current remark and date
-//   const [remark, setRemark] = useState<Remark>({ remark: '', date: '' })
-//   const [error, setError] = useState<string>('')
-
-//   // Handle change in the remark or date fields
-//   const handleRemarkChange = (field: string, value: string) => {
-//     setRemark(prevState => ({ ...prevState, [field]: value }))
-//   }
-
-//   // Handle save remark with validation
-//   const handleSaveRemark = () => {
-//     if (!remark.remark.trim() || !remark.date) {
-//       setError('Please provide both a remark and a date.')
-//       return
-//     }
-
-//     // Clear previous error if validation is successful
-//     setError('')
-
-//     // Save the current remark to the ticket
-//     const updatedTicket = { ...ticketData, remarks: [...ticketData.remarks, remark] }
-//     setTicketData(updatedTicket)
-//     setRemark({ remark: '', date: '' }) // Clear the fields after saving
-//   }
-
-//   // Handle delete remark
-//   const handleDeleteRemark = (index: number) => {
-//     const updatedRemarks = ticketData.remarks.filter((_, i) => i !== index)
-//     setTicketData(prevState => ({ ...prevState, remarks: updatedRemarks }))
-//   }
-
-//   useEffect(() => {
-//     const remarkData = remarksData.find(remarks => remarks.id === slug)
-//     setRemarks(remarkData || null)
-
-//     setTicketData({
-//       ...data,
-//       tags: data.tags ?? [] // Ensure tags is an empty array if undefined
-//     })
-//   }, [data, slug])
-
-//   return (
-//     <div>
-//       {/* Card Component replacing Dialog */}
-//       <Card sx={{ maxWidth: 900, margin: 'auto', padding: '20px', boxShadow: 3 }}>
-//         <CardHeader
-//           title='View Remarks'
-//           subheader='Here are the details for the Remarks'
-//           titleTypographyProps={{
-//             variant: 'h4',
-//             fontWeight: 'bold',
-//             textAlign: 'center'
-//           }}
-//           subheaderTypographyProps={{
-//             variant: 'body1',
-//             align: 'center',
-//             color: 'text.secondary'
-//           }}
-//           sx={{ paddingBottom: 2 }}
-//         />
-//         <CardContent>
-//           <Typography variant='h5' align='center' gutterBottom>
-//             Saved Remarks
-//           </Typography>
-//           <Table sx={{ marginBottom: 3 }}>
-//             <TableHead>
-//               <TableRow>
-//                 <TableCell>
-//                   <strong>Date</strong>
-//                 </TableCell>
-//                 <TableCell>
-//                   <strong>Remark</strong>
-//                 </TableCell>
-//                 <TableCell align='center'>
-//                   <strong>Action</strong>
-//                 </TableCell>
-//               </TableRow>
-//             </TableHead>
-//             <TableBody>
-//               {ticketData.remarks.map((remark, index) => (
-//                 <TableRow key={index}>
-//                   <TableCell>{remark.date}</TableCell>
-//                   <TableCell>{remark.remark}</TableCell>
-//                   <TableCell align='center'>
-//                     <Button variant='outlined' color='error' onClick={() => handleDeleteRemark(index)}>
-//                       Delete
-//                     </Button>
-//                   </TableCell>
-//                 </TableRow>
-//               ))}
-//             </TableBody>
-//           </Table>
-
-//           {/* Add new remark */}
-//           <Grid item xs={12}>
-//             <Typography variant='h6' color='primary' align='center' gutterBottom>
-//               Add Remark & Date
-//             </Typography>
-//             <Grid container spacing={2} justifyContent='center'>
-//               <Grid item xs={12} sm={5}>
-//                 <DatePickerInput
-//                   label='Date'
-//                   value={remark.date}
-//                   onChange={value => handleRemarkChange('date', value)}
-//                   error={!!error}
-//                 />
-//               </Grid>
-//             </Grid>
-//             <Grid container spacing={2} justifyContent='center'>
-//               <Grid item xs={12} sm={5}>
-//                 <CustomDescriptionInput
-//                   label='Remark'
-//                   value={remark.remark}
-//                   onChange={value => handleRemarkChange('remark', value)}
-//                   error={!!error}
-//                 />
-//               </Grid>
-//             </Grid>
-
-//             {/* Show error if validation fails */}
-//             {error && (
-//               <Typography variant='body2' color='error' align='center' sx={{ marginTop: 2 }}>
-//                 {error}
-//               </Typography>
-//             )}
-
-//             <Button variant='outlined' onClick={handleSaveRemark} fullWidth sx={{ marginTop: 3 }}>
-//               Save Remark
-//             </Button>
-//           </Grid>
-//         </CardContent>
-
-//         <CardActions sx={{ paddingTop: 2 }}>
-//           <Button variant='outlined' onClick={handleClose} fullWidth>
-//             Close
-//           </Button>
-//         </CardActions>
-//       </Card>
-//     </div>
-//   )
-// }
-
-// export default Remarks
+export default ViewTickets

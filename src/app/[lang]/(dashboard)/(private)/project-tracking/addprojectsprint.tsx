@@ -332,7 +332,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
         <i className='tabler-x' />
       </DialogCloseButton>
       <DialogTitle variant='h4' className='flex gap-2 flex-col text-primary text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-        Add Projects & Sprints
+        Add Ticket
       </DialogTitle>
       <form onSubmit={handleSubmit(handleSave)}>
         <DialogContent>
@@ -351,6 +351,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     onSelect={(selectedValue: string) => setValue(`projectname`, selectedValue)}
                     error={!!errors.projectname}
                     helperText={errors.projectname?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -367,11 +368,12 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                 }}
                 render={({ field }) => (
                   <CustomTextInput
-                    label='Sprint Title'
-                    placeholder='Enter Sprint Title...'
+                    label=' Title'
+                    placeholder='Enter  Title...'
                     {...field}
                     error={!!errors.sprints?.[0]?.sprintname}
                     helperText={errors.sprints?.[0]?.sprintname?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -390,6 +392,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     {...field}
                     error={!!errors.sprints?.[0]?.assignBy}
                     helperText={errors.sprints?.[0]?.assignBy?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -408,6 +411,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     placeholder='Type and select tags'
                     error={!!errors.sprints?.[0]?.addmodule}
                     helperText={errors.sprints?.[0]?.addmodule?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -420,7 +424,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                 name={`sprints.0.sprintStartDate`}
                 rules={{ required: 'Start Date is required' }} // Required field validation
                 render={({ field }) => (
-                  <DatePickerInput label='Start Date' placeholder='Enter Task Start Date' type='date' {...field} />
+                  <DatePickerInput label='Start Date' placeholder='Enter Task Start Date' type='date' {...field} required/>
                 )}
               />
             </Grid>
@@ -430,7 +434,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                 name={`sprints.0.sprintEndDate`}
                 rules={{ required: 'End Date is required' }} // Required field validation
                 render={({ field }) => (
-                  <DatePickerInput label='Deadline Date' placeholder='Enter Sprint End Date' type='date' {...field} />
+                  <DatePickerInput label='Deadline Date' placeholder='Enter Sprint End Date' type='date' {...field} required />
                 )}
               />
             </Grid>
@@ -443,12 +447,13 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                 rules={{ required: 'Tester is required' }} // Required field validation
                 render={({ field }) => (
                   <Dropdown
-                    label='Select Tester'
+                    label=' Tester'
                     options={testers}
                     selectedOption={field.value}
                     onSelect={(selectedValue: string) => setValue(`sprints.0.tester`, selectedValue)}
                     error={!!errors.sprints?.[0]?.tester}
                     helperText={errors.sprints?.[0]?.tester?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -460,12 +465,13 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                 rules={{ required: 'Developer is required' }} // Required field validation
                 render={({ field }) => (
                   <Dropdown
-                    label='Select Developer'
+                    label=' Developer'
                     options={developers}
                     selectedOption={field.value}
                     onSelect={(selectedValue: string) => setValue(`sprints.0.developer`, selectedValue)}
                     error={!!errors.sprints?.[0]?.developer}
                     helperText={errors.sprints?.[0]?.developer?.message} // Display error message
+                    required
                   />
                 )}
               />
@@ -485,6 +491,7 @@ const AddProjectsprint = ({ open, setOpen, data }: EditUserInfoProps) => {
                     onChange={(value: string) => setValue(`sprints.0.description`, value)}
                     error={!!errors.sprints?.[0]?.description}
                     helperText={errors.sprints?.[0]?.description?.message} // Display error message
+                    required
                   />
                 )}
               />

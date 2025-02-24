@@ -445,10 +445,8 @@ const Page: React.FC = () => {
     <div>
       <Card className='container mx-auto p-4'>
         <div className='flex justify-between items-center mb-6'>
-          <Typography variant='h4' fontWeight='bold' className='text-primary'>
-            Finance Management
-          </Typography>
-          <SearchFilter label='Search' value={searchTerm} onChange={handleSearch} placeholder='Search all fields' />
+        <SearchFilter label='Search' value={searchTerm} onChange={handleSearch} placeholder='Search all fields' />
+
         </div>
 
         <Box className='mt-5 p-4'>

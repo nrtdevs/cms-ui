@@ -19,7 +19,8 @@ import {
   Box,
   Card,
   Stack,
-  Grid
+  Grid,
+  Chip
 } from '@mui/material'
 
 import {
@@ -47,14 +48,15 @@ import Link from '@/components/Link'
 import { useParams } from 'next/navigation'
 import { Locale } from '@/configs/i18n'
 import Dropdown from '@/app/Custom-Cpmponents/Select-dropdown/dropdown'
+import { ThemeColor } from '@/@core/types'
 
 interface Remark {
   remark: string
   date: string
 }
 
-interface Report{
-  report : string
+interface Report {
+  report: string
 }
 
 type Project = {
@@ -65,7 +67,9 @@ type Project = {
   end_date: string
   clientname: string
   status: string
-  report:string
+  report: string
+  developer: string
+  tester: string
   remarks: Remark[]
 }
 
@@ -84,7 +88,7 @@ const buttonAddrops: ButtonProps = {
   size: 'small',
   className: 'bg-green-700 text-white p-0 rounded-sm',
   sx: { fontSize: '0.5rem', minWidth: '20px', minHeight: '20px' },
-  children: <i style={{ fontSize: '15px' , }} className='tabler-plus text-white' />
+  children: <i style={{ fontSize: '15px' }} className='tabler-plus text-white' />
 }
 
 const buttonviewProps: ButtonProps = {
@@ -113,26 +117,23 @@ const AdminTickets: React.FC = () => {
   const rowsPerPage = 10
   // const reportOptions = ['In Progress', 'Pending', 'Completed', 'Completed']
 
-
   const reportOptions = ['In Progress', 'Pending', 'Completed', 'Ongoing']
 
   // State for data
-  const [datax, setDatax] = useState<string[]>(['In Progress', 'Pending', 'Completed', 'Ongoing']);
+  const [datax, setDatax] = useState<string[]>(['In Progress', 'Pending', 'Completed', 'Ongoing'])
   const [errors, setErrors] = useState<any>({})
-
 
   // Handle changes in the report dropdown
   const handleReportChange = (value: string) => {
     setDatax(prevData =>
-      prevData.map((item) => {
+      prevData.map(item => {
         if (item === value) {
-          return value; // Directly modify the matching value
+          return value // Directly modify the matching value
         }
-        return item; // Keep other values unchanged
+        return item // Keep other values unchanged
       })
-    );
-  };
-
+    )
+  }
 
   const handleInputChange = (field: keyof Project, value: string) => {
     setDatax(prevData => {
@@ -166,7 +167,7 @@ const AdminTickets: React.FC = () => {
         Projectstartdate: '2025-01-02',
         end_date: '2024-06-01',
         clientname: 'John Doe',
-        status: 'Active',
+        status: 'active',
         report: 'In Progress', // Added report field
         ticketName: 'Login Bug Fix',
         assignee: 'Sarah Lee',
@@ -174,6 +175,8 @@ const AdminTickets: React.FC = () => {
         priority: 'High',
         tags: ['Bug', 'Urgent'],
         ticketDescription: 'Fixing the login issue where users cannot authenticate.',
+        developer: 'John Doe', // Developer field added
+        tester: 'Alice Johnson', // Tester field added
         remarks: [
           { remark: 'Initial investigation completed', date: '2025-01-03' },
           { remark: 'Fixing authentication bug', date: '2025-01-05' },
@@ -188,14 +191,16 @@ const AdminTickets: React.FC = () => {
         Projectstartdate: '2025-01-02',
         end_date: '2024-08-01',
         clientname: 'Jane Smith',
-        status: 'Unactive',
-        report: 'Pending', // Added report field
+        status: 'inactive',
+        report: 'pending', // Added report field
         ticketName: 'Admin Panel Redesign',
         assignee: 'Michael Wright',
         ticketStatus: 'Not Started',
         priority: 'Medium',
         tags: ['UI', 'Design'],
         ticketDescription: 'Redesign the admin panel to improve the user interface and accessibility.',
+        developer: 'Emily White', // Developer field added
+        tester: 'Eve Carter', // Tester field added
         remarks: [
           { remark: 'Design phase initiated', date: '2025-01-03' },
           { remark: 'UI mockups created', date: '2025-01-08' }
@@ -209,7 +214,7 @@ const AdminTickets: React.FC = () => {
         Projectstartdate: '2025-03-01',
         end_date: '2024-12-15',
         clientname: 'Emily Davis',
-        status: 'Active',
+        status: 'inactive',
         report: 'Completed', // Added report field
         ticketName: 'Security Patch Update',
         assignee: 'Lucas Allen',
@@ -217,6 +222,8 @@ const AdminTickets: React.FC = () => {
         priority: 'Low',
         tags: ['Security', 'Patch'],
         ticketDescription: 'Update security patches and make necessary fixes.',
+        developer: 'James Black', // Developer field added
+        tester: 'Olivia Martinez', // Tester field added
         remarks: [
           { remark: 'Security vulnerability discovered', date: '2025-03-05' },
           { remark: 'Patch applied successfully', date: '2025-03-07' },
@@ -230,7 +237,7 @@ const AdminTickets: React.FC = () => {
         Projectstartdate: '2025-04-10',
         end_date: '2025-10-30',
         clientname: 'David Lee',
-        status: 'Unactive',
+        status: 'pending',
         report: 'Ongoing', // Added report field
         ticketName: 'Backend Optimization',
         assignee: 'Olivia Martinez',
@@ -238,6 +245,8 @@ const AdminTickets: React.FC = () => {
         priority: 'High',
         tags: ['Backend', 'Optimization'],
         ticketDescription: 'Optimize backend code for faster processing and better performance.',
+        developer: 'David Green', // Developer field added
+        tester: 'Alice Johnson', // Tester field added
         remarks: [
           { remark: 'Code profiling completed', date: '2025-04-12' },
           { remark: 'Optimization strategies discussed', date: '2025-04-15' },
@@ -280,6 +289,15 @@ const AdminTickets: React.FC = () => {
     return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
   }
 
+  type UserStatusType = {
+    [key: string]: ThemeColor
+  }
+
+  const userStatusObj: UserStatusType = {
+    active: 'success',
+    pending: 'warning',
+    inactive: 'secondary'
+  }
   const columns = useMemo<ColumnDef<Project>[]>(
     () => [
       {
@@ -304,6 +322,24 @@ const AdminTickets: React.FC = () => {
       {
         accessorKey: 'projectname',
         header: 'Project Name',
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        )
+      },
+      {
+        accessorKey: 'developer',
+        header: 'Developer',
+        cell: info => (
+          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+            {info.getValue<string>()}
+          </Typography>
+        )
+      },
+      {
+        accessorKey: 'tester',
+        header: 'Tester',
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
             {info.getValue<string>()}
@@ -340,81 +376,54 @@ const AdminTickets: React.FC = () => {
       {
         accessorKey: 'status',
         header: 'Status',
-        cell: info => {
-          const status = info.getValue<string>()
-          let icon, borderColor, textColor
-
-          // Set icon and colors based on status
-          if (status === 'Active') {
-            icon = '✓' // Green tick
-            borderColor = '#198754' // Green
-            textColor = '#198754'
-
-          } else if (status === 'Unactive') {
-            icon = '✗' // Orange tick
-            borderColor = '#fd0054' // Orange
-            textColor = '#fd0054'
-
-          } else if (status === 'Completed') {
-            icon = '✓' // Blue tick
-            borderColor = 'blue' // Blue
-            textColor = 'blue' // Blue
-          } else {
-            icon = '✗' // Cross for undefined or other statuses
-            borderColor = 'gray' // Default gray
-            textColor = 'gray'
-          
-          }
-
-          return (
-            <Box
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                color: textColor,
-                border: `1px solid ${borderColor}`,
-                padding: '4px 8px',
-                borderRadius: '4px',
-                width: '60%'
-              }}
-            >
-              <span style={{ fontSize: '16px', marginRight: '8px' }}>{icon}</span>
-              <span>{status}</span>
-            </Box>
-          )
-        }
+        cell: ({ row }) => (
+          <div className='flex items-center gap-3'>
+            <Chip
+              variant='tonal'
+              label={row.original.status}
+              size='small'
+              color={userStatusObj[row.original.status]}
+              className='capitalize'
+            />
+          </div>
+        )
       },
+
       {
         id: 'actions',
         header: 'Actions',
         cell: info => {
-
           const project = info.row.original
 
-            return (
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <OpenDialogOnElementClick
-                  element={Button}
-                  elementProps={buttonAddrops}
-                  dialog={AddRemark}
-                  dialogProps={{ data: project }}
-                />
-                <OpenDialogOnElementClick
-                  element={Button}
-                  elementProps={buttonProps}
-                  dialog={EditTicket}
-                  dialogProps={{ data: project }}
-                />
-                <OpenDialogOnElementClick
+          return (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonAddrops}
+                dialog={AddRemark}
+                dialogProps={{ data: project }}
+              />
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonProps}
+                dialog={EditTicket}
+                dialogProps={{ data: project }}
+              />
+              {/* <OpenDialogOnElementClick
                   element={Button}
                   elementProps={buttonviewProps}
                   dialog={ViewTicket}
                   dialogProps={{ data: project }}
-                />
-              </Box>
-            )
-          }
+                /> */}
+              <Link href={getLocalizedUrl(`/tickets/${info.row.original.id}`, locale as Locale)}>
+                <Button className='bg-primary text-white p-0 rounded-sm min-w-5 min-h-5'>
+                  <i style={{ fontSize: '15px' }} className='tabler-eye text-white' />
+                </Button>
+              </Link>
+            </Box>
+          )
         }
+      }
     ],
     []
   )

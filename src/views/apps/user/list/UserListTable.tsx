@@ -231,6 +231,7 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
           </div>
         )
       }),
+      
       columnHelper.accessor('action', {
         header: 'Action',
         cell: ({ row }) => (

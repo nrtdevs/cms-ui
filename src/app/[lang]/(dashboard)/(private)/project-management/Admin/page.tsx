@@ -16,7 +16,8 @@ import {
   Box,
   Card,
   Stack,
-  Grid
+  Grid,
+  Chip
 } from '@mui/material'
 
 import {
@@ -39,6 +40,8 @@ import AddProjectInfo from '../User/addproject'
 
 import FilterDropdown from '@/app/Custom-Cpmponents/Select-dropdown/filterdropdown'
 import Activeprojectstatus from '../assignteam'
+import { ThemeColor } from '@/@core/types'
+
 
 type Project = {
   id: number
@@ -123,7 +126,7 @@ const AdminProjectData: React.FC = () => {
         activation_date: '2024-01-01',
         end_date: '2024-06-01',
         clientname: 'John Doe',
-        status: 'Active',
+        status: 'active',
         bid_creater: 'Rihana',
         clientemail: 'john.doe@example.com',
         clientcontact: '1234567890',
@@ -145,7 +148,7 @@ const AdminProjectData: React.FC = () => {
         activation_date: '2024-02-01',
         end_date: '2024-08-01',
         clientname: 'Jane Smith',
-        status: 'Completed',
+        status: 'pending',
         clientemail: 'jane.smith@example.com',
         clientcontact: '9876543210',
         clientcompany: 'Smith Corp',
@@ -157,6 +160,17 @@ const AdminProjectData: React.FC = () => {
     ],
     []
   )
+
+
+  type UserStatusType = {
+    [key: string]: ThemeColor
+  }
+
+  const userStatusObj: UserStatusType = {
+    active: 'success',
+    pending: 'warning',
+    inactive: 'secondary'
+  }
 
   const bidCreators = Array.from(new Set(data.map(item => item.bid_creater)))
 
@@ -292,9 +306,17 @@ const AdminProjectData: React.FC = () => {
         accessorKey: 'status',
         header: 'Status',
         cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.getValue<string>()}
-          </Typography>
+          <div className='flex items-center gap-3'>
+          <Chip
+            variant='tonal'
+            label={info.getValue<string>()}
+            size='small'
+            color={userStatusObj[info.getValue<string>()]}
+            className='capitalize'
+          />
+        </div>
+
+
         )
       },
       {
