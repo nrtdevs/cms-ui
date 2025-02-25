@@ -21,7 +21,8 @@ import {
   TableHead,
   SelectChangeEvent
 } from '@mui/material'
-import { permissionList } from '@/app/Services/roleService'
+import { permissionList, roleUpdate } from '@/app/Services/roleService'
+import Swal from 'sweetalert2'
 
 type Permission = {
   permissionname: string
@@ -33,18 +34,20 @@ interface AddRoleProps {
   open: boolean
   setOpen: (open: boolean) => void
   roleData?: {
+    id: number
     name: string
     userType: string
     description: string
     permissions: { permission_group: string; permissions: { id: number; permissionname: string }[] }[]
   }
+  onSuccess: (open: boolean) => void
 }
 
 type SelectedPermissions = {
   [key: string]: number[]
 }
 
-const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
+const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData, onSuccess }) => {
   const [userType, setUserType] = useState<string>('')
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
@@ -85,10 +88,10 @@ const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) =>
 
     fetchRoleData()
   }, [])
+
   const handleClose = () => {
     setOpen(false)
   }
-  console.log('roleData', roleData?.permissions)
 
   // const permissions: Permission[] = [
   //   { id: 1, permissionname: 'read', permission_group: 'Dashboard' },
@@ -200,9 +203,8 @@ const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) =>
     }
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name || !userType) {
-      alert('Name and UserType are required fields.')
       return
     }
 
@@ -211,28 +213,37 @@ const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) =>
       permissions: permissionNames
         .map(permissionName => {
           const permission = permissions.find(p => p.id === permissionName && p.permission_group === group)
+
           return permission ? { permissionname: permission.permissionname, id: permission.id } : null
         })
         .filter(p => p !== null)
     }))
 
+    const selectedPermissionIds: Number[] = permissionsToSubmit.flatMap(group =>
+      group.permissions.map(permission => permission.id)
+    )
+
     const formData = {
       name,
-      userType,
       description,
-      permissions: permissionsToSubmit
+      permissions: selectedPermissionIds
     }
 
-    console.log('Form submitted with the following data:', formData)
 
-    setName('')
-    setUserType('')
-    setDescription('')
-    setSelectedPermissions({})
-    setSelectAllPermissions(false)
+    const response = await roleUpdate(roleData?.id || 1, formData)
+
+    if (response) {
+      Swal.fire({
+        title: 'Success!',
+        text: 'Role created submitted successfully.',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      })
+
+    }
+    onSuccess(true)
     handleClose()
   }
-
   return (
     <Dialog open={open} onClose={handleClose} maxWidth='md' fullWidth>
       <Container className='p-8 min-h-screen'>
@@ -253,7 +264,7 @@ const EditTrackStatus: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) =>
             <Box className='w-1/2'>
               <FormControl fullWidth>
                 <InputLabel htmlFor='userType'>User Type</InputLabel>
-                <Select value={userType} onChange={handleUserTypeChange} label='User Type' id='userType' required>
+                <Select value={userType} onChange={handleUserTypeChange} label='User Type' id='userType' disabled>
                   <MenuItem value='user'>User</MenuItem>
                   <MenuItem value='super_admin'>Super Admin</MenuItem>
                 </Select>

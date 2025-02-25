@@ -228,41 +228,41 @@ const Page: React.FC = () => {
   )
   const totalPages = Math.ceil(permissions.length / rowsPerPage)
 
-  useEffect(() => {
-    const fetchRoleData = async () => {
-      try {
-        const data = await roleList()
+  const fetchRoleData = async () => {
+    try {
+      setRoles([])
+      const data = await roleList()
 
-        const formattedRoles: Roles[] = data.data.map((role: any) => ({
-          id: role.id,
-          name: role.name,
-          userType: role.userType, // Adjust dynamically if needed
-          description: role.description,
-          createdat: role.created_at,
+      const formattedRoles: Roles[] = data.data.map((role: any) => ({
+        id: role.id,
+        name: role.name,
+        userType: role.userType, // Adjust dynamically if needed
+        description: role.description,
+        createdat: role.created_at,
 
-          permissions: Object.values(
-            role.permissions.reduce((acc: any, permission: any) => {
-              if (!acc[permission.group]) {
-                acc[permission.group] = {
-                  permission_group: permission.group,
-                  permissions: []
-                }
+        permissions: Object.values(
+          role.permissions.reduce((acc: any, permission: any) => {
+            if (!acc[permission.group]) {
+              acc[permission.group] = {
+                permission_group: permission.group,
+                permissions: []
               }
-              acc[permission.group].permissions.push({
-                permissionname: permission.name,
-                id: permission.id
-              })
-              return acc
-            }, {})
-          )
-        }))
+            }
+            acc[permission.group].permissions.push({
+              permissionname: permission.name,
+              id: permission.id
+            })
+            return acc
+          }, {})
+        )
+      }))
 
-        setRoles(formattedRoles)
-      } catch (error) {
-        console.error('Error fetching role data:', error)
-      }
+      setRoles(formattedRoles)
+    } catch (error) {
+      console.error('Error fetching role data:', error)
     }
-
+  }
+  useEffect(() => {
     fetchRoleData()
   }, [])
 
@@ -325,13 +325,14 @@ const Page: React.FC = () => {
                 element={Button}
                 elementProps={buttonProps}
                 dialog={EditRollInfo}
-                dialogProps={{ roleData }}
+                dialogProps={{ roleData , onSuccess: fetchRoleData}}
+                onClose={fetchRoleData}
               />
               <OpenDialogOnElementClick
                 element={Button}
                 elementProps={buttonviewProps}
                 dialog={ViewRollInfo}
-                dialogProps={{roleData }}
+                dialogProps={{ roleData  }}
               />
               <Button
                 variant='contained'
@@ -349,7 +350,6 @@ const Page: React.FC = () => {
     ],
     [columnHelper]
   )
-  console.log('data', roles)
 
   const fuzzyFilter: FilterFn<Roles> = (row, columnId, filterValue) => {
     const cellValue = row.getValue(columnId)
@@ -372,7 +372,13 @@ const Page: React.FC = () => {
       <Box className='mt-10'>
         <Box className='flex items-center justify-between m-5'>
           <SearchFilter label='Search' value={searchTerm} onChange={setSearchTerm} placeholder='Search all fields' />
-          <OpenDialogOnElementClick element={Button} elementProps={buttonaddrops} dialog={AddRole} />
+          <OpenDialogOnElementClick
+            element={Button}
+            elementProps={buttonaddrops}
+            dialog={AddRole}
+            onClose={fetchRoleData}
+            dialogProps={{ onSuccess: fetchRoleData }}
+          />
         </Box>
         <TableContainer component={Paper} className='shadow-none'>
           <Table>
@@ -417,7 +423,11 @@ const Page: React.FC = () => {
         </TableContainer>
         <div className='flex items-center justify-center mt-10 mb-2 my-4'>
           <Stack spacing={2}>
-            <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            <Paginator
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           </Stack>
         </div>
       </Box>
