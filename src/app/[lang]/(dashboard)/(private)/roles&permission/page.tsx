@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import type { ButtonProps } from '@mui/material'
 import {
@@ -19,13 +19,13 @@ import {
 } from '@mui/material'
 import type { SortingState, FilterFn } from '@tanstack/react-table'
 import { createColumnHelper, useReactTable, getCoreRowModel, getSortedRowModel } from '@tanstack/react-table'
-
 import Paginator from '../../../../Custom-Cpmponents/paginator/Paginator'
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
 import EditRollInfo from './EditRollInfo'
 import ViewRollInfo from './ViewRoleInfo'
 import AddRole from './AddRole'
+import { roleList } from '@/app/Services/roleService'
 
 // Define missing types for better typing
 interface PermissionDetails {
@@ -46,6 +46,14 @@ interface Permission {
   description: string
   permissions: PermissionGroup[]
   createdat: string
+}
+interface Roles {
+  id: number
+  name: string
+  userType: string
+  description: string
+  createdat: string
+  permissions: PermissionGroup[]
 }
 
 // Define Button props for better typing
@@ -75,9 +83,10 @@ const buttonaddrops: ButtonProps = {
 
 const Page: React.FC = () => {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const columnHelper = createColumnHelper<Permission>()
+  const columnHelper = createColumnHelper<Roles>()
   const [searchTerm, setSearchTerm] = useState<string>('')
-
+  const [currentPage, setCurrentPage] = useState(1)
+  const [roles, setRoles] = useState<Roles[]>([])
   const rowsPerPage = 10
 
   const permissions: Permission[] = useMemo(
@@ -98,7 +107,7 @@ const Page: React.FC = () => {
             permissions: [
               { permissionname: 'create', id: 23 },
               { permissionname: 'read', id: 47 },
-              { permissionname: 'update', id: 12 },
+              { permissionname: 'update', id: 12 }
               // { permissionname: 'approve', id: 8 },
               // { permissionname: 'block', id: 74 }
             ]
@@ -217,18 +226,53 @@ const Page: React.FC = () => {
     ],
     []
   )
-
   const totalPages = Math.ceil(permissions.length / rowsPerPage)
 
-  const [currentPage, setCurrentPage] = useState(1)
+  useEffect(() => {
+    const fetchRoleData = async () => {
+      try {
+        const data = await roleList()
+
+        const formattedRoles: Roles[] = data.data.map((role: any) => ({
+          id: role.id,
+          name: role.name,
+          userType: role.userType, // Adjust dynamically if needed
+          description: role.description,
+          createdat: role.created_at,
+
+          permissions: Object.values(
+            role.permissions.reduce((acc: any, permission: any) => {
+              if (!acc[permission.group]) {
+                acc[permission.group] = {
+                  permission_group: permission.group,
+                  permissions: []
+                }
+              }
+              acc[permission.group].permissions.push({
+                permissionname: permission.name,
+                id: permission.id
+              })
+              return acc
+            }, {})
+          )
+        }))
+
+        setRoles(formattedRoles)
+      } catch (error) {
+        console.error('Error fetching role data:', error)
+      }
+    }
+
+    fetchRoleData()
+  }, [])
 
   const filteredData = useMemo(() => {
-    if (!searchTerm) return permissions
+    if (!searchTerm) return roles
 
-    return permissions.filter(permission =>
-      Object.values(permission).some(value => value.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+    return roles.filter(role =>
+      Object.values(role).some(value => value.toString().toLowerCase().includes(searchTerm.toLowerCase()))
     )
-  }, [searchTerm, permissions])
+  }, [searchTerm, roles])
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * rowsPerPage
@@ -243,8 +287,7 @@ const Page: React.FC = () => {
   const columns = useMemo(
     () => [
       columnHelper.accessor('id', {
-        id: 'id',
-        header: '#',
+        header: 'Id',
         cell: info => <Typography sx={{ whiteSpace: 'nowrap' }}>{info.getValue()}</Typography>
       }),
       columnHelper.accessor('name', {
@@ -264,11 +307,12 @@ const Page: React.FC = () => {
         )
       }),
       columnHelper.accessor('createdat', {
-        id: 'createdat',
         header: 'Created At',
-        cell: info => <Typography color='text.primary'>{info.getValue()}</Typography>
+        cell: info => {
+          const formattedDate = info.getValue().split(' ').slice(1, 4).join('-')
+          return <Typography color='text.primary'>{formattedDate}</Typography>
+        }
       }),
-
       columnHelper.display({
         id: 'actions',
         header: 'Actions',
@@ -281,13 +325,13 @@ const Page: React.FC = () => {
                 element={Button}
                 elementProps={buttonProps}
                 dialog={EditRollInfo}
-                dialogProps={{ roleData  }}
+                dialogProps={{ roleData }}
               />
               <OpenDialogOnElementClick
                 element={Button}
                 elementProps={buttonviewProps}
                 dialog={ViewRollInfo}
-                dialogProps={{ roleData }}
+                dialogProps={{roleData }}
               />
               <Button
                 variant='contained'
@@ -305,8 +349,9 @@ const Page: React.FC = () => {
     ],
     [columnHelper]
   )
+  console.log('data', roles)
 
-  const fuzzyFilter: FilterFn<Permission> = (row, columnId, filterValue) => {
+  const fuzzyFilter: FilterFn<Roles> = (row, columnId, filterValue) => {
     const cellValue = row.getValue(columnId)
 
     return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
