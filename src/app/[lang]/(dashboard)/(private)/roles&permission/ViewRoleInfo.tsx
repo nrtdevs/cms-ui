@@ -15,88 +15,139 @@ import {
   Button,
   Checkbox
 } from '@mui/material';
+import { permissionList, roleList } from '@/app/Services/roleService';
+
+
 
 type Permission = {
-  permissionname: string;
-  permission_group: string;
-  id: number;
-};
+  permissionname: string
+  permission_group: string
+  id: number
+}
+
+type SelectedPermissions = {
+  [key: string]: number[]
+}
+
+// interface Roles {
+//   id: number
+//   name: string
+//   userType: string
+//   description: string
+//   createdat: string
+//   permissions: PermissionGroup[]
+// }
 
 interface ViewRoleProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   roleData?: {
+    id: number;
     name: string;
     userType: string;
     description: string;
     permissions: { permission_group: string; permissions: { id: number; permissionname: string }[] }[];
   };
+
 }
 
-type SelectedPermissions = {
-  [key: string]: number[];
-};
 
-const ViewRoleInfo: React.FC<ViewRoleProps> = ({ open, setOpen, roleData }) => {
+const ViewRoleInfo: React.FC<ViewRoleProps> = ({ open, setOpen, roleData  }) => {
   const [userType, setUserType] = useState<string>('');
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [selectedPermissions, setSelectedPermissions] = useState<SelectedPermissions>({});
+  const [permissions, setPermissions] = useState<Permission[]>([])
+
+
+  // useEffect(() => {
+  //   if (roleData) {
+  //     setName(roleData.name);
+  //     setUserType(roleData.userType);
+  //     setDescription(roleData.description);
+
+  //     const newSelectedPermissions: SelectedPermissions = {};
+  //     roleData.permissions.forEach(group => {
+  //       newSelectedPermissions[group.permission_group] = group.permissions.map(p => p.id);
+  //     });
+  //     setSelectedPermissions(newSelectedPermissions);
+  //   }
+  // }, [roleData]);
 
   useEffect(() => {
     if (roleData) {
-      setName(roleData.name);
-      setUserType(roleData.userType);
-      setDescription(roleData.description);
+      setName(roleData.name)
+      setUserType(roleData.userType)
+      setDescription(roleData.description)
 
-      const newSelectedPermissions: SelectedPermissions = {};
+      const newSelectedPermissions: SelectedPermissions = {}
       roleData.permissions.forEach(group => {
-        newSelectedPermissions[group.permission_group] = group.permissions.map(p => p.id);
-      });
-      setSelectedPermissions(newSelectedPermissions);
+        newSelectedPermissions[group.permission_group] = group.permissions.map(p => p.id)
+      })
+      setSelectedPermissions(newSelectedPermissions)
     }
-  }, [roleData]);
+  }, [roleData])
+
+  useEffect(() => {
+    const fetchRoleData = async () => {
+      try {
+        const data = await permissionList()
+
+        const formattedPermission: Permission[] = data.data.map((permission: any) => ({
+          permissionname: permission.name,
+          permission_group: permission.group,
+          id: permission.id
+        }))
+
+        setPermissions(formattedPermission)
+      } catch (error) {
+        console.error('Error fetching role data:', error)
+      }
+    }
+
+    fetchRoleData()
+  }, [])
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const permissions: Permission[] = [
-    { id: 1, permissionname: 'read', permission_group: 'Dashboard' },
-    { id: 2, permissionname: 'create', permission_group: 'User' },
-    { id: 3, permissionname: 'read', permission_group: 'User' },
-    { id: 4, permissionname: 'update', permission_group: 'User' },
-    { id: 5, permissionname: 'approve', permission_group: 'User' },
-    { id: 6, permissionname: 'block', permission_group: 'User' },
-    { id: 7, permissionname: 'create', permission_group: 'Bidding' },
-    { id: 8, permissionname: 'read', permission_group: 'Bidding' },
-    { id: 9, permissionname: 'update', permission_group: 'Bidding' },
-    { id: 10, permissionname: 'approve', permission_group: 'Bidding' },
-    { id: 74, permissionname: 'block', permission_group: 'Bidding' },
-    { id: 30, permissionname: 'create', permission_group: 'Reporting' },
-    { id: 59, permissionname: 'edit', permission_group: 'Reporting' },
-    { id: 24, permissionname: 'delete', permission_group: 'Reporting' },
-    { id: 30, permissionname: 'create', permission_group: 'Content' },
-    { id: 59, permissionname: 'edit', permission_group: 'Content' },
-    { id: 24, permissionname: 'delete', permission_group: 'Content' },
-    { id: 30, permissionname: 'create', permission_group: 'Settings' },
-    { id: 59, permissionname: 'edit', permission_group: 'Settings' },
-    { id: 24, permissionname: 'delete', permission_group: 'Settings' },
-    { id: 30, permissionname: 'create', permission_group: 'Notifications' },
-    { id: 59, permissionname: 'edit', permission_group: 'Notifications' },
-    { id: 24, permissionname: 'delete', permission_group: 'Notifications' },
-  ];
+  // const permissions: Permission[] = [
+  //   { id: 1, permissionname: 'read', permission_group: 'Dashboard' },
+  //   { id: 2, permissionname: 'create', permission_group: 'User' },
+  //   { id: 3, permissionname: 'read', permission_group: 'User' },
+  //   { id: 4, permissionname: 'update', permission_group: 'User' },
+  //   { id: 5, permissionname: 'approve', permission_group: 'User' },
+  //   { id: 6, permissionname: 'block', permission_group: 'User' },
+  //   { id: 7, permissionname: 'create', permission_group: 'Bidding' },
+  //   { id: 8, permissionname: 'read', permission_group: 'Bidding' },
+  //   { id: 9, permissionname: 'update', permission_group: 'Bidding' },
+  //   { id: 10, permissionname: 'approve', permission_group: 'Bidding' },
+  //   { id: 74, permissionname: 'block', permission_group: 'Bidding' },
+  //   { id: 30, permissionname: 'create', permission_group: 'Reporting' },
+  //   { id: 59, permissionname: 'edit', permission_group: 'Reporting' },
+  //   { id: 24, permissionname: 'delete', permission_group: 'Reporting' },
+  //   { id: 30, permissionname: 'create', permission_group: 'Content' },
+  //   { id: 59, permissionname: 'edit', permission_group: 'Content' },
+  //   { id: 24, permissionname: 'delete', permission_group: 'Content' },
+  //   { id: 30, permissionname: 'create', permission_group: 'Settings' },
+  //   { id: 59, permissionname: 'edit', permission_group: 'Settings' },
+  //   { id: 24, permissionname: 'delete', permission_group: 'Settings' },
+  //   { id: 30, permissionname: 'create', permission_group: 'Notifications' },
+  //   { id: 59, permissionname: 'edit', permission_group: 'Notifications' },
+  //   { id: 24, permissionname: 'delete', permission_group: 'Notifications' },
+  // ];
 
   const groupedPermissions = permissions.reduce(
     (acc: { [key: string]: Permission[] }, { permissionname, permission_group, id }) => {
       if (!acc[permission_group]) {
-        acc[permission_group] = [];
+        acc[permission_group] = []
       }
-      acc[permission_group].push({ permissionname, permission_group, id });
-      return acc;
+      acc[permission_group].push({ permissionname, permission_group, id })
+      return acc
     },
     {}
-  );
+  )
 
   const isPermissionSelected = (group: string, permissionId: number) => {
     return selectedPermissions[group]?.includes(permissionId) || false;

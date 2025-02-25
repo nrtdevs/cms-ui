@@ -37,7 +37,7 @@ const OpenDialogOnElementClick = (props: OpenDialogOnElementClickProps) => {
   return (
     <>
       {/* Receive element component as prop and pass the onClick handler */}
-      <Element onClick={handleOnClick} {...restElementProps} />
+      <Element  onClick={handleOnClick} {...restElementProps} />
 
       {/* Receive dialog component as prop and pass open, setOpen, and onClose */}
       <Dialog open={open} setOpen={setOpen} onClose={handleClose} {...dialogProps} />
