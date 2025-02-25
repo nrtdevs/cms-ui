@@ -1,5 +1,5 @@
 'use client'
-
+import { createRoles, permissionList } from '@/app/Services/roleService'
 import React, { useState, useEffect } from 'react'
 
 import {
@@ -21,6 +21,8 @@ import {
   Dialog,
   TableHead
 } from '@mui/material'
+import Swal from 'sweetalert2'
+import { toast } from 'react-toastify'
 
 // Define the types for permissions and selected permissions
 type Permission = {
@@ -38,68 +40,44 @@ interface AddRoleProps {
     description: string
     permissions: { permission_group: string; permissions: { id: number; permissionname: string }[] }[]
   }
+  onSuccess: (open: boolean) => void
 }
 
 type SelectedPermissions = {
   [key: string]: number[] // key is permission_group, value is an array of permission IDs
 }
 
-const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
+const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData, onSuccess }) => {
   const [userType, setUserType] = useState<string>('')
   const [name, setName] = useState<string>('') // Track the name
   const [description, setDescription] = useState<string>('') // Track the description
   const [selectedPermissions, setSelectedPermissions] = useState<SelectedPermissions>({})
   const [selectAllPermissions, setSelectAllPermissions] = useState(false)
+  const [permissions, setPermissions] = useState<Permission[]>([])
 
-  useEffect(() => {
-    if (roleData) {
-      setName(roleData.name)
-      setUserType(roleData.userType)
-      setDescription(roleData.description)
-      console.log(roleData.permissions[0].permission_group)
-
-      // Prefill selected permissions
-      const newSelectedPermissions: SelectedPermissions = {}
-
-      roleData.permissions.forEach(group => {
-        newSelectedPermissions[group.permission_group] = group.permissions.map(p => p.id)
-      })
-      setSelectedPermissions(newSelectedPermissions)
-    }
-  
-
-  }, [roleData])
-
-  const handleClose = () => {
+  const handleClose: any = () => {
     setOpen(false)
   }
 
-  // Example permission data
-  const permissions: Permission[] = [
-    { id: 34, permissionname: 'read', permission_group: 'Dashboard' },
-    { id: 72, permissionname: 'create', permission_group: 'User' },
-    { id: 58, permissionname: 'read', permission_group: 'User' },
-    { id: 61, permissionname: 'update', permission_group: 'User' },
-    { id: 19, permissionname: 'delete', permission_group: 'User' },
-    { id: 95, permissionname: 'block', permission_group: 'User' },
-    { id: 23, permissionname: 'create', permission_group: 'Bidding' },
-    { id: 47, permissionname: 'read', permission_group: 'Bidding' },
-    { id: 12, permissionname: 'update', permission_group: 'Bidding' },
-    { id: 8, permissionname: 'approve', permission_group: 'Bidding' },
-    { id: 74, permissionname: 'block', permission_group: 'Bidding' },
-    { id: 63, permissionname: 'view', permission_group: 'Reporting' },
-    { id: 21, permissionname: 'generate', permission_group: 'Reporting' },
-    { id: 89, permissionname: 'download', permission_group: 'Reporting' },
-    { id: 16, permissionname: 'create', permission_group: 'Content' },
-    { id: 43, permissionname: 'edit', permission_group: 'Content' },
-    { id: 77, permissionname: 'delete', permission_group: 'Content' },
-    { id: 91, permissionname: 'manage', permission_group: 'Settings' },
-    { id: 35, permissionname: 'update', permission_group: 'Settings' },
-    { id: 68, permissionname: 'view', permission_group: 'Settings' },
-    { id: 30, permissionname: 'create', permission_group: 'Notifications' },
-    { id: 59, permissionname: 'edit', permission_group: 'Notifications' },
-    { id: 24, permissionname: 'delete', permission_group: 'Notifications' }
-  ]
+  useEffect(() => {
+    const fetchRoleData = async () => {
+      try {
+        const data = await permissionList()
+
+        const formattedPermission: Permission[] = data.data.map((permission: any) => ({
+          permissionname: permission.name,
+          permission_group: permission.group,
+          id: permission.id
+        }))
+
+        setPermissions(formattedPermission)
+      } catch (error) {
+        console.error('Error fetching role data:', error)
+      }
+    }
+
+    fetchRoleData()
+  }, [])
 
   // Group permissions by permission_group
   const groupedPermissions = permissions.reduce(
@@ -169,10 +147,8 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
     return selectedPermissions[group]?.includes(permissionId) || false
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name || !userType) {
-      alert('Name and UserType are required fields.')
-
       return
     }
 
@@ -187,14 +163,38 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
         .filter(p => p !== null)
     }))
 
+    const selectedPermissionIds: Number[] = permissionsToSubmit.flatMap(group =>
+      group.permissions.map(permission => permission.id)
+    )
+
     const formData = {
       name,
       userType,
       description,
-      permissions: permissionsToSubmit
+      permissions: selectedPermissionIds
     }
 
-    console.log('Form submitted with the following data:', formData)
+
+    const response = await createRoles(formData)
+
+    if (response.success) {
+      Swal.fire({
+        title: 'Success!',
+        text: 'Role created submitted successfully.',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      })
+
+    } else {
+      console.error('Error creating role:', response.data)
+
+      Swal.fire({
+        title: 'Failed !',
+        text: 'Role creation failed.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      })
+    }
 
     // Reset form
     setName('')
@@ -202,6 +202,7 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
     setDescription('')
     setSelectedPermissions({})
     setSelectAllPermissions(false)
+    onSuccess(true)
     handleClose()
   }
 
@@ -225,10 +226,16 @@ const AddRole: React.FC<AddRoleProps> = ({ open, setOpen, roleData }) => {
             <Box className='w-1/2'>
               <FormControl fullWidth>
                 <InputLabel htmlFor='userType'>User Type</InputLabel>
-                <Select value={userType} onChange={e => setUserType(e.target.value)} label='User Type*' id='userType' required>
+                <Select
+                  value={userType}
+                  onChange={e => setUserType(e.target.value)}
+                  label='User Type*'
+                  id='userType'
+                  required
+                >
                   <MenuItem value=''>Select UserType</MenuItem>
-                  <MenuItem value='User'>User</MenuItem>
-                  <MenuItem value='SuperAdmin'>SuperAdmin</MenuItem>
+                  <MenuItem value='user'>User</MenuItem>
+                  <MenuItem value='super_admin'>SuperAdmin</MenuItem>
                 </Select>
               </FormControl>
             </Box>
