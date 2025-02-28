@@ -1,9 +1,7 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-
 import type { ButtonProps } from '@mui/material'
-
 import {
   Button,
   Stack,
@@ -23,7 +21,6 @@ import type { SortingState, FilterFn } from '@tanstack/react-table'
 import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 
 import AddUser from './adduser/page'
-
 import Paginator from '../../../../Custom-Cpmponents/paginator/Paginator'
 import SearchFilter from '@/app/Custom-Cpmponents/input/searchfilter'
 import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialogOnElementClick'
@@ -31,13 +28,17 @@ import OpenDialogOnElementClick from '@/app/Custom-Cpmponents/Buttons/OpenDialog
 import EditUserInfo from './editUser'
 import ViewUserInfo from './viewuser'
 
+// Import the countries array
+import countries from '@/app/Custom-Cpmponents/input/customphonenumberinput'
+
 const users = Array.from({ length: 100 }, (_, index) => ({
   id: index + 1,
   firstname: `User`,
   lastname: ` ${index + 1}`,
   employeeId: `P${String(index + 1).padStart(5, '0')}`,
   email: `user${index + 1}@example.com`,
-  contact: `+33-700-555-${String(200 + index)}`,
+  contact: `9179289${String(200 + index)}`,
+  countryCode: countries[index % countries.length].code,  // Correctly setting the country code
   position: [
     'Project Director',
     'Senior Developer',
@@ -57,7 +58,8 @@ interface Timesheet {
   lastname: string
   employeeId: any
   email: string
-  contact: string
+  contact: string  // Contact now only has the phone field
+  countryCode: string // Added countryCode field
   position: string
   company: string
   employeeType: string
@@ -95,7 +97,6 @@ const Page: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
 
   const rowsPerPage = 10
-
   const totalPages = Math.ceil(users.length / rowsPerPage)
 
   const [currentPage, setCurrentPage] = useState(1)
@@ -148,13 +149,16 @@ const Page: React.FC = () => {
       }),
       columnHelper.accessor('contact', {
         header: 'Contact No.',
-        cell: info => (
-          <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
-            {info.row.original.contact}
-          </Typography>
-        )
+        cell: info => {
+          const {  countryCode } = info.row.original
+          return (
+            <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>
+              {countryCode} {info.row.original.contact}
+            </Typography>
+          )
+        }
       }),
-      columnHelper.accessor('position', {
+      columnHelper.accessor('position', { 
         header: 'Position',
         cell: info => (
           <Typography color='text.primary' sx={{ whiteSpace: 'nowrap' }}>

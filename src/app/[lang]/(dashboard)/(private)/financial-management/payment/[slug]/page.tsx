@@ -64,8 +64,9 @@ const paymentsData = [
     paymentMode: 'Credit Card',
     refId: 'R5678A',
     paymentDate: '2025-01-01',
-    totalAmount: '20000',
-
+    totalAmount: '$20000',
+    receivedAmt: '$13000',
+    pendingAmount: '7000$',
     totalPaymentsList: [
       {
         id: 'p1',
@@ -75,7 +76,7 @@ const paymentsData = [
         transactionId: 'T1234A',
         paymentDate: '2025-01-01',
         totalAmount: '20000',
-        pendingAmount: '10$',
+        pendingAmount: '7000$',
         paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
         description: 'Initial project phase',
         receivedAmt: '$3000',
@@ -88,7 +89,14 @@ const paymentsData = [
         amount: 10000,
         refId: 'R5678A',
         transactionId: 'T1234A',
-        paymentDate: '2025-01-01'
+        paymentDate: '2025-01-01',
+        totalAmount: '20000',
+        pendingAmount: '7000$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Final payment phase',
+        receivedAmt: '$10000',
+        totalPayments: 0,
+        projectName: 'Project Alpha'
       }
     ]
   },
@@ -100,8 +108,9 @@ const paymentsData = [
     paymentMode: 'Bank Transfer',
     refId: 'R1234B',
     paymentDate: '2025-02-01',
-    totalAmount: '15000',
-    pendingAmount: '5000',
+    totalAmount: '$15000',
+    receivedAmt: '$10000',
+    pendingAmount: '5000$',
     totalPaymentsList: [
       {
         id: 'p3',
@@ -109,7 +118,14 @@ const paymentsData = [
         amount: 5000,
         refId: 'R1234B',
         transactionId: 'T5678B',
-        paymentDate: '2025-02-01'
+        paymentDate: '2025-02-01',
+        totalAmount: '15000',
+        pendingAmount: '5000$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Initial project phase',
+        receivedAmt: '$5000',
+        totalPayments: 0,
+        projectName: 'Project Beta'
       },
       {
         id: 'p4',
@@ -117,7 +133,14 @@ const paymentsData = [
         amount: 10000,
         refId: 'R1234B',
         transactionId: 'T5678B',
-        paymentDate: '2025-02-01'
+        paymentDate: '2025-02-01',
+        totalAmount: '15000',
+        pendingAmount: '5000$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Final payment phase',
+        receivedAmt: '$5000',
+        totalPayments: 0,
+        projectName: 'Project Beta'
       }
     ]
   },
@@ -129,8 +152,9 @@ const paymentsData = [
     paymentMode: 'Wire Transfer',
     refId: 'R5678C',
     paymentDate: '2025-01-03',
-    totalAmount: '25000',
-    pendingAmount: '25000',
+    totalAmount: '$25000',
+    receivedAmt: '$0',
+    pendingAmount: '25000$',
     totalPaymentsList: [
       {
         id: 'p5',
@@ -138,7 +162,14 @@ const paymentsData = [
         amount: 25000,
         refId: 'R5678C',
         transactionId: 'T1234C',
-        paymentDate: '2025-01-03'
+        paymentDate: '2025-01-03',
+        totalAmount: '25000',
+        pendingAmount: '25000$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Full project payment',
+        receivedAmt: '$0',
+        totalPayments: 0,
+        projectName: 'Project Gamma'
       }
     ]
   },
@@ -150,8 +181,9 @@ const paymentsData = [
     paymentMode: 'Credit Card',
     refId: 'R5678D',
     paymentDate: '2025-01-04',
-    totalAmount: '18000',
-    pendingAmount: '9000',
+    totalAmount: '$18000',
+    receivedAmt: '$9000',
+    pendingAmount: '9000$',
     totalPaymentsList: [
       {
         id: 'p6',
@@ -159,7 +191,14 @@ const paymentsData = [
         amount: 9000,
         refId: 'R5678D',
         transactionId: 'T1234D',
-        paymentDate: '2025-01-04'
+        paymentDate: '2025-01-04',
+        totalAmount: '18000',
+        pendingAmount: '9000$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Initial payment phase',
+        receivedAmt: '$4500',
+        totalPayments: 0,
+        projectName: 'Project Delta'
       },
       {
         id: 'p7',
@@ -167,7 +206,14 @@ const paymentsData = [
         amount: 9000,
         refId: 'R5678D',
         transactionId: 'T1234D',
-        paymentDate: '2025-01-04'
+        paymentDate: '2025-01-04',
+        totalAmount: '18000',
+        pendingAmount: '9000$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Final payment phase',
+        receivedAmt: '$4500',
+        totalPayments: 0,
+        projectName: 'Project Delta'
       }
     ]
   },
@@ -179,8 +225,9 @@ const paymentsData = [
     paymentMode: 'PayPal',
     refId: 'R5678E',
     paymentDate: '2025-01-05',
-    totalAmount: '22000',
-    pendingAmount: '22000',
+    totalAmount: '$22000',
+    receivedAmt: '$0',
+    pendingAmount: '22000$',
     totalPaymentsList: [
       {
         id: 'p8',
@@ -188,7 +235,14 @@ const paymentsData = [
         amount: 22000,
         refId: 'R5678E',
         transactionId: 'T1234E',
-        paymentDate: '2025-01-05'
+        paymentDate: '2025-01-05',
+        totalAmount: '22000',
+        pendingAmount: '22000$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Full project payment',
+        receivedAmt: '$0',
+        totalPayments: 0,
+        projectName: 'Project Epsilon'
       }
     ]
   },
@@ -200,8 +254,9 @@ const paymentsData = [
     paymentMode: 'Bank Transfer',
     refId: 'R5678F',
     paymentDate: '2025-01-06',
-    totalAmount: '27000',
-    pendingAmount: '17000',
+    totalAmount: '$27000',
+    receivedAmt: '$10000',
+    pendingAmount: '17000$',
     totalPaymentsList: [
       {
         id: 'p9',
@@ -209,7 +264,14 @@ const paymentsData = [
         amount: 10000,
         refId: 'R5678F',
         transactionId: 'T1234F',
-        paymentDate: '2025-01-06'
+        paymentDate: '2025-01-06',
+        totalAmount: '27000',
+        pendingAmount: '17000$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Initial payment phase',
+        receivedAmt: '$5000',
+        totalPayments: 0,
+        projectName: 'Project Zeta'
       },
       {
         id: 'p10',
@@ -217,7 +279,14 @@ const paymentsData = [
         amount: 17000,
         refId: 'R5678F',
         transactionId: 'T1234F',
-        paymentDate: '2025-01-06'
+        paymentDate: '2025-01-06',
+        totalAmount: '27000',
+        pendingAmount: '17000$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Final payment phase',
+        receivedAmt: '$12000',
+        totalPayments: 0,
+        projectName: 'Project Zeta'
       }
     ]
   },
@@ -229,8 +298,9 @@ const paymentsData = [
     paymentMode: 'PayPal',
     refId: 'R5678G',
     paymentDate: '2025-01-07',
-    totalAmount: '16000',
-    pendingAmount: '0',
+    totalAmount: '$16000',
+    receivedAmt: '$16000',
+    pendingAmount: '0$',
     totalPaymentsList: [
       {
         id: 'p11',
@@ -238,7 +308,14 @@ const paymentsData = [
         amount: 16000,
         refId: 'R5678G',
         transactionId: 'T1234G',
-        paymentDate: '2025-01-07'
+        paymentDate: '2025-01-07',
+        totalAmount: '16000',
+        pendingAmount: '0$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Complete payment',
+        receivedAmt: '$16000',
+        totalPayments: 0,
+        projectName: 'Project Eta'
       }
     ]
   },
@@ -250,8 +327,9 @@ const paymentsData = [
     paymentMode: 'Bank Transfer',
     refId: 'R5678H',
     paymentDate: '2025-01-08',
-    totalAmount: '33000',
-    pendingAmount: '33000',
+    totalAmount: '$33000',
+    receivedAmt: '$0',
+    pendingAmount: '33000$',
     totalPaymentsList: [
       {
         id: 'p12',
@@ -259,7 +337,14 @@ const paymentsData = [
         amount: 33000,
         refId: 'R5678H',
         transactionId: 'T1234H',
-        paymentDate: '2025-01-08'
+        paymentDate: '2025-01-08',
+        totalAmount: '33000',
+        pendingAmount: '33000$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Initial project phase',
+        receivedAmt: '$0',
+        totalPayments: 0,
+        projectName: 'Project Theta'
       }
     ]
   },
@@ -271,8 +356,9 @@ const paymentsData = [
     paymentMode: 'Wire Transfer',
     refId: 'R5678I',
     paymentDate: '2025-01-09',
-    totalAmount: '25000',
-    pendingAmount: '0',
+    totalAmount: '$25000',
+    receivedAmt: '$25000',
+    pendingAmount: '0$',
     totalPaymentsList: [
       {
         id: 'p13',
@@ -280,7 +366,14 @@ const paymentsData = [
         amount: 25000,
         refId: 'R5678I',
         transactionId: 'T1234I',
-        paymentDate: '2025-01-09'
+        paymentDate: '2025-01-09',
+        totalAmount: '25000',
+        pendingAmount: '0$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Complete payment',
+        receivedAmt: '$25000',
+        totalPayments: 0,
+        projectName: 'Project Iota'
       }
     ]
   },
@@ -292,16 +385,24 @@ const paymentsData = [
     paymentMode: 'Credit Card',
     refId: 'R5678J',
     paymentDate: '2025-01-10',
-    totalAmount: '19000',
-    pendingAmount: '9500',
+    totalAmount: '$19000',
+    receivedAmt: '$0',
+    pendingAmount: '19000$',
     totalPaymentsList: [
       {
         id: 'p14',
         paymentMode: 'Credit Card',
-        amount: 9500,
+        amount: 19000,
         refId: 'R5678J',
         transactionId: 'T1234J',
-        paymentDate: '2025-01-10'
+        paymentDate: '2025-01-10',
+        totalAmount: '19000',
+        pendingAmount: '9000$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Initial payment phase',
+        receivedAmt: '$10000',
+        totalPayments: 0,
+        projectName: 'Project Kappa'
       },
       {
         id: 'p15',
@@ -309,7 +410,14 @@ const paymentsData = [
         amount: 9500,
         refId: 'R5678J',
         transactionId: 'T1234J',
-        paymentDate: '2025-01-10'
+        paymentDate: '2025-01-10',
+        totalAmount: '19000',
+        pendingAmount: '9500$',
+        paymentSlip: `SL${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        description: 'Cheque payment for project phase completion',
+        receivedAmt: '$9500',
+        totalPayments: 0,
+        projectName: 'Project Kappa'
       }
     ]
   }
@@ -323,13 +431,19 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
   const data = [
     {
       title: paymentData?.projectName,
-      subtitle: 'Payment Details',
-      icon: 'tabler-user'
+      subtitle: 'Project Name'
     },
     {
-      title: paymentData?.amount,
-      subtitle: 'Total Payment Amount',
-      icon: 'tabler-file-invoice'
+      title: paymentData?.totalAmount,
+      subtitle: 'Total Payment Amount'
+    },
+    {
+      title: paymentData?.receivedAmt,
+      subtitle: 'Total Received Amount'
+    },
+    {
+      title: paymentData?.pendingAmount,
+      subtitle: 'Total Pending Amount'
     }
   ]
 
@@ -393,10 +507,7 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
                       <Typography variant='h4' className='text-primary'>{item.title}</Typography>
                       <Typography>{item.subtitle}</Typography>
                     </div>
-                    <Avatar variant='rounded' className='is-[42px] bs-[42px]'>
-                      <i className={classnames(item.icon, 'text-[26px]')} />
-                    </Avatar>
-                  </div>
+                    </div>
                   {isBelowMdScreen && !isBelowSmScreen && index < data.length - 2 && (
                     <Divider
                       className={classnames('mbs-6', {

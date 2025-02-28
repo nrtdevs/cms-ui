@@ -21,6 +21,13 @@ import CustomFileUpload from '@/app/Custom-Cpmponents/Upload-file/CustomfileUplo
 import CustomDescriptionInput from '@/app/Custom-Cpmponents/input/customdescriptioinput'
 import Dropdown from '@/app/Custom-Cpmponents/Select-dropdown/dropdown'
 
+import countries from '../../../../../Custom-Cpmponents/input/customphonenumberinput'
+
+interface CountryCode {
+  country: string
+  code: string
+}
+
 type Project = {
   projectname: string
   platform: string
@@ -40,6 +47,8 @@ type Project = {
   currency: string
   clientlocation: string
   commission: string
+  countryCode: string
+  countries: string[]
 }
 
 type EditUserInfoProps = {
@@ -67,7 +76,9 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
     backenddev: '',
     currency: '',
     clientlocation: '',
-    commission: ''
+    commission: '',
+    countryCode: '',
+    countries: []
   })
 
   const [tags, setTags] = useState<string[]>([])
@@ -106,8 +117,27 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
       backenddev: '',
       currency: '',
       clientlocation: '',
-      commission: ''
+      commission: '',
+      countryCode: '',
+      countries: []
     })
+  }
+
+  const validateCountryCode = (value: string) => {
+    const trimmedValue = value
+
+    // Check if the country code exists in the provided list of country codes
+    const isValidCountryCode = countryList.some(country => country.code === trimmedValue)
+
+    if (!trimmedValue) {
+      return 'Country code is required'
+    }
+
+    if (!isValidCountryCode) {
+      return 'Invalid country code'
+    }
+
+    return ''
   }
 
   const handleSave = () => {
@@ -119,14 +149,20 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
     // Check required fields
     if (!projectData.projectname.trim()) validationErrors.projectname = 'Project name is required.'
     if (!projectData.platform.trim()) validationErrors.platform = 'Platform is required.'
-    if (!projectData.clientname.trim()) validationErrors.clientname = 'Client name is required.'
-    if (!projectData.clientemail.trim()) validationErrors.clientemail = 'Client email is required.'
-    if (!projectData.clientcontact.trim()) validationErrors.clientcontact = 'Client contact is required.'
+    if (!projectData.clientname.trim()) validationErrors.clientname = 'Name is required.'
+    if (!projectData.clientemail.trim()) validationErrors.clientemail = 'Email is required.'
+    if (!projectData.clientcontact.trim()) validationErrors.clientcontact = 'Contact number is required.'
     if (!projectData.projectdescription) validationErrors.projectdescription = 'Project description is required.'
-    if (!projectData.bidammount) validationErrors.bidammount = 'Bidiing Amnt is required.'
+    if (!projectData.bidammount) validationErrors.bidammount = 'Biding Amnt is required.'
 
     if (!projectData.clientlocation.trim()) validationErrors.clientlocation = 'Location is required.'
     if (!projectData.commission) validationErrors.commission = 'Please Select.'
+
+    // Country Code Validation
+    const countryCodeError = validateCountryCode(projectData.countryCode)
+    if (countryCodeError) {
+      validationErrors.countryCode = countryCodeError
+    }
 
     // Email validation
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -136,7 +172,7 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
     }
 
     // Phone number validation (assuming Indian phone number format as an example)
-    const phonePattern = /^\+([1-9]{1}[0-9]{1,2})\d{10}$/
+    const phonePattern = /^[0-9\-\(\)\/\.\s]{6,12}$/
 
     if (projectData.clientcontact && !phonePattern.test(projectData.clientcontact)) {
       validationErrors.clientcontact = 'Invalid phone number'
@@ -148,14 +184,23 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
       validationErrors.bid_date = 'Please enter a valid date.'
     }
 
-
     // If there are validation errors, set them to the state
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
       return
     }
 
-    const updatedProjectData = { ...projectData, skills: tags }
+    // // Concatenate country code with client contact just before backend request
+    // const fullPhoneNumber = projectData.countryCode
+    //   ? `${projectData.countryCode}-${projectData.clientcontact}`
+    //   : projectData.clientcontact
+
+    // Prepare data to be sent to the backend
+    const finalProjectData = {
+      ...projectData
+    }
+
+    const updatedProjectData = { ...finalProjectData, skills: tags }
     console.log('updatedProjectData', updatedProjectData)
 
     Swal.fire({
@@ -177,7 +222,26 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
 
   const options = ['React', 'Node.js', 'Angular', 'Vue', 'JavaScript']
 
+  const [countryCode, setCountryCode] = useState('') // Default to a common country code (+91 for IND)
+  const [countryList, setCountryList] = useState<{ country: string; code: string }[]>([]) // Explicitly set type here
+
+  useEffect(() => {
+    const list = countries // Get country list
+    setCountryList(list as { country: string; code: string }[])
+  }, [])
+
   const handleInputChange = (field: keyof Project, value: string) => {
+    if (field === 'clientcontact') {
+      // Replace anything that's not a number or allowed special characters (e.g., +, -, (, ), space)
+      value = value.replace(/[^0-9\-\(\)\/\.\s]/g, '')
+    }
+
+    if (field === 'countries' && value === '') {
+      setCountryCode('')
+    } else if (field === 'countries') {
+      setCountryCode(value)
+    }
+
     setProjectData(prevData => {
       const updatedData = {
         ...prevData,
@@ -293,28 +357,6 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
               />
             </Grid>
 
-            {/* <Grid item xs={12} sm={4}>
-              <CustomFileUpload
-                label='Upload Project File'
-                onChange={handleFileChange}
-                fileName={file ? file.name : ''}
-                error={file === null}
-                helperText={file === null ? 'Please upload a file.' : ''}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={12}>
-              <CustomTagInput
-                label='Skills'
-                tags={tags}
-                onChange={setTags}
-                options={options}
-                placeholder='Type a tag and press Enter'
-                error={Boolean(errors.skills)}
-                helperText={errors.skills}
-              />
-            </Grid> */}
-
             <Grid item xs={12}>
               <Typography variant='h6' className='mt-2 text-primary font-bold'>
                 Client Details
@@ -343,10 +385,27 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
                 helperText={errors.clientemail}
               />
             </Grid>
+
+            {/* Country Code Dropdown */}
+            <Grid item xs={12} sm={3}>
+              <CustomTagInput
+                options={countryList.map(country => country.code.trim())}
+                label='Country Code'
+                tags={projectData.countryCode ? [projectData.countryCode] : []}
+                onChange={(tags: string[]) => {
+                  const value = tags.length > 0 ? tags[tags.length - 1] : ''
+                  handleInputChange('countryCode', value)
+                }}
+                error={!!errors.countryCode}
+                helperText={errors.countryCode}
+                required
+              />
+            </Grid>
+
             <Grid item xs={12} sm={3}>
               <CustomTextInput
                 label='Client Contact'
-                placeholder='+919874561230'
+                placeholder='9874561230'
                 value={projectData.clientcontact}
                 onChange={value => handleInputChange('clientcontact', value)}
                 required
@@ -399,5 +458,4 @@ const EditprojectInfo = ({ open, setOpen, data }: EditUserInfoProps) => {
     </Dialog>
   )
 }
-
 export default EditprojectInfo
