@@ -44,7 +44,7 @@ const getTheme = (mode: 'light' | 'dark') =>
     }
   })
 
-type ViewProjectInfoProps = {
+type ViewUserInfoProps = {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
   data: {
@@ -53,111 +53,103 @@ type ViewProjectInfoProps = {
     lastname: string
     email: string
     employeeId: string
-    contact: string
+    contact:  string // Ensure contact is an object with 'phone' field
     position: string | string[]
     company: string
     employeeType: string
     fullname: string
+    countryCode: string
   }
 }
 
-const ViewUserInfo: React.FC<ViewProjectInfoProps> = ({ open, setOpen, data }) => {
+const ViewUserInfo: React.FC<ViewUserInfoProps> = ({ open, setOpen, data }) => {
   const [mode, setMode] = useState<'light' | 'dark'>('light') // Light mode by default
 
   return (
     // <ThemeProvider theme={getTheme(mode)}>
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth='sm'>
-        {/* Dialog Title */}
-        <DialogTitle className='font-bold text-primary align-left text-left '>
-          User Details
-        </DialogTitle>
 
-        {/* Dialog Content */}
-        <DialogContent sx={{ backgroundColor: 'background.paper', padding: '32px' }}>
-          {/* Section 1: User Information */}
-          <Box mb={3}>
+    <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth='sm'>
+      {/* Dialog Title */}
+      <DialogTitle className='font-bold text-primary align-left text-left '>User Details</DialogTitle>
 
-
-            <Grid container spacing={2}  >
-              <Grid item xs={12} sm={4}>
-                <Typography variant='h6' className='text-primary' >
-                <br/>
-                  Full Name
-                </Typography>
-                <Typography variant='body1'>{data.fullname}</Typography>
-              </Grid>
-            </Grid>
-          </Box>
-
-          <Divider sx={{ width: '100%', marginY: 2 }} />
-
-          {/* Section 2: Additional Information */}
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <Typography variant='h6' className=' text-primary'>
-                Position
+      {/* Dialog Content */}
+      <DialogContent sx={{ backgroundColor: 'background.paper', padding: '32px' }}>
+        {/* Section 1: User Information */}
+        <Box mb={3}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={4}>
+              <Typography variant='h6' className='text-primary'>
+                Full Name
               </Typography>
-              <Typography variant='body1'>{data.position}</Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant='h6' className=' text-primary'>
-                User ID
-              </Typography>
-              <Typography variant='body1'>{data.employeeId.toLocaleString()}</Typography>
+              <Typography variant='body1'>{data.fullname}</Typography>
             </Grid>
           </Grid>
+        </Box>
 
-          <Grid container spacing={3} mt={2}>
-            <Grid item xs={12} sm={6}>
-              <Typography variant='h6' className=' text-primary'>
-                Company
-              </Typography>
-              <Typography variant='body1'>{data.company}</Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant='h6' className=' text-primary'>
-                Employee Type
-              </Typography>
-              <Typography variant='body1'>{data.employeeType}</Typography>
-            </Grid>
-            {/* <Grid item xs={12} sm={6}>
-              <Typography variant='h6' className=' text-primary'>
-                Contact
-              </Typography>
-              <Typography variant='body1'>{data.contact}</Typography>
-            </Grid> */}
-          </Grid>
+        <Divider sx={{ width: '100%', marginY: 2 }} />
 
-          <Divider sx={{ width: '100%', marginY: 2 }} />
-
-          {/* Section 3: Email */}
-          {/* <Box mt={2}> */}
-          <Grid container spacing={3} mt={2}>
+        {/* Section 2: Additional Information */}
+        <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
-              <Typography variant='h6' className=' text-primary'>
-                Contact
-              </Typography>
-              <Typography variant='body1'>{data.contact}</Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-              <Typography variant='h6' className=' text-primary'>
+            <Typography variant='h6' className=' text-primary'>
+              Position
+            </Typography>
+            <Typography variant='body1'>{data.position}</Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant='h6' className=' text-primary'>
+              User ID
+            </Typography>
+            <Typography variant='body1'>{data.employeeId.toLocaleString()}</Typography>
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={3} mt={2}>
+          <Grid item xs={12} sm={6}>
+            <Typography variant='h6' className=' text-primary'>
+              Company
+            </Typography>
+            <Typography variant='body1'>{data.company}</Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant='h6' className=' text-primary'>
+              Employee Type
+            </Typography>
+            <Typography variant='body1'>{data.employeeType}</Typography>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ width: '100%', marginY: 2 }} />
+
+        {/* Section 3: Email */}
+        <Grid container spacing={3} mt={2}>
+          <Grid item xs={12} sm={6}>
+            <Typography variant='h6' className=' text-primary'>
+              Contact
+            </Typography>
+            {/* Accessing the phone number */}
+            <Typography variant='body1'>
+              {data.countryCode} -{data.contact}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant='h6' className=' text-primary'>
               Email
             </Typography>
             <Typography variant='body1'>{data.email}</Typography>
-            </Grid>
-           </Grid>
-          {/* </Box> */}
-          {/* Divider for clean separation */}
-        </DialogContent>
+          </Grid>
+        </Grid>
+      </DialogContent>
 
-        {/* Dialog Actions */}
-        <DialogActions >
-          <Button onClick={() => setOpen(false)} color='secondary' >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-  // </ThemeProvider>
+      {/* Dialog Actions */}
+      <DialogActions>
+        <Button onClick={() => setOpen(false)} color='secondary'>
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+
+    // </ThemeProvider>
   )
 }
 
