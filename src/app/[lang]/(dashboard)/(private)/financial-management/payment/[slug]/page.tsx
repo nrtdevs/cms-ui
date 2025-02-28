@@ -504,12 +504,19 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
                 >
                   <div className='flex justify-between items-center'>
                     <div className='flex flex-col'>
+<<<<<<< HEAD
                       <Typography variant='h4' className='text-primary'>
                         {item.title}
                       </Typography>
                       <Typography>{item.subtitle}</Typography>
                     </div>
                   </div>
+=======
+                      <Typography variant='h4' className='text-primary'>{item.title}</Typography>
+                      <Typography>{item.subtitle}</Typography>
+                    </div>
+                    </div>
+>>>>>>> 2b80aa825c0ca02bd02952f86bc1d0b6029dca14
                   {isBelowMdScreen && !isBelowSmScreen && index < data.length - 2 && (
                     <Divider
                       className={classnames('mbs-6', {
@@ -530,6 +537,7 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
                 <TableCell className='text-primary' align='center' sx={{ fontSize: '1rem' }}>
                   Payment Mode
                 </TableCell>
+<<<<<<< HEAD
                 <TableCell className='text-primary' align='center' sx={{ fontSize: '1rem', color: 'text.primary' }}>
                   Amount
                 </TableCell>
@@ -543,6 +551,41 @@ const ViewPayments: React.FC<ViewPaymentsProps> = () => {
                   Transaction ID
                 </TableCell>
                 <TableCell className='text-primary' align='center' sx={{ fontSize: '1rem', color: 'text.primary' }}>
+=======
+                <TableCell
+                  className='text-primary'
+                  align='center'
+                  sx={{ fontSize: '1rem', color: 'text.primary' }}
+                >
+                  Amount
+                </TableCell>
+                <TableCell
+                  className='text-primary'
+                  align='center'
+                  sx={{ fontSize: '1rem', color: 'text.primary' }}
+                >
+                  Payment Date
+                </TableCell>
+                <TableCell
+                  className='text-primary'
+                  align='center'
+                  sx={{  fontSize: '1rem', color: 'text.primary' }}
+                >
+                  Reference ID
+                </TableCell>
+                <TableCell
+                  className='text-primary'
+                  align='center'
+                  sx={{  fontSize: '1rem', color: 'text.primary' }}
+                >
+                  Transaction ID
+                </TableCell>
+                <TableCell
+                  className='text-primary'
+                  align='center'
+                  sx={{  fontSize: '1rem', color: 'text.primary' }}
+                >
+>>>>>>> 2b80aa825c0ca02bd02952f86bc1d0b6029dca14
                   Actions
                 </TableCell>
               </TableRow>
